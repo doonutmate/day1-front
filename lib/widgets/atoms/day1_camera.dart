@@ -13,19 +13,26 @@ class Day1Camera extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-        aspectRatio: 1,
-        child: FutureBuilder<void>(
-          future: _initializeControllerFuture,
-          builder: (context, snapshot){
-            if (snapshot.connectionState == ConnectionState.done) {
-              // 미리보기
-              return CameraPreview(controller);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
-        )
+    return FutureBuilder<void>(
+      future: _initializeControllerFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          // 미리보기
+          return AspectRatio(
+            aspectRatio: 1,
+            child: ClipRect(
+              child: Transform.scale(
+                scale: controller.value.aspectRatio,
+                child: Center(
+                  child: CameraPreview(controller),
+                ),
+              ),
+            ),
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 }

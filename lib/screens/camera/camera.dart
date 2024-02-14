@@ -4,18 +4,13 @@ import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/flash_change_button.dart';
 import 'package:day1/widgets/atoms/flip_button.dart';
 import 'package:day1/widgets/atoms/shutter_button.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
-
-
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../services/camera_provider.dart';
 import '../../widgets/atoms/day1_camera.dart';
 
 const int targetWidth = 48;
@@ -35,14 +30,16 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   late CameraController controller;
   late Future<void> _initializeControllerFuture;
+  String formatDate = "";
   bool isFrontCamera = false;
-  late final responseImage;
+  File? responseImage;
 
 
   @override
   void initState() {
     super.initState();
     setCamera(isFrontCamera);
+
 
 
   }
@@ -142,8 +139,12 @@ class _CameraScreenState extends State<CameraScreen> {
     if (image != null) {
       resizedImage =
           img.copyResize(image, width: targetWidth, height: targetHeight);
+
       String tempPath = (await getTemporaryDirectory()).path;
-      final tempFile = File('$tempPath/resized_image.jpg');
+      var now = new DateTime.now();
+      formatDate = DateFormat('yyMMdd_HH:mm:ss').format(now);
+      final tempFile = File('$tempPath/${formatDate}_resized_image.jpg');
+
       return tempFile.writeAsBytes(img.encodeJpg(resizedImage));
     } else {
       return null;
@@ -186,6 +187,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       .pop();
                 },
               ),
+              Text(formatDate),
               Day1Camera(initializeControllerFuture: _initializeControllerFuture, controller: controller),
               Expanded(flex: 1, child: SizedBox()),
               Padding(
@@ -199,6 +201,8 @@ class _CameraScreenState extends State<CameraScreen> {
                   ],
                 ),
               ),
+              if(responseImage != null)
+              Image.file(responseImage!),
               Expanded(flex: 2, child: SizedBox()),
             ],
           ),
