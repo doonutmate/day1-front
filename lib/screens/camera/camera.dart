@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/flash_change_button.dart';
@@ -6,6 +7,7 @@ import 'package:day1/widgets/atoms/flip_button.dart';
 import 'package:day1/widgets/atoms/shutter_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -23,8 +25,6 @@ class CameraScreen extends StatefulWidget {
 
   @override
   State<CameraScreen> createState() => _CameraScreenState();
-
-
 }
 
 class _CameraScreenState extends State<CameraScreen> {
@@ -34,14 +34,10 @@ class _CameraScreenState extends State<CameraScreen> {
   bool isFrontCamera = false;
   File? responseImage;
 
-
   @override
   void initState() {
     super.initState();
     setCamera(isFrontCamera);
-
-
-
   }
 
   @override
@@ -52,15 +48,12 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   void setCamera(bool isFront) {
-    String camera1 = widget.cameras[0].lensDirection.name;
-    String camera2 = widget.cameras[1].lensDirection.name;
+    /*String camera1 = widget.cameras[0].lensDirection.name;
+    String camera2 = widget.cameras[1].lensDirection.name;*/
 
     controller = CameraController(
-      isFront ? widget.cameras[1] : widget.cameras[0],
-      ResolutionPreset.max,
-      enableAudio: false,
-      imageFormatGroup: ImageFormatGroup.bgra8888
-    );
+        isFront ? widget.cameras[1] : widget.cameras[0], ResolutionPreset.max,
+        enableAudio: false, imageFormatGroup: ImageFormatGroup.bgra8888);
 
     _initializeControllerFuture = controller.initialize().then((_) {
       // 카메라가 작동되지 않을 경우
@@ -74,7 +67,7 @@ class _CameraScreenState extends State<CameraScreen> {
         // 코드 작성
       });
     })
-    // 카메라 오류 시
+        // 카메라 오류 시
         .catchError((Object e) {
       if (e is CameraException) {
         switch (e.code) {
@@ -99,16 +92,16 @@ class _CameraScreenState extends State<CameraScreen> {
       // 사진 촬영
       final file = await controller.takePicture();
 
-      final _reduceFile;
+      final XFile? _reduceFile;
       _reduceFile = await compressFile(file);
 
-      final _resizeFile;
-      _resizeFile = await resizeImage(_reduceFile!);
+      final File cropFile;
+      if (_reduceFile != null) {
+        cropFile = await cropImage(_reduceFile);
 
-      if(_resizeFile != null){
-        await DioService.uploadImage(_resizeFile);
+        await DioService.uploadImage(cropFile);
         setState(() {
-          responseImage = _resizeFile;
+          responseImage = File(cropFile.path);
         });
       }
 
@@ -151,10 +144,23 @@ class _CameraScreenState extends State<CameraScreen> {
     }
   }
 
+  Future<File> cropImage(XFile _imageFile) async {
+    ImageProperties properties =
+        await FlutterNativeImage.getImageProperties(_imageFile.path);
+    var cropSize = min(properties.width!, properties.height!);
+    int offsetX = (properties.width! - cropSize) ~/ 2;
+    int offsetY = (properties.height! - cropSize) ~/ 2;
+    var cropImageFile = await FlutterNativeImage.cropImage(
+        _imageFile.path, offsetX, offsetY, cropSize, cropSize);
+
+    return cropImageFile;
+  }
+
   Future<XFile?> compressFile(XFile file) async {
     var fileFromImage = File(file.path);
     var basename = path.basenameWithoutExtension(fileFromImage.path);
-    var pathString = fileFromImage.path.split(path.basename(fileFromImage.path))[0];
+    var pathString =
+        fileFromImage.path.split(path.basename(fileFromImage.path))[0];
 
     var pathStringWithExtension = "$pathString${basename}_image.jpg";
     var result = await FlutterImageCompress.compressAndGetFile(
@@ -168,10 +174,6 @@ class _CameraScreenState extends State<CameraScreen> {
     return result;
   }
 
-
-
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -181,14 +183,28 @@ class _CameraScreenState extends State<CameraScreen> {
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CloseButton(
-                onPressed: (){
-                  Navigator.of(context, rootNavigator: true)
-                      .pop();
-                },
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CloseButton(
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                  ),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          responseImage = null;
+                        });
+                      },
+                      icon: Icon(Icons.settings_backup_restore))
+                ],
               ),
-              Text(formatDate),
-              Day1Camera(initializeControllerFuture: _initializeControllerFuture, controller: controller),
+              responseImage != null
+                  ? Image.file(responseImage!)
+                  : Day1Camera(
+                      initializeControllerFuture: _initializeControllerFuture,
+                      controller: controller),
               Expanded(flex: 1, child: SizedBox()),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -201,8 +217,6 @@ class _CameraScreenState extends State<CameraScreen> {
                   ],
                 ),
               ),
-              if(responseImage != null)
-              Image.file(responseImage!),
               Expanded(flex: 2, child: SizedBox()),
             ],
           ),
@@ -211,5 +225,3 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 }
-
-

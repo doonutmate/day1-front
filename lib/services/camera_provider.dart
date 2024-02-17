@@ -1,19 +1,19 @@
-import 'package:camera/camera.dart';
+import 'dart:io';
 import 'package:riverpod/riverpod.dart';
 
-final camerasProvider = StateNotifierProvider<CameraStateNotifier, List<CameraDescription>>((ref) {
+final camerasProvider = StateNotifierProvider<CameraStateNotifier, File?>((ref) {
   return CameraStateNotifier();
 });
 
 
-class CameraStateNotifier extends StateNotifier<List<CameraDescription>> {
-  CameraStateNotifier() : super([]);
+class CameraStateNotifier extends StateNotifier<File?> {
+  CameraStateNotifier() : super(null);
 
-  void setCameras(List<CameraDescription> _cameras) {
-    state = _cameras;
+  void setResponseImage(File? responsimage) {
+    state = responsimage;
   }
 
-  List<CameraDescription> getCameras() {
+  File? getCameras() {
     return state;
   }
 }

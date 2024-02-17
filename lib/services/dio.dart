@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 
 class DioService{
@@ -9,6 +10,8 @@ class DioService{
     try {
       // 파일 경로를 통해 formData 생성
       var dio = Dio();
+      dio.options.contentType = 'multipart/form-data';
+      dio.options.maxRedirects.isFinite;
       var formData = FormData.fromMap(
           {'multipartFile': await MultipartFile.fromFile(file.path)});
 

@@ -22,7 +22,7 @@ class _FlashChangeButtonState extends State<FlashChangeButton> {
               _isFlashOn ? FlashMode.always : FlashMode.off);
         });
       },
-      icon:_isFlashOn ? SvgPicture.asset("assets/icons/flash.svg") : Icon(Icons.flash_off_outlined),
+      icon:_isFlashOn ? SvgPicture.asset("assets/icons/flash.svg") : SvgPicture.asset("assets/icons/flash_off.svg"),
     );
   }
 }
