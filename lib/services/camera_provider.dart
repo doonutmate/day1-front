@@ -13,7 +13,7 @@ class CameraStateNotifier extends StateNotifier<File?> {
     state = responsimage;
   }
 
-  File? getCameras() {
+  File? getResponseImage() {
     return state;
   }
 }

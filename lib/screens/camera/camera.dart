@@ -1,22 +1,22 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:camera/camera.dart';
-import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/flash_change_button.dart';
 import 'package:day1/widgets/atoms/flip_button.dart';
+import 'package:day1/widgets/atoms/reshoot_text_button.dart';
 import 'package:day1/widgets/atoms/shutter_button.dart';
+import 'package:day1/widgets/atoms/store_text_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
-import 'package:image/image.dart' as img;
-import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
+import '../../constants/size.dart';
+import '../../widgets/atoms/cancel_text_button.dart';
 import '../../widgets/atoms/day1_camera.dart';
 
-const int targetWidth = 48;
-const int targetHeight = 48;
+/*const int targetWidth = 48;
+const int targetHeight = 48;*/
 
 class CameraScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -24,10 +24,10 @@ class CameraScreen extends StatefulWidget {
   const CameraScreen(List<CameraDescription> this.cameras, {super.key});
 
   @override
-  State<CameraScreen> createState() => _CameraScreenState();
+  State<CameraScreen> createState() => CameraScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen> {
+class CameraScreenState extends State<CameraScreen> {
   late CameraController controller;
   late Future<void> _initializeControllerFuture;
   String formatDate = "";
@@ -99,31 +99,17 @@ class _CameraScreenState extends State<CameraScreen> {
       if (_reduceFile != null) {
         cropFile = await cropImage(_reduceFile);
 
-        await DioService.uploadImage(cropFile);
         setState(() {
           responseImage = File(cropFile.path);
         });
       }
-
-      /*//final bytes = await File(path).readAsBytes();
-      //final img.Image? image = img.decodeImage(bytes);
-
-      // import 'dart:io';
-      // 사진을 저장할 경로 : 기본경로(storage/emulated/0/)
-      Directory directory = Directory('storage/emulated/0/DCIM/MyImages');
-
-      // 지정한 경로에 디렉토리를 생성하는 코드
-      // .create : 디렉토리 생성    recursive : true - 존재하지 않는 디렉토리일 경우 자동 생성
-      await Directory(directory.path).create(recursive: true);
-
-      // 지정한 경로에 사진 저장
-      await File(file.path).copy('${directory.path}/${file.name}');*/
     } catch (e) {
       print('Error taking picture: $e');
     }
   }
 
-  Future<File?> resizeImage(XFile _image) async {
+  //사진 사이즈 조절 함수
+  /*Future<File?> resizeImage(XFile _image) async {
     late final img.Image resizedImage;
     final path = _image.path;
     final bytes = await File(path).readAsBytes();
@@ -142,7 +128,7 @@ class _CameraScreenState extends State<CameraScreen> {
     } else {
       return null;
     }
-  }
+  }*/
 
   Future<File> cropImage(XFile _imageFile) async {
     ImageProperties properties =
@@ -169,8 +155,6 @@ class _CameraScreenState extends State<CameraScreen> {
       quality: 5,
     );
 
-    //if (result != null) print(await result.length());
-
     return result;
   }
 
@@ -183,37 +167,54 @@ class _CameraScreenState extends State<CameraScreen> {
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CloseButton(
-                    onPressed: () {
-                      Navigator.of(context, rootNavigator: true).pop();
-                    },
-                  ),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          responseImage = null;
-                        });
-                      },
-                      icon: Icon(Icons.settings_backup_restore))
-                ],
+              SizedBox(
+                height: cameraScreenAppbarHeight,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: responseImage == null
+                      ? [
+                          CancelTextButton(),
+                        ]
+                      : [
+                          ReshootTextButton(
+                            func: () {
+                              setState(() {
+                                responseImage = null;
+                              });
+                            },
+                          ),
+                          Spacer(),
+                          StoreTextButton()
+                        ],
+                ),
               ),
-              responseImage != null
-                  ? Image.file(responseImage!)
-                  : Day1Camera(
-                      initializeControllerFuture: _initializeControllerFuture,
-                      controller: controller),
+              AspectRatio(
+                aspectRatio: 1,
+                child: responseImage != null
+                    ? Image.file(responseImage!)
+                    : Day1Camera(
+                        initializeControllerFuture: _initializeControllerFuture,
+                        controller: controller),
+              ),
               Expanded(flex: 1, child: SizedBox()),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    FlashChangeButton(controller: controller),
-                    ShutterButton(func: _takePicture),
-                    FlipButton(func: setCamera),
+                    FlashChangeButton(
+                      controller: controller,
+                      responseImage: responseImage,
+                    ),
+                    ShutterButton(
+                      shutterFunc: _takePicture,
+                      responseImage: responseImage,
+                    ),
+                    FlipButton(
+                      func: setCamera,
+                      responseImage: responseImage,
+                    ),
                   ],
                 ),
               ),

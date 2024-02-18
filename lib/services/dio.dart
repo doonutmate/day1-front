@@ -21,7 +21,6 @@ class DioService{
       if (response.statusCode != 200) {
         print(await response.statusMessage);
       }
-      //print(response.data.toString());
 
       return;
     } catch (e) {

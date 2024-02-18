@@ -18,14 +18,11 @@ class Day1Camera extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           // 미리보기
-          return AspectRatio(
-            aspectRatio: 1,
-            child: ClipRect(
-              child: Transform.scale(
-                scale: controller.value.aspectRatio,
-                child: Center(
-                  child: CameraPreview(controller),
-                ),
+          return ClipRect(
+            child: Transform.scale(
+              scale: controller.value.aspectRatio,
+              child: Center(
+                child: CameraPreview(controller),
               ),
             ),
           );
