@@ -48,6 +48,7 @@ dependencies:
   fluttertoast: ^8.2.4
   uni_links:
   http: ^0.13.3
+  flutter_screenutil: ^5.9.0
 
   kakao_flutter_sdk: ^1.8.0 # 전체 추가
   kakao_flutter_sdk_user: ^1.8.0 # 카카오 로그인

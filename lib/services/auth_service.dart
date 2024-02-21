@@ -7,43 +7,47 @@ import 'dart:convert';
 class AuthService {
   // 카카오톡 실행 가능 여부 확인
   // 카카오톡 실행이 가능하면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
-  Future<void> signInWithKakao() async {
+  Future<OAuthToken?> signInWithKakao() async {
     bool isInstalled = await isKakaoTalkInstalled();
+    OAuthToken? token;
+
     if (isInstalled) {
       try {
-        OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
+        token = await UserApi.instance.loginWithKakaoTalk();
         print('카카오톡으로 로그인 성공');
         // 백엔드로 토큰 전송
-        await sendTokenToServer(token.accessToken);
+        return token; // 토큰 반환
+        // await sendTokenToServer(token.accessToken);
       } catch (error) {
         print('카카오톡으로 로그인 실패 $error');
 
         // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
         // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
         if (error is PlatformException && error.code == 'CANCELED') {
-          return;
-        }
-        // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
-        try {
-          OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
-          // await UserApi.instance.loginWithKakaoAccount();
-          print('카카오계정으로 로그인 성공');
-          // 백엔드로 토큰 전송
-          await sendTokenToServer(token.accessToken);
-        } catch (error) {
-          print('카카오계정으로 로그인 실패 $error');
+          return null;
+        } else {
+          // 다른 오류인 경우 null 반환
+          return null;
         }
       }
     } else {
+      // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인
       try {
-        OAuthToken token = await UserApi.instance.loginWithKakaoAccount();
+        token = await UserApi.instance.loginWithKakaoAccount();
+        // OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
         // await UserApi.instance.loginWithKakaoAccount();
         print('카카오계정으로 로그인 성공');
+        return token;
+        // 백엔드로 토큰 전송
+        // await sendTokenToServer(token.accessToken);
       } catch (error) {
         print('카카오계정으로 로그인 실패 $error');
+        // 다른 오류인 경우 null 반환
+        return null;
       }
     }
   }
+
 
   Future<void> kakaoToken() async {
     if (await AuthApi.instance.hasToken()) {
@@ -87,20 +91,37 @@ class AuthService {
 
 
   Future<void> sendTokenToServer(String token) async {
+    print('서버로 전송할 토큰: $token'); // 요청 데이터 로깅
     try {
+      // 사용자 정보 요청
+      User user = await UserApi.instance.me();
+      String? name = user.kakaoAccount?.profile?.nickname; // 사용자 이름 (닉네임) 추출
+      print('사용자 이름: $name'); // 디버깅을 위한 로그 추가
+
+      // 사용자 이름이 없는 경우, 기본값 설정 또는 오류 처리
+      if (name == null) {
+        print('사용자 이름이 없어 서버로 전송할 수 없습니다.');
+        return;
+      }
       var response = await http.post(
         Uri.parse('http://43.201.170.13:8081/oauth/login?oauthType=KAKAO'),
         // 백엔드 서버의 토큰 검증 엔드포인트
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'token': token}),
+        body: json.encode({
+          'accessToken': token,
+          // 'oauthType': 'KAKAO',// accessToken만 요청 바디에 포함
+        }),
       );
+
+      // print('서버 응답 상태 코드: ${response.statusCode}'); // 응답 상태 코드 로깅
+      // print('서버 응답 본문: ${response.body}'); // 응답 본문 로깅
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         // 서버로부터의 응답 처리
-        print('토큰 서버 전송 성공: ${response.body}');
+        print('토큰 서버 및 사용자 이름 전송 성공: ${response.body}');
       } else {
         // 에러 처리
-        print('토큰 서버 전송 실패: ${response.body}');
+        print('토큰 및 사용자 이름 서버 전송 실패: ${response.body}');
       }
     } catch (e) {
       print('서버 전송 중 에러 발생: $e');
