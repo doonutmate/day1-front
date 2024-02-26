@@ -59,7 +59,7 @@ class LoginScreen extends StatelessWidget {
               KakaoLoginButton(
                 onPressed: () async {
                   AuthService authService = AuthService();
-                  OAuthToken? token = await AuthService().signInWithKakao();
+                  OAuthToken? token = await AuthService().signInWithKakao(context);
                   if (token != null) {
                     await authService.sendTokenToServer(token.accessToken);
                   }

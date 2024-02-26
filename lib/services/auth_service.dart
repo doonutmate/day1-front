@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:http/http.dart' as http;
@@ -7,7 +8,7 @@ import 'dart:convert';
 class AuthService {
   // 카카오톡 실행 가능 여부 확인
   // 카카오톡 실행이 가능하면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
-  Future<OAuthToken?> signInWithKakao() async {
+  Future<OAuthToken?> signInWithKakao(BuildContext context) async {
     bool isInstalled = await isKakaoTalkInstalled();
     OAuthToken? token;
 
@@ -15,6 +16,7 @@ class AuthService {
       try {
         token = await UserApi.instance.loginWithKakaoTalk();
         print('카카오톡으로 로그인 성공');
+        Navigator.pushNamed(context, '/camera');
         // 백엔드로 토큰 전송
         return token; // 토큰 반환
         // await sendTokenToServer(token.accessToken);
@@ -37,6 +39,7 @@ class AuthService {
         // OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
         // await UserApi.instance.loginWithKakaoAccount();
         print('카카오계정으로 로그인 성공');
+        Navigator.pushNamed(context, '/camera');
         return token;
         // 백엔드로 토큰 전송
         // await sendTokenToServer(token.accessToken);
@@ -94,19 +97,22 @@ class AuthService {
     print('서버로 전송할 토큰: $token'); // 요청 데이터 로깅
     try {
       // 사용자 정보 요청
-      User user = await UserApi.instance.me();
-      String? name = user.kakaoAccount?.profile?.nickname; // 사용자 이름 (닉네임) 추출
-      print('사용자 이름: $name'); // 디버깅을 위한 로그 추가
-
-      // 사용자 이름이 없는 경우, 기본값 설정 또는 오류 처리
-      if (name == null) {
-        print('사용자 이름이 없어 서버로 전송할 수 없습니다.');
-        return;
-      }
+      // User user = await UserApi.instance.me(); //카카오 로그인을 통해 인증된 사용자의 프로필, 이메일, 아이디 등의 정보를 조회하는 카카오 REST API 호출을 감쌈
+      //String? name = user.kakaoAccount?.profile?.nickname; // 사용자 이름 (닉네임) 추출
+      // print('사용자 이름: $name'); // 디버깅을 위한 로그 추가
+      //
+      // // 사용자 이름이 없는 경우, 기본값 설정 또는 오류 처리
+      // if (name == null) {
+      //   print('사용자 이름이 없어 서버로 전송할 수 없습니다.');
+      //   return;
+      // }
       var response = await http.post(
         Uri.parse('http://43.201.170.13:8081/oauth/login?oauthType=KAKAO'),
         // 백엔드 서버의 토큰 검증 엔드포인트
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': 'Bearer $token',
+        },
         body: json.encode({
           'accessToken': token,
           // 'oauthType': 'KAKAO',// accessToken만 요청 바디에 포함
@@ -118,10 +124,10 @@ class AuthService {
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         // 서버로부터의 응답 처리
-        print('토큰 서버 및 사용자 이름 전송 성공: ${response.body}');
+        print('토큰 서버 전송 성공: ${response.body}');
       } else {
         // 에러 처리
-        print('토큰 및 사용자 이름 서버 전송 실패: ${response.body}');
+        print('토큰 서버 전송 실패: ${response.body}');
       }
     } catch (e) {
       print('서버 전송 중 에러 발생: $e');
@@ -137,6 +143,15 @@ class AuthService {
           '\n이메일: ${user.kakaoAccount?.email}');
     } catch (error) {
       print('사용자 정보 요청 실패 $error');
+    }
+  }
+
+  Future<bool> isLoggedIn() async {
+    try {
+      return await AuthApi.instance.hasToken();
+    } catch (e) {
+      print('로그인 상태 확인 중 에러 발생: $e');
+      return false;
     }
   }
 
