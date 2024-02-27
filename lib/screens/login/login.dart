@@ -14,15 +14,13 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Expanded(flex: 2, child: SizedBox()),
-              // "day1Text" 이미지와 "데이원과 함께해요" 텍스트를 왼쪽 정렬된 별도의 Column으로 묶기
+              // 이미지와 "데이원과 함께해요" 텍스트를 왼쪽 정렬된 별도의 Column으로 묶기
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -72,7 +70,6 @@ class LoginScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }
