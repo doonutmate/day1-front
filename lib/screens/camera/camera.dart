@@ -47,6 +47,7 @@ class CameraScreenState extends State<CameraScreen> {
     super.dispose();
   }
 
+  //카메라 설정하는 함수
   void setCamera(bool isFront) {
     /*String camera1 = widget.cameras[0].lensDirection.name;
     String camera2 = widget.cameras[1].lensDirection.name;*/
@@ -84,6 +85,7 @@ class CameraScreenState extends State<CameraScreen> {
     });
   }
 
+  //사진 촬영하는 함수
   Future<void> _takePicture() async {
     if (!controller.value.isInitialized || controller == null) {
       return;
@@ -130,6 +132,7 @@ class CameraScreenState extends State<CameraScreen> {
     }
   }*/
 
+  //찍은 사진을 카메라 화면 크기대로 자르는 함수
   Future<File> cropImage(XFile _imageFile) async {
     ImageProperties properties =
         await FlutterNativeImage.getImageProperties(_imageFile.path);
@@ -142,6 +145,7 @@ class CameraScreenState extends State<CameraScreen> {
     return cropImageFile;
   }
 
+  //사진 용량 압축하는 함수
   Future<XFile?> compressFile(XFile file) async {
     var fileFromImage = File(file.path);
     var basename = path.basenameWithoutExtension(fileFromImage.path);
@@ -160,67 +164,72 @@ class CameraScreenState extends State<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: SafeArea(
-        child: Scaffold(
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: cameraScreenAppbarHeight,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: responseImage == null
-                      ? [
-                          CancelTextButton(),
-                        ]
-                      : [
-                          ReshootTextButton(
-                            func: () {
-                              setState(() {
-                                responseImage = null;
-                              });
-                            },
-                          ),
-                          Spacer(),
-                          StoreTextButton()
-                        ],
-                ),
+    return SafeArea(
+      child: Scaffold(
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: cameraScreenAppbarHeight,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                //카메라 화면을 보여줄 때는 취소 버튼만 있고, 사진찍고 나서는 다시찍기 버튼과 저장버튼이 있다.
+                children: responseImage == null
+                    ? [
+                        CancelTextButton(),
+                      ]
+                    : [
+                        ReshootTextButton(
+                          func: () {
+                            setState(() {
+                              responseImage = null;
+                            });
+                          },
+                        ),
+                        Spacer(),
+                        StoreTextButton()
+                      ],
               ),
-              AspectRatio(
-                aspectRatio: 1,
-                child: responseImage != null
-                    ? Image.file(responseImage!)
-                    : Day1Camera(
-                        initializeControllerFuture: _initializeControllerFuture,
-                        controller: controller),
+            ),
+            // 카메라 화면 가로 세로 비율을 1대1로 고정
+            AspectRatio(
+              aspectRatio: 1,
+              // 서버에서 응답받은 이미지가 있을 경우 이미지를 화면에 보여주고 없으면 카메라 화면을 보여준다
+              child: responseImage != null
+                  ? Image.file(responseImage!)
+                  : Day1Camera(
+                      initializeControllerFuture: _initializeControllerFuture,
+                      controller: controller),
+            ),
+            Expanded(flex: 1, child: SizedBox()),
+            Padding(
+              padding: screenHorizontalMargin,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // 플래시 on/off 버튼
+                  FlashChangeButton(
+                    controller: controller,
+                    responseImage: responseImage,
+                  ),
+
+                  //사진촬영 버튼
+                  ShutterButton(
+                    shutterFunc: _takePicture,
+                    responseImage: responseImage,
+                  ),
+
+                  //카메라 전면/후면 전환 버튼
+                  FlipButton(
+                    func: setCamera,
+                    responseImage: responseImage,
+                  ),
+                ],
               ),
-              Expanded(flex: 1, child: SizedBox()),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    FlashChangeButton(
-                      controller: controller,
-                      responseImage: responseImage,
-                    ),
-                    ShutterButton(
-                      shutterFunc: _takePicture,
-                      responseImage: responseImage,
-                    ),
-                    FlipButton(
-                      func: setCamera,
-                      responseImage: responseImage,
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(flex: 2, child: SizedBox()),
-            ],
-          ),
+            ),
+            Expanded(flex: 2, child: SizedBox()),
+          ],
         ),
       ),
     );
