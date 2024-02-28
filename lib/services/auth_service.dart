@@ -96,16 +96,6 @@ class AuthService {
   Future<void> sendTokenToServer(String token) async {
     print('서버로 전송할 토큰: $token'); // 요청 데이터 로깅
     try {
-      // 사용자 정보 요청
-      // User user = await UserApi.instance.me(); //카카오 로그인을 통해 인증된 사용자의 프로필, 이메일, 아이디 등의 정보를 조회하는 카카오 REST API 호출을 감쌈
-      //String? name = user.kakaoAccount?.profile?.nickname; // 사용자 이름 (닉네임) 추출
-      // print('사용자 이름: $name'); // 디버깅을 위한 로그 추가
-      //
-      // // 사용자 이름이 없는 경우, 기본값 설정 또는 오류 처리
-      // if (name == null) {
-      //   print('사용자 이름이 없어 서버로 전송할 수 없습니다.');
-      //   return;
-      // }
       var response = await http.post(
         Uri.parse('http://43.201.170.13:8081/oauth/login?oauthType=KAKAO'),
         // 백엔드 서버의 토큰 검증 엔드포인트
@@ -115,7 +105,6 @@ class AuthService {
         },
         body: json.encode({
           'accessToken': token,
-          // 'oauthType': 'KAKAO',// accessToken만 요청 바디에 포함
         }),
       );
 
