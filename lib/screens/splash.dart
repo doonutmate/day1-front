@@ -2,6 +2,7 @@ import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/login/login.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../main.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -32,8 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Day1'), // 여기에 앱 로고나 이름을 표시
-            // CircularProgressIndicator(), // 로딩 인디케이터
+              SvgPicture.asset('assets/icons/DAY1.svg'), // 여기에 앱 로고나 이름을 표시
           ],
         ),
       ),

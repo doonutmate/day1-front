@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // 기기마다 다른 화면 사이즈에 맞춰 Flexible하게 변환하는 방법
+// import 'package:flutter_screenutil/flutter_screenutil.dart'; // 기기마다 다른 화면 사이즈에 맞춰 Flexible하게 변환하는 방법
 
 
 class LoginScreen extends StatelessWidget {
