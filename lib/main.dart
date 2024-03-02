@@ -2,7 +2,6 @@ import 'package:camera/camera.dart';
 import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/login/login.dart';
 import 'package:day1/screens/s_main.dart';
-import 'package:day1/screens/splash.dart';
 import 'package:day1/services/camera_provider.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
 import 'dart:async';
 import 'package:uni_links/uni_links.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 late List<CameraDescription> cameras;
 
-Future<void> main() async{
+Future<void> main() async {
   // 다음에 호출되는 함수 모두 실행 끝날 때까지 기다림
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -38,25 +38,32 @@ Future<void> main() async{
     javaScriptAppKey: '27d258fa70f6d2fd19c92fe135ed0bda',
   );
 
-
-  runApp(ProviderScope(child : MyApp(initialUrl: initialUrl)));
+  runApp(ProviderScope(child: MyApp(initialUrl: initialUrl)));
 }
 
 class MyApp extends StatelessWidget {
   final String? initialUrl;
+
   const MyApp({super.key, this.initialUrl});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      debugShowCheckedModeBanner: false,
+      home: FutureBuilder(
+          future: AuthService.isLoggedIn(),
+          builder: (context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.hasData && snapshot.data == true) {
+              return CameraScreen(cameras);
+            } else {
+              return LoginScreen();
+            }
+          }),
       routes: {
-        '/login': (context) => LoginScreen(), // 초기 화면 설정을 FutureBuilder로 대체했으므로 필요 없을 수 있음
+        '/login': (context) => LoginScreen(),
         '/main': (context) => MainScreen(),
         '/camera': (context) => CameraScreen(cameras),
       },
     );
   }
 }
-
