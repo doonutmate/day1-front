@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart'; // 기기마다 다른 화면 사이즈에 맞춰 Flexible하게 변환하는 방법
 
-
 class LoginScreen extends StatelessWidget {
   final String? initialUrl;
 
@@ -15,25 +14,46 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      body: Column(
+        // crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(flex: 2, child: SizedBox()),
+          // 이미지와 "데이원과 함께해요" 텍스트를 왼쪽 정렬된 별도의 Column으로 묶기
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Expanded(flex: 2, child: SizedBox()),
-              // 이미지와 "데이원과 함께해요" 텍스트를 왼쪽 정렬된 별도의 Column으로 묶기
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SvgPicture.asset('assets/icons/day1Text.svg'),
-                  SizedBox(height: 15),
-                  Text(
-                    "일상의 새로운 도전, 데이원과 함께해요",
-                    style: TextStyle(color: Colors.grey[700]),
-                  ),
-                ],
+              // SvgPicture.asset('assets/icons/day1Text.svg'),
+              RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                      fontSize: 27,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black),
+                  children: <TextSpan>[
+                    TextSpan(text: "지금 "),
+                    TextSpan(
+                        text: "데이원",
+                        style: TextStyle(color: Colors.deepPurple)),
+                    TextSpan(text: "과 함께\n사진으로 "),
+                    TextSpan(
+                        text: "이야기",
+                        style: TextStyle(color: Colors.deepPurple)),
+                    TextSpan(text: "를 담아보세요"),
+                  ],
+                ),
               ),
-              Expanded(flex: 3, child: SizedBox()),
-              // "3초만에 시작하기" 버튼
+              SizedBox(height: 15),
+              Text(
+                "일상의 새로운 도전, 데이원과 함께해요",
+                style: TextStyle(color: Colors.grey[700], fontSize: 17),
+              ),
+            ],
+          ),
+          Expanded(flex: 3, child: SizedBox()),
+          // "3초만에 시작하기" 버튼
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
               ElevatedButton(
                 child: Text(
                   '3초만에 시작하기 😍',
@@ -45,31 +65,42 @@ class LoginScreen extends StatelessWidget {
                 onPressed: () {},
                 style: ButtonStyle(
                   // backgroundColor: MaterialStateProperty.all(Colors.white),
-                  surfaceTintColor: MaterialStateProperty.all(Colors.white), // ElevatedButton은 배경색을 적용하여도 tint값과 섞인 색상이 나오게 된다.
+                  surfaceTintColor: MaterialStateProperty.all(Colors.white),
+                  // ElevatedButton은 배경색을 적용하여도 tint값과 섞인 색상이 나오게 된다.
                   padding: MaterialStateProperty.all(
                       EdgeInsets.symmetric(vertical: 2, horizontal: 10)),
-                  elevation: MaterialStateProperty.all(5), // 그림자 높이 설정
-                  shadowColor: MaterialStateProperty.all(Colors.white70), // 그림자 색상 설정
+                  elevation: MaterialStateProperty.all(5),
+                  // 그림자 높이 설정
+                  shadowColor:
+                      MaterialStateProperty.all(Colors.white70), // 그림자 색상 설정
                 ),
               ),
               SizedBox(height: 15),
               // 카카오 로그인 버튼
-              KakaoLoginButton(
-                onPressed: () async {
-                  AuthService authService = AuthService();
-                  OAuthToken? token = await AuthService().signInWithKakao(context);
-                  if (token != null) {
-                    await authService.sendTokenToServer(token.accessToken);
-                  }
-                },
+              Container(
+                alignment: Alignment.center,
+                child: KakaoLoginButton(
+                  onPressed: () async {
+                    OAuthToken? token =
+                        await AuthService.signInWithKakao(context);
+                    if (token != null) {
+                      await AuthService.sendTokenToServer(token.accessToken);
+                      Navigator.pushNamed(context, '/camera');
+                    }
+                  },
+                ),
               ),
               SizedBox(height: 15),
               // 애플 로그인 버튼
-              appleLoginButton(onPressed: () async {}),
-              Expanded(flex: 1, child: SizedBox()),
+              Container(
+                alignment: Alignment.center,
+                child: appleLoginButton(onPressed: () async {}),
+              ),
             ],
           ),
-        ),
+          Expanded(flex: 1, child: SizedBox()),
+        ],
+      ),
     );
   }
 }
