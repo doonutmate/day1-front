@@ -12,7 +12,9 @@ class CancelTextButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: (){
-        Navigator.of(context, rootNavigator: true).pop();
+        //Navigator.of(context, rootNavigator: true).pop();
+        //Navigator.pushNamedAndRemoveUntil(context ,'/calendar', ModalRoute.withName('/'));
+        Navigator.pushNamedAndRemoveUntil(context ,'/main', ModalRoute.withName('/login'));
       },
       child: Text(
         "취소",

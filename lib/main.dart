@@ -3,10 +3,11 @@ import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/login/login.dart';
 import 'package:day1/screens/s_main.dart';
 import 'package:day1/screens/splash.dart';
-import 'package:day1/services/camera_provider.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
 import 'dart:async';
 import 'package:uni_links/uni_links.dart';
@@ -16,6 +17,10 @@ late List<CameraDescription> cameras;
 Future<void> main() async{
   // 다음에 호출되는 함수 모두 실행 끝날 때까지 기다림
   WidgetsFlutterBinding.ensureInitialized();
+
+  //언어 설정을 위한 함수 실행
+  await initializeDateFormatting();
+
 
   // 기기에서 사용 가능한 카메라 목록 불러오기
   cameras = await availableCameras();
@@ -38,7 +43,9 @@ Future<void> main() async{
     javaScriptAppKey: '27d258fa70f6d2fd19c92fe135ed0bda',
   );
 
+  FlutterNativeSplash.remove();
 
+  // ProviderScope 이하의 위젯에서 provider 사용 가능
   runApp(ProviderScope(child : MyApp(initialUrl: initialUrl)));
 }
 

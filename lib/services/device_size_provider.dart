@@ -3,6 +3,7 @@ import 'package:riverpod/riverpod.dart';
 
 import '../models/device_size_model.dart';
 
+// 실제 화면 크기 State 관리 프로바이더
 final deviceSizeProvider = StateNotifierProvider<deviceSizeStateNotifier, DeviceSize>((ref) {
   return deviceSizeStateNotifier();
 });

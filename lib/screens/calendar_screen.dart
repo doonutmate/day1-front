@@ -1,5 +1,6 @@
 import 'package:day1/services/device_size_provider.dart';
 import 'package:day1/services/dio.dart';
+import 'package:day1/services/oauth_token_provider.dart';
 import 'package:day1/widgets/atoms/calendar_rich_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,18 +32,26 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   }
 
   Future<void> getCalendarImage(int year, int month) async {
+    String? token = ref.read(ServerTokenProvider.notifier).getServerToken();
+
     _year = year;
     _month = month;
     imageMap.clear();
 
-    List<dynamic> responseList = await DioService.getImageList(year, month);
-    responseList.forEach((element) {
-      imageMap[element['day']] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl']);
-    });
-    setState(() {
-      isGetFinish = true;
-      print("response success");
-    });
+    if(token != null){
+      List<dynamic> responseList = await DioService.getImageList(year, month, token);
+      responseList.forEach((element) {
+        imageMap[element['day']] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl']);
+      });
+      setState(() {
+        isGetFinish = true;
+        print("response success");
+      });
+    }
+    else{
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
+
   }
 
   @override

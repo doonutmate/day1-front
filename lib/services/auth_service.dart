@@ -57,9 +57,11 @@ class AuthService {
       try {
         // 현재 토큰의 유효성 체크
         AccessTokenInfo tokenInfo = await UserApi.instance.accessTokenInfo();
+        int id1 = tokenInfo.appId;
         print('토큰 유효성 체크 성공'
             '\n회원정보: ${tokenInfo.id}'
-            '\n만료시간: ${tokenInfo.expiresIn} 초');
+            '\n만료시간: ${tokenInfo.expiresIn} 초'
+            '\n토큰 스트링: ${tokenInfo.toString()}');
         // 여기서는 유효한 토큰이 있으므로 추가 로그인 없이 필요한 작업을 진행하면 됩니다.
       } catch (error) {
         // 토큰 만료 또는 유효하지 않은 경우
@@ -93,7 +95,7 @@ class AuthService {
   }
 
 
-  Future<void> sendTokenToServer(String token) async {
+  Future<String?> sendTokenToServer(String token) async {
     print('서버로 전송할 토큰: $token'); // 요청 데이터 로깅
     try {
       var response = await http.post(
@@ -114,9 +116,11 @@ class AuthService {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         // 서버로부터의 응답 처리
         print('토큰 서버 전송 성공: ${response.body}');
+        return response.body;
       } else {
         // 에러 처리
         print('토큰 서버 전송 실패: ${response.body}');
+        return null;
       }
     } catch (e) {
       print('서버 전송 중 에러 발생: $e');
