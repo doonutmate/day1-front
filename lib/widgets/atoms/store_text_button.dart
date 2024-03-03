@@ -1,4 +1,4 @@
-import 'package:day1/services/oauth_token_provider.dart';
+import 'package:day1/services/server_token_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,8 +28,6 @@ class StoreTextButton extends ConsumerWidget {
             Navigator.pushReplacementNamed(context, '/main');
           }
         }
-
-
       },
       child: Text(
         "저장",

@@ -52,7 +52,6 @@ dependencies:
   flutter_screenutil: ^5.9.0
   flutter_native_splash: ^2.3.10
 
-
   kakao_flutter_sdk: ^1.8.0 # 전체 추가
   kakao_flutter_sdk_user: ^1.8.0 # 카카오 로그인
   kakao_flutter_sdk_talk: ^1.8.0 # 카카오톡 메시지, 카카오톡 소셜(프로필 가져오기, 친구 목록 가져오기)

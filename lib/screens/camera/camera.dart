@@ -16,9 +16,6 @@ import '../../constants/size.dart';
 import '../../widgets/atoms/cancel_text_button.dart';
 import '../../widgets/atoms/day1_camera.dart';
 
-/*const int targetWidth = 48;
-const int targetHeight = 48;*/
-
 class CameraScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
 
@@ -50,9 +47,6 @@ class CameraScreenState extends State<CameraScreen> {
 
   //카메라 설정하는 함수
   void setCamera(bool isFront) {
-    /*String camera1 = widget.cameras[0].lensDirection.name;
-    String camera2 = widget.cameras[1].lensDirection.name;*/
-
     controller = CameraController(
         isFront ? widget.cameras[1] : widget.cameras[0], ResolutionPreset.max,
         enableAudio: false, imageFormatGroup: ImageFormatGroup.bgra8888);
@@ -95,9 +89,11 @@ class CameraScreenState extends State<CameraScreen> {
       // 사진 촬영
       final file = await controller.takePicture();
 
+      // 이미지 용량 압축
       final XFile? _reduceFile;
       _reduceFile = await compressFile(file);
 
+      // 이미지를 카메라 화면에 맞게 crop
       final File cropFile;
       if (_reduceFile != null) {
         cropFile = await cropImage(_reduceFile);

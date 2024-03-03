@@ -1,3 +1,4 @@
+import 'package:day1/constants/size.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../constants/colors.dart';
@@ -55,12 +56,16 @@ class CustomTableCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TableCalendar(
+      //캘린더 일자영역 스타일 설정
       calendarStyle: const CalendarStyle(
+        //당일 날짜 표시하지 않게 설정
         isTodayHighlighted: false,
         defaultTextStyle: TextStyle(fontSize: 16),
         weekendTextStyle: TextStyle(fontSize: 16),
+        //그달에 속하지 않은 날자는 안보이게 처리
         outsideDaysVisible: false,
       ),
+      // 캘린더 헤더 영역 스타일 설정
       headerStyle: HeaderStyle(
         formatButtonVisible: false,
         titleCentered: true,
@@ -83,8 +88,8 @@ class CustomTableCalendar extends StatelessWidget {
       CalendarBuilders(defaultBuilder: (context, day, focusedDay) {
         if (imageMap[(day.day)]?.thumbNailUrl != null ) {
           return Container(
-            width: 46,
-            height: 46,
+            width: thumbnailWidth,
+            height: thumbnailWidth,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
@@ -93,7 +98,7 @@ class CustomTableCalendar extends StatelessWidget {
             ),
             child: Text(
               day.day.toString(),
-              style: TextStyle(fontSize: 16, color: Colors.white),
+              style: const TextStyle(fontSize: calendarDayFontSize, color: white),
             ),
           );
         }
@@ -105,13 +110,15 @@ class CustomTableCalendar extends StatelessWidget {
             child: Text(
               day.day.toString(),
               style: TextStyle(
-                fontSize: 16,
+                fontSize: calendarDayFontSize,
               ),
             ),
           );
         }
       }),
+      // 한국어 설정
       locale: 'ko-KR',
+      //시작 요일을 월요일로 설정
       startingDayOfWeek: StartingDayOfWeek.monday,
       focusedDay: DateTime(year, month),
       firstDay: DateTime(2024, 1, 1),
