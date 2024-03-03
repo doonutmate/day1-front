@@ -1,18 +1,22 @@
+import 'dart:convert';
+import 'package:day1/services/app_database.dart';
 import 'package:day1/widgets/atoms/appleLogin_button.dart';
 import 'package:day1/widgets/atoms/kakaoLogin_button.dart';
 import 'package:flutter/material.dart';
 import 'package:day1/services/auth_service.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart'; // 기기마다 다른 화면 사이즈에 맞춰 Flexible하게 변환하는 방법
+import '../../services/server_token_provider.dart';
 
-class LoginScreen extends StatelessWidget {
+
+class LoginScreen extends ConsumerWidget {
   final String? initialUrl;
 
   LoginScreen({Key? key, this.initialUrl}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final oauthProvider = ref.watch(ServerTokenProvider.notifier);
     return Scaffold(
       body: Column(
         // crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,11 +85,21 @@ class LoginScreen extends StatelessWidget {
                 alignment: Alignment.center,
                 child: KakaoLoginButton(
                   onPressed: () async {
-                    OAuthToken? token =
-                        await AuthService.signInWithKakao(context);
+                    OAuthToken? token = await AuthService.signInWithKakao(context);
                     if (token != null) {
-                      await AuthService.sendTokenToServer(token.accessToken);
-                      Navigator.pushNamed(context, '/camera');
+                      String? response = await AuthService.sendTokenToServer(token.accessToken);
+                      if (response != null){
+                        // json string을 map으로 변환
+                        Map tokenMap = json.decode(response);
+                        //키를 통하여 value 추출
+                        String serverToken = tokenMap['accessToken'];
+                        //서버 토큰을 앱 내부 저장소에 저장
+                        AppDataBase.setToken(serverToken);
+                        //provider에 서버 토큰 저장
+                        oauthProvider.setServerToken(serverToken);
+                        Navigator.pushNamed(context, '/camera');
+
+                      }
                     }
                   },
                 ),

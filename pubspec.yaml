@@ -37,15 +37,16 @@ dependencies:
   cupertino_icons: ^1.0.2
   camera: ^0.10.5+9
   flutter_riverpod: ^2.4.10
-  dio: ^5.4.0
+  dio: ^5.4.0 # http 통신
   image: ^4.1.6
-  path_provider: ^2.1.2
+  path_provider: ^2.1.2  #임시 파일 주소 생성
   flutter_image_compress: ^2.0.0
   path: ^1.8.3
   flutter_svg: ^2.0.9
   intl: ^0.19.0
   flutter_native_image: ^0.0.6
   fluttertoast: ^8.2.4
+  table_calendar: ^3.1.0
   uni_links:
   http: ^0.13.3
   flutter_screenutil: ^5.9.0
@@ -57,7 +58,7 @@ dependencies:
   kakao_flutter_sdk_share: ^1.8.0 # 카카오톡 공유
   kakao_flutter_sdk_navi: ^1.8.0 # 카카오내비
   kakao_flutter_sdk_friend: ^1.8.0 # 카카오톡 소셜(피커: 친구 선택하기)
-
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

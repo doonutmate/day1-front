@@ -89,7 +89,7 @@ class AuthService {
   }
 
 
-  static Future<void> sendTokenToServer(String token) async {
+  static Future<String?> sendTokenToServer(String token) async {
     print('서버로 전송할 토큰: $token'); // 요청 데이터 로깅
     try {
       var response = await http.post(
@@ -109,9 +109,11 @@ class AuthService {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         // 서버로부터의 응답 처리
         print('토큰 서버 전송 성공: ${response.body}');
+        return response.body;
       } else {
         // 에러 처리
         print('토큰 서버 전송 실패: ${response.body}');
+        return null;
       }
     } catch (e) {
       print('서버 전송 중 에러 발생: $e');
