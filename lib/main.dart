@@ -58,6 +58,10 @@ class MyApp extends ConsumerWidget {
     token = await AppDataBase.getToken();
     provider.setServerToken(token);
     bool result = await AuthService.isLoggedIn();
+    //카카오 로그인이 무효할 경우 서버토큰 초기화
+    if(result == false){
+      AppDataBase.clearToken();
+    }
     return result;
   }
 

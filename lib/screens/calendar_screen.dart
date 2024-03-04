@@ -1,3 +1,4 @@
+import 'package:day1/services/app_database.dart';
 import 'package:day1/services/device_size_provider.dart';
 import 'package:day1/services/dio.dart';
 import 'package:day1/services/server_token_provider.dart';
@@ -42,16 +43,23 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
     if(token != null){
       // 캘린더 api 함수
-      List<dynamic> responseList = await DioService.getImageList(year, month, token);
-      // day는 imageMap<Map>의 키로 사용하고 value로는 썸네일 이미지와 원본이미지를 멤버로 갖고 있는 CalendarImage 모델 클래스로 사용
-      responseList.forEach((element) {
-        imageMap[element['day']] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl']);
-      });
-      setState(() {
-        // 통신이 끝났는지 플래그값 설정
-        isGetFinish = true;
-        print("response success");
-      });
+      List<dynamic>? responseList = await DioService.getImageList(year, month, token);
+      //responseList가 null일 경우 재로그인
+      if(responseList == null){
+        AppDataBase.clearToken();
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      }
+      else{
+        // day는 imageMap<Map>의 키로 사용하고 value로는 썸네일 이미지와 원본이미지를 멤버로 갖고 있는 CalendarImage 모델 클래스로 사용
+        responseList.forEach((element) {
+          imageMap[element['day']] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl']);
+        });
+        setState(() {
+          // 통신이 끝났는지 플래그값 설정
+          isGetFinish = true;
+          print("response success");
+        });
+      }
     }
     else{
       Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);

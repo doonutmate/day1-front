@@ -44,21 +44,25 @@ class DioService{
   }
 
   //서버에서 캘린더에 표시할 이미지 받는 함수
-  static Future<List<dynamic>> getImageList(int year, int month, String token) async {
-    var dio = Dio();
-
-    //get header 설정
-    dio.options.headers ={
-      "Authorization": "Bearer $token"
-    };
-    Response response = await dio.get(
-      baseUri + "challenge?year=${year}&month=${month}",
-    );
-    if (response.statusCode != 200) {
-      print(await response.statusMessage);
+  static Future<List<dynamic>?> getImageList(int year, int month, String token) async {
+    try{
+      var dio = Dio();
+      //get header 설정
+      dio.options.headers ={
+        "Authorization": "Bearer $token"
+      };
+      Response response = await dio.get(
+        baseUri + "challenge?year=${year}&month=${month}",
+      );
+      if (response.statusCode != 200) {
+        print(await response.statusMessage);
+      }
+      List<dynamic> responseList = response.data;
+      return responseList;
     }
-
-    List<dynamic> responseList = response.data;
-    return responseList;
+    catch(e){
+      print(e);
+      return null;
+    }
   }
 }
