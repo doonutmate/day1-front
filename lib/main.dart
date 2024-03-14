@@ -55,13 +55,24 @@ class MyApp extends ConsumerWidget {
 
   // 앱내 저장소에서 저장된 토큰을 가져오고 프로바이더에 저장 후 카카오 로그인 유효한지 확인
   Future<bool> getToken(ServerTokenStateNotifier provider) async{
+    bool isKaKao = false;
+    bool isServerToken = false;
+    bool result = false;
+
+    isKaKao = await AuthService.isLoggedIn();
     token = await AppDataBase.getToken();
-    provider.setServerToken(token);
-    bool result = await AuthService.isLoggedIn();
+    isServerToken = token != null ? true : false;
+
+    result = isKaKao || isServerToken;
+
+    if(result == true){
+      provider.setServerToken(token);
+    }
     //카카오 로그인이 무효할 경우 서버토큰 초기화
-    if(result == false){
+    else{
       AppDataBase.clearToken();
     }
+
     return result;
   }
 
@@ -70,10 +81,13 @@ class MyApp extends ConsumerWidget {
     ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        fontFamily: "Pretendard"
+      ),
       home: FutureBuilder(
           future: getToken(tokenProvider),
           builder: (context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.hasData && snapshot.data == true && token != null) {
+            if (snapshot.hasData && snapshot.data == true) {
                 return CameraScreen(cameras);
             } else {
               return LoginScreen();

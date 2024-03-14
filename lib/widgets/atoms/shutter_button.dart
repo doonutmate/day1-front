@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:day1/constants/size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -21,6 +22,7 @@ class ShutterButton extends StatelessWidget {
       gravity: ToastGravity.BOTTOM,
       backgroundColor: AlertBackGroudColor,
       timeInSecForIosWeb: 3,
+      fontSize: cameraScreenAppBarTextSize,
     );
   }
 

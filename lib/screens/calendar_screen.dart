@@ -5,8 +5,6 @@ import 'package:day1/services/server_token_provider.dart';
 import 'package:day1/widgets/atoms/calendar_rich_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:table_calendar/table_calendar.dart';
-
 import '../constants/size.dart';
 import '../models/calendar_image_model.dart';
 import '../widgets/organisms/CustomTableCalendar.dart';
@@ -72,7 +70,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     // provider에서 실제 화면 width get
     double deviceWidth = ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
     // calendar headermargin 크기
-    double headerMargin = (deviceWidth - 213) / 2;
+    double headerMargin = (deviceWidth - 225) / 2;
 
     return Padding(
       padding: screenHorizontalMargin,
@@ -80,10 +78,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: 40,
+            height: calendarTopMargin,
           ),
           //서버에서 사진을 저장한 일자대로 리스트를 넘겨주므로 리스트의 길이를 매개변수로 넘겨준다
           CalendarRichText(recordNum: imageMap.length,),
+          SizedBox(
+            height: 20,
+          ),
           // dio 통신 응답 받기전 예외 처리
           isGetFinish == false ? Center(child: CircularProgressIndicator()) :
           CustomTableCalendar(year: _year, month: _month, headerMargin: headerMargin, imageMap: imageMap, shifhtMonth: getCalendarImage,),

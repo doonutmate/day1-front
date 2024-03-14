@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:camera/camera.dart';
 import 'package:day1/widgets/atoms/flash_change_button.dart';
 import 'package:day1/widgets/atoms/flip_button.dart';
@@ -79,6 +78,8 @@ class CameraScreenState extends State<CameraScreen> {
       }
     });
   }
+
+  //void setSkeletonImage()
 
   //사진 촬영하는 함수
   Future<void> _takePicture() async {

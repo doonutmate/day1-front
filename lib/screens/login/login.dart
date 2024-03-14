@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'package:day1/services/app_database.dart';
+import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/appleLogin_button.dart';
 import 'package:day1/widgets/atoms/kakaoLogin_button.dart';
 import 'package:flutter/material.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../services/server_token_provider.dart';
 
 
@@ -108,7 +110,15 @@ class LoginScreen extends ConsumerWidget {
               // 애플 로그인 버튼
               Container(
                 alignment: Alignment.center,
-                child: appleLoginButton(onPressed: () async {}),
+                child: appleLoginButton(onPressed: () async {
+                  AuthorizationCredentialAppleID? appleToken = await AuthService.signInWithApple();
+                  if(appleToken != null){
+                    print("token : ${appleToken.identityToken}\nname : ${appleToken.givenName}");
+                    if(appleToken.identityToken != null){
+                      DioService.sendAppleTokenToServer(appleToken.identityToken!);
+                  }
+                  }
+                }),
               ),
             ],
           ),

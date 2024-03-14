@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants/colors.dart';
 import '../../constants/size.dart';
 import '../../screens/camera/camera.dart';
+import '../../services/auth_service.dart';
 import '../../services/dio.dart';
 
 class StoreTextButton extends ConsumerWidget {
@@ -22,17 +23,19 @@ class StoreTextButton extends ConsumerWidget {
         //camareascreen의 response이미지가 null이 아니고 서버토큰이 null이 아닐 시 서버에 이미지 업로드
         if(parent != null && parent.responseImage != null && token != null){
           bool uploadResult = await DioService.uploadImage(parent!.responseImage!, token);
-
           //이미지 업로드가 정상적으로 수행됐을 때 달력화면으로 전환
           if(uploadResult){
             Navigator.pushReplacementNamed(context, '/main');
+          }
+          else{
+              Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
           }
         }
       },
       child: Text(
         "저장",
         style: TextStyle(
-            fontSize: cameraScreenTextSize,
+            fontSize: cameraScreenAppBarTextSize,
             color: textButtonColor
         ),
       ),
