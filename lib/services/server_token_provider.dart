@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/kakao_token_model.dart';
+import '../models/server_token_model.dart';
 
 //토큰 관리 프로바이더
-final ServerTokenProvider = StateNotifierProvider<ServerTokenStateNotifier, KakaoTokenState>((ref) {
+final ServerTokenProvider = StateNotifierProvider<ServerTokenStateNotifier, ServerTokenState>((ref) {
   return ServerTokenStateNotifier();
 });
 
-class ServerTokenStateNotifier extends StateNotifier<KakaoTokenState> {
-  ServerTokenStateNotifier() : super(KakaoTokenState());
+class ServerTokenStateNotifier extends StateNotifier<ServerTokenState> {
+  ServerTokenStateNotifier() : super(ServerTokenState());
 
 
   void setServerToken(String? token) {

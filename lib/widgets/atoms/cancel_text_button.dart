@@ -19,7 +19,7 @@ class CancelTextButton extends StatelessWidget {
       child: Text(
         "취소",
         style: TextStyle(
-            fontSize: cameraScreenTextSize,
+            fontSize: cameraScreenAppBarTextSize,
             color: textButtonColor
         ),
       ),

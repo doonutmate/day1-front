@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:day1/services/app_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
@@ -7,11 +7,44 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day1/providers/user_profile_provider.dart';
 import '../models/user_profile.dart';
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../models/user_profile.dart';
 
 
 class AuthService {
+  static String sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  //apple login
+  static Future<AuthorizationCredentialAppleID?> signInWithApple() async {
+
+    try{
+      final rawNonce = "5jk32gb5jk23vb5";
+      //final rawNonce = generateNonce();
+      final nonce = sha256ofString(rawNonce);
+
+      final AuthorizationCredentialAppleID appleCredential = await SignInWithApple
+          .getAppleIDCredential(
+          scopes: [
+            AppleIDAuthorizationScopes.email,
+            AppleIDAuthorizationScopes.fullName,
+          ],
+          nonce: nonce
+      );
+      return appleCredential;
+    }
+    catch(e){
+      print(e);
+      return null;
+
+    }
+
+  }
 
   // 카카오톡 실행 가능 여부 확인
   // 카카오톡 실행이 가능하면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
