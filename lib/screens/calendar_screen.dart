@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/device_size_provider.dart';
 import 'package:day1/services/dio.dart';
@@ -7,7 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/size.dart';
 import '../models/calendar_image_model.dart';
-import '../widgets/organisms/CustomTableCalendar.dart';
+import '../models/token_information.dart';
+import '../widgets/organisms/custom_table_calendar.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
@@ -17,7 +19,7 @@ class CalendarScreen extends ConsumerStatefulWidget {
 }
 
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
-  Map<int, CalendarImage> imageMap = {};
+  Map<DateTime, CalendarImage> imageMap = {};
   bool isGetFinish = false;
   late int _year;
   late int _month;
@@ -32,7 +34,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   // 서버에서 캘린더 이미지를 불러오는 함수
   Future<void> getCalendarImage(int year, int month) async {
-    //provider에서 서버 토큰 get
+    //provider에서 서버 토큰 정보 get
     String? token = ref.read(ServerTokenProvider.notifier).getServerToken();
 
     _year = year;
@@ -40,8 +42,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     imageMap.clear();
 
     if(token != null){
+      //token 정보 json string 디코딩
+      Map<String, dynamic> tokenMap = jsonDecode(token);
+      //Map 데이터를 모델클래스로 컨버팅
+      TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
       // 캘린더 api 함수
-      List<dynamic>? responseList = await DioService.getImageList(year, month, token);
+      List<dynamic>? responseList = await DioService.getImageList(year, month, tokenInfo.accessToken);
       //responseList가 null일 경우 재로그인
       if(responseList == null){
         AppDataBase.clearToken();
@@ -50,7 +56,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       else{
         // day는 imageMap<Map>의 키로 사용하고 value로는 썸네일 이미지와 원본이미지를 멤버로 갖고 있는 CalendarImage 모델 클래스로 사용
         responseList.forEach((element) {
-          imageMap[element['day']] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl']);
+          imageMap[DateTime(_year, _month, element['day'])] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl']);
         });
         setState(() {
           // 통신이 끝났는지 플래그값 설정

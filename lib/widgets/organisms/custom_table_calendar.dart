@@ -1,9 +1,12 @@
 import 'package:day1/constants/size.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../constants/colors.dart';
 import '../../models/calendar_image_model.dart';
+import 'custom_table_Calendar.dart';
+import 'default_image_dialog.dart';
 
 class CustomTableCalendar extends StatelessWidget {
   CustomTableCalendar(
@@ -17,59 +20,17 @@ class CustomTableCalendar extends StatelessWidget {
   int year;
   int month;
   final double headerMargin;
-  final Map<int, CalendarImage> imageMap;
+  final Map<DateTime, CalendarImage> imageMap;
   Future<void> Function(int year, int month) shifhtMonth;
 
   //원본 이미지 보여주는 함수
-  Future<void> showImage(BuildContext context, int day) {
+  Future<void> showImage(BuildContext context, DateTime day) {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
       builder: (context) {
         // builder 에서 생성할 위젯
-        return Dialog.fullscreen(
-          backgroundColor: barrierColor,
-          child: Column(
-            children: [
-              Expanded(
-                flex: 1,
-                child: InkWell(
-                  splashFactory: NoSplash.splashFactory,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(
-                    child: Align(
-                      alignment: Alignment.topLeft,
-                      child: CloseButton(
-                        color: white,
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              AspectRatio(
-                aspectRatio: 1,
-                child: Image.network(imageMap[day]!.defaultUrl),
-              ),
-              Expanded(
-                flex: 1,
-                child: InkWell(
-                  splashFactory: NoSplash.splashFactory,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Container(),
-                ),
-              ),
-            ],
-          ),
-        );
+        return DefaultImageDialog(imageMap: imageMap, day: day,);
       },
     );
   }
@@ -77,6 +38,8 @@ class CustomTableCalendar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TableCalendar(
+      pageAnimationDuration: const Duration(milliseconds: 600),
+      pageAnimationCurve: Curves.ease,
       rowHeight: 66,
       // 한국어 설정
       locale: 'ko-KR',
@@ -116,13 +79,16 @@ class CustomTableCalendar extends StatelessWidget {
         print("${date.year}/${date.month}");
       },
       onDaySelected: (selectedDay, focusedDay) {
-        if (imageMap[selectedDay.day]?.defaultUrl != null) {
-          showImage(context, selectedDay.day);
+        if (imageMap[DateTime(selectedDay.year, selectedDay.month, selectedDay.day)]?.defaultUrl != null) {
+          showImage(context, DateTime(selectedDay.year, selectedDay.month, selectedDay.day));
         }
       },
       calendarBuilders: CalendarBuilders(
         defaultBuilder: (context, day, focusedDay) {
-          if (imageMap[(day.day)]?.thumbNailUrl != null) {
+          String today = DateFormat("yyyy-MM-dd").format(DateTime.now());
+          String calendarDay = DateFormat("yyyy-MM-dd").format(day);
+
+          if (imageMap[DateTime(day.year, day.month, day.day)] != null) {
             return Container(
               margin: EdgeInsets.symmetric(horizontal: 3, vertical: 10),
               width: thumbnailWidth,
@@ -131,12 +97,17 @@ class CustomTableCalendar extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                    image: NetworkImage(imageMap[day.day]!.thumbNailUrl)),
+                    image: NetworkImage(imageMap[DateTime(day.year, day.month, day.day)]!.thumbNailUrl)),
               ),
               child: Text(
                 day.day.toString(),
-                style: const TextStyle(
-                    fontSize: calendarDayFontSize, color: white),
+                style: today.compareTo(calendarDay) != 0 ? TextStyle(
+                    fontSize: calendarDayFontSize, color: white) :
+                    TextStyle(
+                      fontSize: calendarDayFontSize,
+                      color: primary,
+                      fontWeight: FontWeight.bold
+                    ),
               ),
             );
           } else {
@@ -147,8 +118,12 @@ class CustomTableCalendar extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 day.day.toString(),
-                style: TextStyle(
-                  fontSize: calendarDayFontSize,
+                style: today.compareTo(calendarDay) != 0 ? TextStyle(
+                    fontSize: calendarDayFontSize) :
+                TextStyle(
+                    fontSize: calendarDayFontSize,
+                    color: primary,
+                    fontWeight: FontWeight.bold
                 ),
               ),
             );
@@ -159,3 +134,4 @@ class CustomTableCalendar extends StatelessWidget {
     );
   }
 }
+

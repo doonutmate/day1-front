@@ -1,3 +1,4 @@
+import 'package:day1/services/app_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
@@ -19,8 +20,8 @@ class AuthService {
   static Future<AuthorizationCredentialAppleID?> signInWithApple() async {
 
     try{
-      //final rawNonce = generateNonce();
       final rawNonce = "5jk32gb5jk23vb5";
+      //final rawNonce = generateNonce();
       final nonce = sha256ofString(rawNonce);
 
       final AuthorizationCredentialAppleID appleCredential = await SignInWithApple

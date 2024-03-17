@@ -59,16 +59,19 @@ class MyApp extends ConsumerWidget {
     bool isServerToken = false;
     bool result = false;
 
+    //카카오 로그인이 유효한지 확인
     isKaKao = await AuthService.isLoggedIn();
+    //앱내부에 저장된 token 정보 가져오기
     token = await AppDataBase.getToken();
+    //토큰이 있는지 확인하고 플래그값 설정
     isServerToken = token != null ? true : false;
 
+    // 카카오 로그인 확인은 부차적으로 확인해주고 사실상 서버 토큰이 있는지가 중요
     result = isKaKao || isServerToken;
 
     if(result == true){
       provider.setServerToken(token);
     }
-    //카카오 로그인이 무효할 경우 서버토큰 초기화
     else{
       AppDataBase.clearToken();
     }
@@ -81,6 +84,8 @@ class MyApp extends ConsumerWidget {
     ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+
+      //기본 폰트 설정
       theme: ThemeData(
         fontFamily: "Pretendard"
       ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:day1/models/token_information.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/appleLogin_button.dart';
@@ -115,7 +116,16 @@ class LoginScreen extends ConsumerWidget {
                   if(appleToken != null){
                     print("token : ${appleToken.identityToken}\nname : ${appleToken.givenName}");
                     if(appleToken.identityToken != null){
-                      DioService.sendAppleTokenToServer(appleToken.identityToken!);
+                      dynamic response = await DioService.sendAppleTokenToServer(appleToken.identityToken!);
+                      //response map 데이터를 TokenInformation 모델 클래스로 변환
+                      TokenInformation tokenInfo = new TokenInformation(accessToken: response["accessToken"], oauthType: response["oauthType"]);
+                      //acesstoken, oauthType map 자료 json string으로 인코딩
+                      String json = jsonEncode(tokenInfo);
+                      //서버 토큰을 앱 내부 저장소에 저장
+                      AppDataBase.setToken(json);
+                      //provider에 서버 토큰 저장
+                      oauthProvider.setServerToken(json);
+                      Navigator.pushNamed(context, '/camera');
                   }
                   }
                 }),
