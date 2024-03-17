@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'package:day1/models/token_information.dart';
 import 'package:day1/services/app_database.dart';
+import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/appleLogin_button.dart';
 import 'package:day1/widgets/atoms/kakaoLogin_button.dart';
 import 'package:flutter/material.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../services/server_token_provider.dart';
 
 
@@ -108,7 +111,24 @@ class LoginScreen extends ConsumerWidget {
               // 애플 로그인 버튼
               Container(
                 alignment: Alignment.center,
-                child: appleLoginButton(onPressed: () async {}),
+                child: appleLoginButton(onPressed: () async {
+                  AuthorizationCredentialAppleID? appleToken = await AuthService.signInWithApple();
+                  if(appleToken != null){
+                    print("token : ${appleToken.identityToken}\nname : ${appleToken.givenName}");
+                    if(appleToken.identityToken != null){
+                      dynamic response = await DioService.sendAppleTokenToServer(appleToken.identityToken!);
+                      //response map 데이터를 TokenInformation 모델 클래스로 변환
+                      TokenInformation tokenInfo = new TokenInformation(accessToken: response["accessToken"], oauthType: response["oauthType"]);
+                      //acesstoken, oauthType map 자료 json string으로 인코딩
+                      String json = jsonEncode(tokenInfo);
+                      //서버 토큰을 앱 내부 저장소에 저장
+                      AppDataBase.setToken(json);
+                      //provider에 서버 토큰 저장
+                      oauthProvider.setServerToken(json);
+                      Navigator.pushNamed(context, '/camera');
+                  }
+                  }
+                }),
               ),
             ],
           ),

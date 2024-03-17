@@ -27,7 +27,7 @@ class Day1Camera extends StatelessWidget {
             ),
           );
         } else {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: Container());
         }
       },
     );

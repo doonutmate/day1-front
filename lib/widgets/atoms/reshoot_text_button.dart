@@ -21,7 +21,7 @@ class ReshootTextButton extends StatelessWidget {
       child: Text(
         "다시찍기",
         style: TextStyle(
-            fontSize: cameraScreenTextSize,
+            fontSize: cameraScreenAppBarTextSize,
             color: textButtonColor
         ),
       ),
