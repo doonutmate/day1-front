@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:day1/providers/user_profile_provider.dart';
+import '../models/user_profile.dart';
 import 'dart:convert';
+
+import '../models/user_profile.dart';
 
 
 class AuthService {
+
   // 카카오톡 실행 가능 여부 확인
   // 카카오톡 실행이 가능하면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
   static Future<OAuthToken?> signInWithKakao(BuildContext context) async {
@@ -17,7 +23,7 @@ class AuthService {
       try {
         token = await UserApi.instance.loginWithKakaoTalk();
         print('카카오톡으로 로그인 성공');
-        Navigator.pushNamed(context, '/camera');
+        // Navigator.pushNamed(context, '/camera');
         // 백엔드로 토큰 전송
         return token; // 토큰 반환
       } catch (error) {
@@ -120,13 +126,17 @@ class AuthService {
     }
   }
 
-  static Future<void> requestUserInfo() async {
+  static Future<void> requestUserInfo(WidgetRef ref) async {
     try {
       User user = await UserApi.instance.me();
       print('사용자 정보 요청 성공'
           '\n회원번호: ${user.id}'
           '\n닉네임: ${user.kakaoAccount?.profile?.nickname}'
           '\n이메일: ${user.kakaoAccount?.email}');
+      ref.read(userProfileProvider.notifier).state = UserProfile(
+        profileImageUrl: user.kakaoAccount?.profile?.profileImageUrl ?? '',
+        nickname: user.kakaoAccount?.profile?.nickname ?? '',
+      );
     } catch (error) {
       print('사용자 정보 요청 실패 $error');
     }
@@ -144,7 +154,7 @@ class AuthService {
     }
   }
 
-  static Future<void> logoutKakao() async {
+  static Future<void> logout() async {
     try {
       await UserApi.instance.logout();
       print('로그아웃 성공, SDK에서 토큰 삭제');

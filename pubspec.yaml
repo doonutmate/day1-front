@@ -36,7 +36,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   camera: ^0.10.5+9
-  flutter_riverpod: ^2.4.10
+  flutter_riverpod: ^2.5.1
   dio: ^5.4.0 # http 통신
   image: ^4.1.6
   path_provider: ^2.1.2  #임시 파일 주소 생성
@@ -51,7 +51,8 @@ dependencies:
   http: ^0.13.3
   flutter_screenutil: ^5.9.0
   flutter_native_splash: ^2.3.10
-
+  webview_flutter: ^4.7.0
+  url_launcher: ^6.2.5
   kakao_flutter_sdk: ^1.8.0 # 전체 추가
   kakao_flutter_sdk_user: ^1.8.0 # 카카오 로그인
   kakao_flutter_sdk_talk: ^1.8.0 # 카카오톡 메시지, 카카오톡 소셜(프로필 가져오기, 친구 목록 가져오기)

@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="2.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
+<plist version="2.0">
 	<dict>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
@@ -42,6 +42,8 @@
 			<string>kakaokompassauth</string>
 			<string>kakaolink</string>
 			<string>kakaoplus</string>
+			<string>sms</string>
+            <string>tel</string>
 		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
