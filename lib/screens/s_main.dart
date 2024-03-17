@@ -1,6 +1,6 @@
 import 'package:day1/constants/colors.dart';
 import 'package:day1/screens/calendar_screen.dart';
-import 'package:day1/screens/my_page_screen.dart';
+import 'package:day1/screens/mypage/my_page_screen.dart';
 import 'package:day1/services/device_size_provider.dart';
 import 'package:day1/widgets/molecules/custom_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';

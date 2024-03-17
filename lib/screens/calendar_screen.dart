@@ -8,8 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/size.dart';
 import '../models/calendar_image_model.dart';
+import '../services/auth_service.dart';
 import '../models/token_information.dart';
 import '../widgets/organisms/custom_table_calendar.dart';
+
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
@@ -73,6 +75,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    void initState() {
+      super.initState();
+      // 프레임이 렌더링된 후에 실행된 작업을 스케줄링
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        AuthService.requestUserInfo(ref);
+      });
+    }
+
     // provider에서 실제 화면 width get
     double deviceWidth = ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
     // calendar headermargin 크기
