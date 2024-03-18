@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day1/models/user_profile.dart';
 import 'package:day1/widgets/atoms/logout_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:day1/constants/colors.dart';
+
 
 class MyPageScreen extends ConsumerStatefulWidget {
   const MyPageScreen({super.key});
@@ -19,8 +21,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
   void initState() {
     super.initState();
     // 프레임이 렌더링된 후에 실행된 작업을 스케줄링
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      AuthService.requestUserInfo(ref);
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      final userProfile = await fetchUserProfile();
+      ref.read(userProfileProvider.notifier).state = userProfile;
     });
   }
 
@@ -38,30 +41,14 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               if (userProfile != null) ...[
                 CircleAvatar(
                   backgroundImage: NetworkImage(userProfile.profileImageUrl),
-                  radius: 26,
+                  radius: 54,
                 ),
                 SizedBox(
                   width: 14,
                 ),
                 Text(
                   userProfile.nickname,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-                )
-              ] else ...[
-                CircleAvatar(
-                  backgroundColor: Colors.grey,
-                  radius: 24,
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(
-                  width: 14,
-                ),
-                Text(
-                  '게스트',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24),
                 )
               ],
             ],
@@ -72,13 +59,15 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           child: Text(
             '서비스 정보',
             style: TextStyle(
-              color: Colors.grey,
+              color: gray500,
               fontSize: 14,
             ),
           ),
         ),
         ListTile(
-          title: Text('서비스 이용약관'),
+          title: Text('서비스 이용약관',style: TextStyle(
+            fontSize: 16
+          ),),
           onTap: () async{
             final url= Uri.parse(
                 'https://gkswnsgur.notion.site/Day1-8b4b1f86f61c4cc0a5bc8a83c8543479?pvs=4'
@@ -91,7 +80,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           },
         ),
         ListTile(
-          title: Text('개인정보 처리방침'),
+          title: Text('개인정보 처리방침',style: TextStyle(
+              fontSize: 16
+          ),),
           onTap: () async{
             final url= Uri.parse(
                 'https://gkswnsgur.notion.site/Day1-1621c491c6c94b8180fe321659a08803?pvs=4'
@@ -104,7 +95,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           },
         ),
         ListTile(
-          title: Text('로그아웃'),
+          title: Text('로그아웃',style: TextStyle(
+              fontSize: 16
+          ),),
           onTap: () {
             LogoutDialog(context, () {
               AuthService.logout();
@@ -112,7 +105,9 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           },
         ),
         ListTile(
-          title: Text('탈퇴하기'),
+          title: Text('탈퇴하기',style: TextStyle(
+              fontSize: 16
+          ),),
           onTap: () {
             Navigator.push(
                 context,
