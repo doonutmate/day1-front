@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:day1/constants/colors.dart';
 import 'package:day1/models/token_information.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/dio.dart';
@@ -40,11 +41,11 @@ class LoginScreen extends ConsumerWidget {
                     TextSpan(text: "지금 "),
                     TextSpan(
                         text: "데이원",
-                        style: TextStyle(color: Colors.deepPurple)),
+                        style: TextStyle(color: primary)),
                     TextSpan(text: "과 함께\n사진으로 "),
                     TextSpan(
                         text: "이야기",
-                        style: TextStyle(color: Colors.deepPurple)),
+                        style: TextStyle(color: primary)),
                     TextSpan(text: "를 담아보세요"),
                   ],
                 ),
@@ -52,7 +53,7 @@ class LoginScreen extends ConsumerWidget {
               SizedBox(height: 15),
               Text(
                 "일상의 새로운 도전, 데이원과 함께해요",
-                style: TextStyle(color: Colors.grey[700], fontSize: 17),
+                style: TextStyle(color: gray600, fontSize: 18),
               ),
             ],
           ),
@@ -65,7 +66,7 @@ class LoginScreen extends ConsumerWidget {
                 child: Text(
                   '3초만에 시작하기 😍',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: gray900,
                     fontSize: 16,
                   ),
                 ),
