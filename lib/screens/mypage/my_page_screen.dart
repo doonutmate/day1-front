@@ -1,11 +1,12 @@
+import 'dart:convert';
 import 'package:day1/providers/user_profile_provider.dart';
 import 'package:day1/screens/mypage/withdraw_screen.dart';
-import 'package:day1/services/auth_service.dart';
+import 'package:day1/services/app_database.dart';
 import 'package:day1/widgets/atoms/logout_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day1/models/user_profile.dart';
-import 'package:day1/widgets/atoms/logout_dialog.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:day1/constants/colors.dart';
 
@@ -22,8 +23,16 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
     super.initState();
     // 프레임이 렌더링된 후에 실행된 작업을 스케줄링
     WidgetsBinding.instance.addPostFrameCallback((_) async{
-      final userProfile = await fetchUserProfile();
-      ref.read(userProfileProvider.notifier).state = userProfile;
+      String? token = await AppDataBase.getToken();
+
+      if(token != null){
+        //token 정보 json string 디코딩
+        Map<String, dynamic> tokenMap = jsonDecode(token);
+
+        final userProfile = await fetchUserProfile(tokenMap["accessToken"]);
+        ref.read(userProfileProvider.notifier).state = userProfile;
+      }
+
     });
   }
 
@@ -40,8 +49,8 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
             children: [
               if (userProfile != null) ...[
                 CircleAvatar(
-                  backgroundImage: NetworkImage(userProfile.profileImageUrl),
-                  radius: 54,
+                  backgroundImage: userProfile.profileImageUrl != "" ? NetworkImage(userProfile.profileImageUrl) : AssetImage('assets/icons/mypage_profile.png') as ImageProvider,
+                  radius: 27,
                 ),
                 SizedBox(
                   width: 14,
@@ -100,7 +109,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
           ),),
           onTap: () {
             LogoutDialog(context, () {
-              AuthService.logout();
+              AppDataBase.clearToken();
             });
           },
         ),

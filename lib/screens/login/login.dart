@@ -93,14 +93,10 @@ class LoginScreen extends ConsumerWidget {
                     if (token != null) {
                       String? response = await AuthService.sendTokenToServer(token.accessToken);
                       if (response != null){
-                        // json string을 map으로 변환
-                        Map tokenMap = json.decode(response);
-                        //키를 통하여 value 추출
-                        String serverToken = tokenMap['accessToken'];
                         //서버 토큰을 앱 내부 저장소에 저장
-                        AppDataBase.setToken(serverToken);
+                        AppDataBase.setToken(response);
                         //provider에 서버 토큰 저장
-                        oauthProvider.setServerToken(serverToken);
+                        oauthProvider.setServerToken(response);
                         Navigator.pushNamed(context, '/camera');
 
                       }

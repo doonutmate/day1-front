@@ -28,7 +28,8 @@ Future<void> LogoutDialog(BuildContext context, VoidCallback onLogout) async {
             ),
             onPressed: () {
               onLogout();
-              Navigator.pushNamed(context, '/login');
+              //stack에 쌓여있는 page들을 다 지우고 login 화면 push
+              Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
             },
           )
         ],

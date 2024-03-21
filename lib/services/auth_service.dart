@@ -14,6 +14,7 @@ import '../models/user_profile.dart';
 
 
 class AuthService {
+
   static String sha256ofString(String input) {
     final bytes = utf8.encode(input);
     final digest = sha256.convert(bytes);
@@ -132,7 +133,7 @@ class AuthService {
     print('서버로 전송할 토큰: $token'); // 요청 데이터 로깅
     try {
       var response = await http.post(
-        Uri.parse('http://43.201.170.13:8081/oauth/login?oauthType=KAKAO'),
+        Uri.parse('https://dev.doonut.site/oauth/login?oauthType=KAKAO'),
         // 백엔드 서버의 토큰 검증 엔드포인트
         headers: {
           'Content-Type': 'application/json',
@@ -187,14 +188,7 @@ class AuthService {
     }
   }
 
-  static Future<void> logout() async {
-    try {
-      await UserApi.instance.logout();
-      print('로그아웃 성공, SDK에서 토큰 삭제');
-    } catch (error) {
-      print('로그아웃 실패, SDK에서 토큰 삭제 $error');
-    }
-  }
+
 
   static Future<void> unlinkKakao() async {
     try {

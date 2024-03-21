@@ -3,11 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 //앱 내부 저장소 관리 클래스
 class AppDataBase{
 
-  static Future<String?> getOAuthType() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('oauthType');
-  }
-
   // 저장 함수
   static Future<void> setToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
