@@ -9,15 +9,29 @@ class DioService{
   //기본 주소
   static const String baseUri = "https://prod.doonut.site/";
 
-  static Future<void> signOutDay1(String oauthType, String token, String reason) async{
+  static Future<void> signOutDay1(String oauthType, String? appleToken, String? accessToken, String reason) async{
     try{
       var dio = Dio();
-      Map<String, dynamic> _data = {
-        "oauthType" : oauthType,
-        "code" : token,
-        "reason" : reason
+      dio.options.headers = {
+        "Authorization": "Bearer $accessToken"
       };
-      var response = await dio.delete(baseUri + "",data:_data);
+      Map<String, dynamic> _data;
+
+      if(appleToken != ""){
+        _data = {
+          "oauthType" : oauthType,
+          "code" : appleToken,
+          "reason" : reason
+        };
+      }
+      else{
+        _data = {
+          "oauthType" : oauthType,
+          "reason" : reason
+        };
+      }
+
+      var response = await dio.delete(baseUri + "member",data:_data);
       if(response.statusCode != 200){
         print("서버통신 에러");
       }

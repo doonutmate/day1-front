@@ -36,11 +36,11 @@ class CustomBottomNavigationBar extends StatelessWidget {
             child: BottomNavigationBar(
               items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
-                  icon: SvgPicture.asset("assets/icons/calendar.svg"),
+                  icon: selectedIndex == 0 ? SvgPicture.asset("assets/icons/active_calendar_tab.svg") : SvgPicture.asset("assets/icons/inactive_calendar_tab.svg"),
                   label: '캘린더',
                 ),
                 BottomNavigationBarItem(
-                  icon: SvgPicture.asset("assets/icons/profile.svg"),
+                  icon: selectedIndex == 1 ? SvgPicture.asset("assets/icons/active_profile_tab.svg") : SvgPicture.asset("assets/icons/inactive_profile_tab.svg"),
                   label: '마이페이지',
                 ),
               ],

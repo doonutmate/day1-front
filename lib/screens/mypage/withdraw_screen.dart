@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:day1/constants/colors.dart';
 import 'package:day1/services/app_database.dart';
+import 'package:day1/services/auth_service.dart';
 import 'package:day1/services/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day1/providers/submit_reason_provider.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+
+import '../../models/token_information.dart';
 
 
 class WithdrawScreen extends StatefulWidget {
@@ -107,16 +113,35 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                             final submitReasonText =
                                 reason == '기타' ? otherReason : reason;
 
-                            String? oauthType =
-                                await AppDataBase.getOAuthType();
                             String? token = await AppDataBase.getToken();
 
-                            if (oauthType != null && token != null) {
-                              // 서버에 회원 탈퇴 이유 전송
-                              await DioService.signOutDay1(
-                                  oauthType, token, submitReasonText);
+                            if (token != null) {
 
-                              Navigator.pushNamed(context, '/login');
+                              //token 정보 json string 디코딩
+                              Map<String, dynamic> tokenMap = jsonDecode(token);
+                              //Map 데이터를 모델클래스로 컨버팅
+                              TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
+
+                              if(tokenInfo.oauthType == "KAKAO"){
+                                // 서버에 회원 탈퇴 이유 전송
+                                await DioService.signOutDay1(
+                                    tokenInfo.oauthType, "", tokenInfo.accessToken, submitReasonText);
+                              }
+                              else{
+                                AuthorizationCredentialAppleID? appleToken = await AuthService.signInWithApple();
+                                if(appleToken != null){
+                                  if(appleToken.authorizationCode != null){
+
+                                    // 서버에 회원 탈퇴 이유 전송
+                                    await DioService.signOutDay1(
+                                        tokenInfo.oauthType, appleToken.authorizationCode, tokenInfo.accessToken, submitReasonText);
+                                  }
+                                }
+                              }
+                              AppDataBase.clearToken();
+                              Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+
+
                             } else {
                               // 오류 처리, 예: 사용자에게 오류 메시지 표시
                               showDialog(

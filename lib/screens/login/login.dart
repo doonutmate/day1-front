@@ -12,7 +12,6 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../services/server_token_provider.dart';
 
-
 class LoginScreen extends ConsumerWidget {
   final String? initialUrl;
 
@@ -39,13 +38,9 @@ class LoginScreen extends ConsumerWidget {
                       color: Colors.black),
                   children: <TextSpan>[
                     TextSpan(text: "지금 "),
-                    TextSpan(
-                        text: "데이원",
-                        style: TextStyle(color: primary)),
+                    TextSpan(text: "데이원", style: TextStyle(color: primary)),
                     TextSpan(text: "과 함께\n사진으로 "),
-                    TextSpan(
-                        text: "이야기",
-                        style: TextStyle(color: primary)),
+                    TextSpan(text: "이야기", style: TextStyle(color: primary)),
                     TextSpan(text: "를 담아보세요"),
                   ],
                 ),
@@ -89,20 +84,17 @@ class LoginScreen extends ConsumerWidget {
                 alignment: Alignment.center,
                 child: KakaoLoginButton(
                   onPressed: () async {
-                    OAuthToken? token = await AuthService.signInWithKakao(context);
+                    OAuthToken? token =
+                        await AuthService.signInWithKakao(context);
                     if (token != null) {
-                      String? response = await AuthService.sendTokenToServer(token.accessToken);
-                      if (response != null){
-                        // json string을 map으로 변환
-                        Map tokenMap = json.decode(response);
-                        //키를 통하여 value 추출
-                        String serverToken = tokenMap['accessToken'];
+                      String? response = await AuthService.sendTokenToServer(
+                          token.accessToken);
+                      if (response != null) {
                         //서버 토큰을 앱 내부 저장소에 저장
-                        AppDataBase.setToken(serverToken);
+                        AppDataBase.setToken(response);
                         //provider에 서버 토큰 저장
-                        oauthProvider.setServerToken(serverToken);
+                        oauthProvider.setServerToken(response);
                         Navigator.pushNamed(context, '/camera');
-
                       }
                     }
                   },
@@ -113,21 +105,22 @@ class LoginScreen extends ConsumerWidget {
               Container(
                 alignment: Alignment.center,
                 child: appleLoginButton(onPressed: () async {
-                  AuthorizationCredentialAppleID? appleToken = await AuthService.signInWithApple();
-                  if(appleToken != null){
-                    print("token : ${appleToken.identityToken}\nname : ${appleToken.givenName}");
-                    if(appleToken.identityToken != null){
-                      dynamic response = await DioService.sendAppleTokenToServer(appleToken.identityToken!);
-                      //response map 데이터를 TokenInformation 모델 클래스로 변환
-                      TokenInformation tokenInfo = new TokenInformation(accessToken: response["accessToken"], oauthType: response["oauthType"]);
-                      //acesstoken, oauthType map 자료 json string으로 인코딩
-                      String json = jsonEncode(tokenInfo);
-                      //서버 토큰을 앱 내부 저장소에 저장
-                      AppDataBase.setToken(json);
-                      //provider에 서버 토큰 저장
-                      oauthProvider.setServerToken(json);
-                      Navigator.pushNamed(context, '/camera');
-                  }
+                  AuthorizationCredentialAppleID? appleToken =
+                      await AuthService.signInWithApple();
+                  if (appleToken?.identityToken != null) {
+                    dynamic response = await DioService.sendAppleTokenToServer(
+                        appleToken!.identityToken!);
+                    //response map 데이터를 TokenInformation 모델 클래스로 변환
+                    TokenInformation tokenInfo = new TokenInformation(
+                        accessToken: response["accessToken"],
+                        oauthType: response["oauthType"]);
+                    //acesstoken, oauthType map 자료 json string으로 인코딩
+                    String json = jsonEncode(tokenInfo);
+                    //서버 토큰을 앱 내부 저장소에 저장
+                    AppDataBase.setToken(json);
+                    //provider에 서버 토큰 저장
+                    oauthProvider.setServerToken(json);
+                    Navigator.pushNamed(context, '/camera');
                   }
                 }),
               ),

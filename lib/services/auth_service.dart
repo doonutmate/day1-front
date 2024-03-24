@@ -10,10 +10,10 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-import '../models/user_profile.dart';
 
 
 class AuthService {
+
   static String sha256ofString(String input) {
     final bytes = utf8.encode(input);
     final digest = sha256.convert(bytes);
@@ -187,14 +187,7 @@ class AuthService {
     }
   }
 
-  static Future<void> logout() async {
-    try {
-      await UserApi.instance.logout();
-      print('로그아웃 성공, SDK에서 토큰 삭제');
-    } catch (error) {
-      print('로그아웃 실패, SDK에서 토큰 삭제 $error');
-    }
-  }
+
 
   static Future<void> unlinkKakao() async {
     try {
