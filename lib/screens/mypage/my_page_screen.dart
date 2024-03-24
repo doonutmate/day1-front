@@ -41,7 +41,7 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
               if (userProfile != null) ...[
                 CircleAvatar(
                   backgroundImage: NetworkImage(userProfile.profileImageUrl),
-                  radius: 54,
+                  radius: 24,
                 ),
                 SizedBox(
                   width: 14,

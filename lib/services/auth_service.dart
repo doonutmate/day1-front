@@ -132,7 +132,7 @@ class AuthService {
     print('서버로 전송할 토큰: $token'); // 요청 데이터 로깅
     try {
       var response = await http.post(
-        Uri.parse('http://43.201.170.13:8081/oauth/login?oauthType=KAKAO'),
+        Uri.parse('https://prod.doonut.site/oauth/login?oauthType=KAKAO'),
         // 백엔드 서버의 토큰 검증 엔드포인트
         headers: {
           'Content-Type': 'application/json',
@@ -151,7 +151,7 @@ class AuthService {
         return response.body;
       } else {
         // 에러 처리
-        print('토큰 서버 전송 실패: ${response.body}');
+        print('카카오 토큰 서버 전송 실패: ${response.body}');
         return null;
       }
     } catch (e) {
