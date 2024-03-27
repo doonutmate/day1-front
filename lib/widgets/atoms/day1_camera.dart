@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:camera/camera.dart';
+import 'package:day1/constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class Day1Camera extends StatelessWidget {
@@ -27,7 +30,7 @@ class Day1Camera extends StatelessWidget {
             ),
           );
         } else {
-          return Center(child: Container());
+          return Center(child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),child: Container(color: Colors.black,)));
         }
       },
     );
