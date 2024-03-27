@@ -210,7 +210,6 @@ class CameraScreenState extends State<CameraScreen> {
                     controller: controller,
                     responseImage: responseImage,
                   ),
-
                   //사진촬영 버튼
                   ShutterButton(
                     shutterFunc: _takePicture,
