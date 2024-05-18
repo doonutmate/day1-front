@@ -64,6 +64,7 @@ dependencies:
   transparent_image: ^2.0.1
   crypto: ^3.0.3
   flip_card: ^0.7.0
+  image_picker: ^1.0.8
 
 dev_dependencies:
   flutter_test:

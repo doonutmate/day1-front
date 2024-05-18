@@ -49,6 +49,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Day1은 사용자의 일상을 특별하게 기록할 수 있도록 카메라 접근을 요청합니다.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To enable photo library access for changing profile image</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>To enable GPS location access for Exif data</string>
 	<key>NSMicrophoneUsageDescription</key>

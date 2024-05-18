@@ -167,7 +167,7 @@ class CameraScreenState extends State<CameraScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: cameraScreenAppbarHeight,
+              height: appBarHeight,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
