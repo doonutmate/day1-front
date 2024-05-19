@@ -15,12 +15,14 @@ class SetCalendarScreen extends StatefulWidget {
 class _SetCalendarScreenState extends State<SetCalendarScreen> {
   late TextEditingController myController; // Textformfield controller
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  late FocusNode focusNode;
   bool isError = false;
   String currentText = "";
 
   @override
   void initState() {
     myController = TextEditingController();
+    focusNode = FocusNode();
     super.initState();
   }
 
@@ -59,48 +61,61 @@ class _SetCalendarScreenState extends State<SetCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: appBarHeight,
-        title: Text(
-          "캘린더 설정",
-          style: TextStyle(
-            fontSize: appBarTitleFontSize,
+    return GestureDetector(
+      onTap: (){
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: appBarHeight,
+          title: Text(
+            "캘린더 설정",
+            style: TextStyle(
+              fontSize: appBarTitleFontSize,
+            ),
+          ),
+          leading: GestureDetector(
+            onTap: (){
+              if(focusNode.hasFocus == false)
+                Navigator.pop(context);
+            },
+            child: Icon(Icons.arrow_back_ios),
           ),
         ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: mypageHorizontalMargin),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 16,
-            ),
-            TitleTextformfieldGroup(
-              title: "제목",
-              formKey: formKey,
-              myController: myController,
-              validateTextFormField: validateTextFormField,
-              isError: isError,
-              errorText: '1자 이상 8자 이하로 작성해주세요.',
-            ),
-            Spacer(),
-            GestureDetector(
-              onTap: (){
-                formKey.currentState?.validate();
-              },
-              child: RadiusTextButton(
-                height: 48,
-                backgroudColor: isError == true ? gray300 : primary,
-                radius: 4,
-                text: "저장하기",
-                textColor: white,
-                fontSize: 17,
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: mypageHorizontalMargin),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 16,
               ),
-            ),
-            SizedBox(height: 50,),
-          ],
+              TitleTextformfieldGroup(
+                focusNode: focusNode,
+                title: "제목",
+                formKey: formKey,
+                myController: myController,
+                validateTextFormField: validateTextFormField,
+                isError: isError,
+                errorText: '1자 이상 8자 이하로 작성해주세요.',
+              ),
+              Spacer(),
+              GestureDetector(
+                onTap: (){
+                  formKey.currentState?.validate();
+                },
+                child: RadiusTextButton(
+                  height: 48,
+                  backgroudColor: isError == true ? gray300 : primary,
+                  radius: 4,
+                  text: "저장하기",
+                  textColor: white,
+                  fontSize: 17,
+                ),
+              ),
+              SizedBox(height: 50,),
+            ],
+          ),
         ),
       ),
     );

@@ -24,6 +24,7 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
   String currentText = "";
   late ImageProvider profileImage;
   XFile? _image; //이미지를 담을 변수 선언
+  late FocusNode focusNode;
   final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
 
   //이미지를 가져오는 함수
@@ -42,12 +43,12 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
     super.initState();
     myController = TextEditingController();
     final userProfile = ref.read(userProfileProvider); //사용자 프로필 구독
+    focusNode = FocusNode();
 
     currentText = userProfile?.nickname ?? "";
     profileImage = (userProfile?.profileImageUrl != "" && userProfile != null)
-    ? NetworkImage(userProfile!.profileImageUrl)
-        : AssetImage('assets/icons/mypage_profile.png')
-    as ImageProvider;
+        ? NetworkImage(userProfile!.profileImageUrl)
+        : AssetImage('assets/icons/mypage_profile.png') as ImageProvider;
   }
 
   @override
@@ -56,7 +57,7 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
     super.dispose();
   }
 
-  void showChooseAlbumSheet (){
+  void showChooseAlbumSheet() {
     showModalBottomSheet(
       barrierColor: Color(0x80222222),
       context: context,
@@ -68,22 +69,24 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   getImage(ImageSource.gallery);
                   Navigator.pop(context);
                 },
                 child: RadiusTextButton(
-                    height: 61,
-                    backgroudColor: Color(0xB3F5F5F5),
-                    radius: 13,
-                    text: "앨범에서 선택",
-                    textColor: Color(0xFF007AFF),
-                    fontSize: 20,
+                  height: 61,
+                  backgroudColor: Color(0xB3F5F5F5),
+                  radius: 13,
+                  text: "앨범에서 선택",
+                  textColor: Color(0xFF007AFF),
+                  fontSize: 20,
                 ),
               ),
-              SizedBox(height: 8,),
+              SizedBox(
+                height: 8,
+              ),
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   Navigator.pop(context);
                 },
                 child: RadiusTextButton(
@@ -104,20 +107,19 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
     );
   }
 
-  String? validateTextFormField (String? value){
-    if (value?.isEmpty ?? true)
-    {
+  String? validateTextFormField(String? value) {
+    if (value?.isEmpty ?? true) {
       isError = true;
       setState(() {
         currentText = "";
       });
       return '';
-    }
-    else if (value!.length > 8){
+    } else if (value!.length > 8) {
       isError = true;
 
       setState(() {
-        currentText = value.replaceRange(value.length - 1, value.length, "");;
+        currentText = value.replaceRange(value.length - 1, value.length, "");
+        ;
       });
       return '';
     }
@@ -128,62 +130,77 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
       currentText = value;
     });
     return null;
-
   }
 
   @override
   Widget build(BuildContext context) {
     myController.text = currentText;
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: appBarHeight,
-        title: Text(
-          "프로필 수정",
-          style: TextStyle(
-            fontSize: appBarTitleFontSize,
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: mypageHorizontalMargin),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 16,
-            ),
-            Container(
-              width: double.infinity,
-              alignment: Alignment.center,
-              child: GestureDetector(
-                onTap: (){
-                  showChooseAlbumSheet();
-                },
-                child: EditProfileImage(profileImage),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+            toolbarHeight: appBarHeight,
+            title: Text(
+              "프로필 수정",
+              style: TextStyle(
+                fontSize: appBarTitleFontSize,
               ),
             ),
-            SizedBox(
-              height: 24,
+            leading: GestureDetector(
+              onTap: (){
+                if(focusNode.hasFocus == false)
+                  Navigator.pop(context);
+              },
+              child: Icon(Icons.arrow_back_ios),
             ),
-            TitleTextformfieldGroup(
+        ),
+        body: Padding(
+          padding:
+              const EdgeInsets.symmetric(horizontal: mypageHorizontalMargin),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 16,
+              ),
+              Container(
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: GestureDetector(
+                  onTap: () {
+                    showChooseAlbumSheet();
+                  },
+                  child: EditProfileImage(profileImage),
+                ),
+              ),
+              SizedBox(
+                height: 24,
+              ),
+              TitleTextformfieldGroup(
+                focusNode: focusNode,
                 title: "이름",
                 formKey: formKey,
                 myController: myController,
                 validateTextFormField: validateTextFormField,
-              isError: isError,
-              errorText: '1자 이상 12자 이하로 작성해주세요.',
-            ),
-            Spacer(),
-            RadiusTextButton(
+                isError: isError,
+                errorText: '1자 이상 12자 이하로 작성해주세요.',
+              ),
+              Spacer(),
+              RadiusTextButton(
                 height: 48,
                 backgroudColor: isError == true ? gray300 : primary,
                 radius: 4,
                 text: "수정하기",
                 textColor: white,
                 fontSize: 17,
-            ),
-            SizedBox(height: 50,),
-          ],
+              ),
+              SizedBox(
+                height: 50,
+              ),
+            ],
+          ),
         ),
       ),
     );

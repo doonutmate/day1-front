@@ -22,13 +22,17 @@ class CalendarInformation extends StatelessWidget {
           height: 4,
         ),
         GestureDetector(
-          onTap: (){
-            Navigator.of(context)
-                .pushNamed("/setcalendar");
+          onTap: () {
+            Navigator.of(context).pushNamed("/setcalendar");
           },
           child: MypageListTile(text: "캘린더 설정"),
         ),
-        MypageListTile(text: "알림 설정"),
+        GestureDetector(
+          onTap: (){
+            Navigator.of(context).pushNamed("/setnotification");
+          },
+          child: MypageListTile(text: "알림 설정"),
+        ),
       ],
     );
   }

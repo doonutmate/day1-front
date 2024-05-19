@@ -3,6 +3,7 @@ import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/login/login.dart';
 import 'package:day1/screens/mypage/change_profile_screen.dart';
 import 'package:day1/screens/mypage/set_calendar_screen.dart';
+import 'package:day1/screens/mypage/set_notification_screen.dart';
 import 'package:day1/screens/mypage/withdraw_screen.dart';
 import 'package:day1/screens/s_main.dart';
 import 'package:day1/services/app_database.dart';
@@ -110,6 +111,7 @@ class MyApp extends ConsumerWidget {
         '/withdraw' : (context) => WithdrawScreen(),
         '/changeprofile' : (context) => ChangeProfileScreen(),
         '/setcalendar' : (context) => SetCalendarScreen(),
+        '/setnotification' : (context) => SetNotificationScreen(),
       },
     );
   }

@@ -5,12 +5,13 @@ import '../../constants/size.dart';
 
 class TitleTextformfieldGroup extends StatefulWidget {
   String title;
+  FocusNode focusNode;
   GlobalKey<FormState> formKey;
   TextEditingController myController;
   String? Function(String?) validateTextFormField;
   bool isError;
   String errorText;
-  TitleTextformfieldGroup({required this.title, required this.formKey, required this.myController,
+  TitleTextformfieldGroup({required this.title, required this.focusNode, required this.formKey, required this.myController,
     required this.validateTextFormField, required this.isError, required this.errorText, super.key});
 
   @override
@@ -36,6 +37,7 @@ class _TitleTextformfieldGroupState extends State<TitleTextformfieldGroup> {
         Form(
           key: widget.formKey,
           child: TextFormField(
+            focusNode: widget.focusNode,
             controller: widget.myController,
             style: TextStyle(
               fontSize: 16,
