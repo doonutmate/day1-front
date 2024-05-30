@@ -30,6 +30,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>kakao96d13b457170f00f736d874770b66f84</string>
+				<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			</array>
 		</dict>
 	</array>
@@ -47,6 +48,8 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>We use your Apple Music account to personalize your experience.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Day1은 사용자의 일상을 특별하게 기록할 수 있도록 카메라 접근을 요청합니다.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

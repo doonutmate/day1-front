@@ -3,11 +3,11 @@ import 'dart:convert';
 import '../models/community_model.dart';
 
 class CommunityService {
-  final String baseUrl = 'https://your-backend-server.com/api';
+  final String baseUrl = 'https://dev.doonut.site';
 
   Future<List<Community>> fetchCalendars() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/community'));
+      final response = await http.get(Uri.parse('$baseUrl/calendars?size=10'));
       if (response.statusCode == 200) {
         List<dynamic> communityJsonList = json.decode(response.body);
         return communityJsonList.map((json) => Community.fromJson(json)).toList();
