@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:camera/camera.dart';
+import 'package:day1/constants/colors.dart';
 import 'package:day1/widgets/atoms/flash_change_button.dart';
 import 'package:day1/widgets/atoms/flip_button.dart';
 import 'package:day1/widgets/atoms/reshoot_text_button.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import '../../constants/size.dart';
 import '../../widgets/atoms/cancel_text_button.dart';
@@ -28,6 +30,10 @@ class CameraScreenState extends State<CameraScreen> {
   late CameraController controller;
   late Future<void> _initializeControllerFuture;
   String formatDate = "";
+  String pictureDay = "";
+  String pictureDayOfWeek = "";
+  String pictureTime = "";
+  String pictureAMPM = "";
   bool isFrontCamera = false;
   File? responseImage;
 
@@ -99,6 +105,13 @@ class CameraScreenState extends State<CameraScreen> {
       if (_reduceFile != null) {
         cropFile = await cropImage(_reduceFile);
 
+        //  changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
+        DateTime today = DateTime.now();
+        pictureDay = DateFormat("yyyy.MM.dd").format(today) + "일";
+        pictureDayOfWeek = "(" + DateFormat('E', 'ko_KR').format(today) + ")";
+        pictureAMPM = DateFormat('aa', 'ko_KR').format(today) == "AM" ? "오전" : "오후";
+        pictureTime = DateFormat('hh:mm').format(today);
+
         setState(() {
           responseImage = File(cropFile.path);
         });
@@ -167,7 +180,7 @@ class CameraScreenState extends State<CameraScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: cameraScreenAppbarHeight,
+              height: appBarHeight,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -194,7 +207,36 @@ class CameraScreenState extends State<CameraScreen> {
               aspectRatio: 1,
               // 서버에서 응답받은 이미지가 있을 경우 이미지를 화면에 보여주고 없으면 카메라 화면을 보여준다
               child: responseImage != null
-                  ? Image.file(responseImage!)
+                  ? Stack(
+                      children: [
+                        Image.file(responseImage!),
+                        Positioned(
+                          left: 30,
+                          bottom: 30,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                pictureDay + " " + pictureDayOfWeek,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: white
+                                ),
+                              ),
+                              Text(
+                                pictureAMPM + " " + pictureTime,
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: white
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
                   : Day1Camera(
                       initializeControllerFuture: _initializeControllerFuture,
                       controller: controller),

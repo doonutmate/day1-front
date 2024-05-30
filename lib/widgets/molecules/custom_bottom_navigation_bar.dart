@@ -58,7 +58,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
           top: -32,
           child: GestureDetector(
             onTap: (){
-              Navigator.of(context, rootNavigator: true)
+              Navigator.of(context)
                   .pushNamed("/camera");
             },
             child: SvgPicture.asset("assets/icons/camera.svg"),

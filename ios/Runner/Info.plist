@@ -53,8 +53,15 @@
 	<string>To enable GPS location access for Exif data</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>To enable microphone access when recording video</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To enable photo library access for changing profile image</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

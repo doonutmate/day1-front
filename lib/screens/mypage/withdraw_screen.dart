@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day1/providers/submit_reason_provider.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
+import '../../constants/size.dart';
 import '../../models/token_information.dart';
 
 
@@ -28,11 +29,11 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
       return Scaffold(
         appBar: AppBar(
-          toolbarHeight: 50,
+          toolbarHeight: appBarHeight,
           title: Text(
             '탈퇴하기',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: appBarTitleFontSize,
             ),
           ),
         ),

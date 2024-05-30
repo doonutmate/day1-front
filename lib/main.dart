@@ -1,16 +1,22 @@
 import 'package:camera/camera.dart';
 import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/login/login.dart';
+import 'package:day1/screens/mypage/change_profile_screen.dart';
+import 'package:day1/screens/mypage/set_calendar_screen.dart';
+import 'package:day1/screens/mypage/set_notification_screen.dart';
+import 'package:day1/screens/mypage/withdraw_screen.dart';
 import 'package:day1/screens/s_main.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:day1/services/server_token_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
 import 'dart:async';
 import 'package:uni_links/uni_links.dart';
+import 'firebase_options.dart';
 
 late List<CameraDescription> cameras;
 
@@ -20,6 +26,11 @@ Future<void> main() async {
 
   //언어 설정을 위한 함수 실행
   await initializeDateFormatting();
+
+  //firbase 초기화
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
 
   // 기기에서 사용 가능한 카메라 목록 불러오기
@@ -87,7 +98,9 @@ class MyApp extends ConsumerWidget {
 
       //기본 폰트 설정
       theme: ThemeData(
-        fontFamily: "Pretendard"
+        fontFamily: "Pretendard",
+        bottomSheetTheme: BottomSheetThemeData(
+            backgroundColor: Colors.black.withOpacity(0)),
       ),
       home: FutureBuilder(
           future: getToken(tokenProvider),
@@ -102,6 +115,10 @@ class MyApp extends ConsumerWidget {
         '/login': (context) => LoginScreen(),
         '/main': (context) => MainScreen(),
         '/camera': (context) => CameraScreen(cameras),
+        '/withdraw' : (context) => WithdrawScreen(),
+        '/changeprofile' : (context) => ChangeProfileScreen(),
+        '/setcalendar' : (context) => SetCalendarScreen(),
+        '/setnotification' : (context) => SetNotificationScreen(),
       },
     );
   }
