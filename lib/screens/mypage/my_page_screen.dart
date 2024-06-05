@@ -20,18 +20,7 @@ class MyPageScreen extends ConsumerStatefulWidget {
 class _MyPageScreenState extends ConsumerState<MyPageScreen> {
   void initState() {
     super.initState();
-    // 프레임이 렌더링된 후에 실행된 작업을 스케줄링
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      String? token = await AppDataBase.getToken();
 
-      if (token != null) {
-        //token 정보 json string 디코딩
-        Map<String, dynamic> tokenMap = jsonDecode(token);
-
-        final userProfile = await fetchUserProfile(tokenMap["accessToken"]);
-        ref.read(userProfileProvider.notifier).state = userProfile;
-      }
-    });
   }
 
   @override

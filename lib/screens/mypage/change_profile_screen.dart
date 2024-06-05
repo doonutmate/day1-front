@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:day1/constants/colors.dart';
+import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/edit_profile_image.dart';
 import 'package:day1/widgets/atoms/radius_text_button.dart';
 import 'package:day1/widgets/molecules/title_textformfield_group.dart';
@@ -7,7 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../constants/size.dart';
+import '../../models/token_information.dart';
+import '../../models/user_profile.dart';
 import '../../providers/user_profile_provider.dart';
+import '../../services/server_token_provider.dart';
 
 class ChangeProfileScreen extends ConsumerStatefulWidget {
   const ChangeProfileScreen({super.key});
@@ -22,18 +27,20 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool isError = false;
   String currentText = "";
+  String profileUrl = "";
   late ImageProvider profileImage;
-  XFile? _image; //이미지를 담을 변수 선언
+  String? token;
   late FocusNode focusNode;
   final ImagePicker picker = ImagePicker(); //ImagePicker 초기화
+  XFile? pickedFile;
 
   //이미지를 가져오는 함수
   Future getImage(ImageSource imageSource) async {
     //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
-    final XFile? pickedFile = await picker.pickImage(source: imageSource);
+    pickedFile = await picker.pickImage(source: imageSource, imageQuality:30);
     if (pickedFile != null) {
       setState(() {
-        profileImage = FileImage(File(pickedFile.path)); //가져온 이미지를 _image에 저장
+        profileImage = FileImage(File(pickedFile!.path)); //가져온 이미지를 _image에 저장
       });
     }
   }
@@ -42,9 +49,10 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
   void initState() {
     super.initState();
     myController = TextEditingController();
+    token = ref.read(ServerTokenProvider.notifier).getServerToken();
     final userProfile = ref.read(userProfileProvider); //사용자 프로필 구독
     focusNode = FocusNode();
-
+    profileUrl = userProfile?.profileImageUrl ?? "";
     currentText = userProfile?.nickname ?? "";
     profileImage = (userProfile?.profileImageUrl != "" && userProfile != null)
         ? NetworkImage(userProfile!.profileImageUrl)
@@ -188,13 +196,24 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
                 errorText: '1자 이상 12자 이하로 작성해주세요.',
               ),
               Spacer(),
-              RadiusTextButton(
-                height: 48,
-                backgroudColor: isError == true ? gray300 : primary,
-                radius: 4,
-                text: "수정하기",
-                textColor: white,
-                fontSize: 17,
+              GestureDetector(
+                onTap: () async {
+                  if(isError == false && myController.text != null && token != null){
+                    Map<String, dynamic> tokenMap = jsonDecode(token!);
+                    TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
+                    await DioService.uploadProfileInfo(pickedFile?.path ?? profileUrl , myController.text, tokenInfo.accessToken);
+                    final userProfile = await fetchUserProfile(tokenInfo.accessToken);
+                    ref.read(userProfileProvider.notifier).state = userProfile!;
+                  }
+                },
+                child: RadiusTextButton(
+                  height: 48,
+                  backgroudColor: isError == true ? gray300 : primary,
+                  radius: 4,
+                  text: "수정하기",
+                  textColor: white,
+                  fontSize: 17,
+                ),
               ),
               SizedBox(
                 height: 50,

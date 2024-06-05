@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/login/login.dart';
@@ -18,11 +20,21 @@ import 'dart:async';
 import 'package:uni_links/uni_links.dart';
 import 'firebase_options.dart';
 
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
+
 late List<CameraDescription> cameras;
 
 Future<void> main() async {
   // 다음에 호출되는 함수 모두 실행 끝날 때까지 기다림
   WidgetsFlutterBinding.ensureInitialized();
+
+  HttpOverrides.global = MyHttpOverrides();
 
   //언어 설정을 위한 함수 실행
   await initializeDateFormatting();

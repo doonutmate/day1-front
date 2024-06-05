@@ -1,29 +1,40 @@
+import 'dart:convert';
+import 'package:day1/providers/calendar_title_provider.dart';
+import 'package:day1/services/dio.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants/colors.dart';
 import '../../constants/size.dart';
+import '../../models/token_information.dart';
+import '../../services/server_token_provider.dart';
 import '../../widgets/atoms/radius_text_button.dart';
 import '../../widgets/molecules/title_textformfield_group.dart';
 
-class SetCalendarScreen extends StatefulWidget {
+class SetCalendarScreen extends ConsumerStatefulWidget {
   const SetCalendarScreen({super.key});
 
   @override
-  State<SetCalendarScreen> createState() => _SetCalendarScreenState();
+  ConsumerState<SetCalendarScreen> createState() => _SetCalendarScreenState();
 }
 
-class _SetCalendarScreenState extends State<SetCalendarScreen> {
+class _SetCalendarScreenState extends ConsumerState<SetCalendarScreen> {
   late TextEditingController myController; // Textformfield controller
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late FocusNode focusNode;
   bool isError = false;
+  String? token;
   String currentText = "";
 
   @override
   void initState() {
+    super.initState();
+    token = ref.read(ServerTokenProvider.notifier).getServerToken();
+    currentText = ref.read(calendarTitleProvider.notifier).state ?? "";
     myController = TextEditingController();
     focusNode = FocusNode();
-    super.initState();
+
+
+
   }
 
   @override
@@ -61,6 +72,7 @@ class _SetCalendarScreenState extends State<SetCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    myController.text = currentText;
     return GestureDetector(
       onTap: (){
         FocusScope.of(context).unfocus();
@@ -102,7 +114,16 @@ class _SetCalendarScreenState extends State<SetCalendarScreen> {
               Spacer(),
               GestureDetector(
                 onTap: (){
-                  formKey.currentState?.validate();
+                  if(isError != true){
+                    if(token != null){
+                      Map<String, dynamic> tokenMap = jsonDecode(token!);
+                      TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
+                      DioService.setCalendarTitle(myController.text, tokenInfo.accessToken);
+                      ref.watch(calendarTitleProvider.notifier).state = myController.text;
+                    }
+
+                  }
+
                 },
                 child: RadiusTextButton(
                   height: 48,
