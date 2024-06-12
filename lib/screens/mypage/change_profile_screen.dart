@@ -201,9 +201,17 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
                   if(isError == false && myController.text != null && token != null){
                     Map<String, dynamic> tokenMap = jsonDecode(token!);
                     TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
-                    await DioService.uploadProfileInfo(pickedFile?.path ?? profileUrl , myController.text, tokenInfo.accessToken);
+                    if(pickedFile != null){
+                      await DioService.putProfileInfo(pickedFile!.path , myController.text, tokenInfo.accessToken);
+                    }
+                    else{
+                      await DioService.putProfileName(myController.text, tokenInfo.accessToken);
+                    }
                     final userProfile = await fetchUserProfile(tokenInfo.accessToken);
                     ref.read(userProfileProvider.notifier).state = userProfile!;
+                    setState(() {
+                      myController.text = userProfile.nickname;
+                    });
                   }
                 },
                 child: RadiusTextButton(

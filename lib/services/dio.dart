@@ -125,7 +125,7 @@ class DioService{
     }
   }
 
-  static Future<bool> uploadProfileInfo(String filePath, String name, String token) async {
+  static Future<bool> putProfileInfo(String filePath, String name, String token) async {
     try {
 
       if(filePath == ""){
@@ -162,6 +162,36 @@ class DioService{
       return false;
     }
   }
+
+  static Future<bool> putProfileName(String name, String token) async {
+    try {
+
+      if(name == ""){
+        throw new Exception("이름이 없습니다.");
+      }
+
+      // 파일 경로를 통해 formData 생성
+      var dio = Dio();
+      dio.options.headers = {
+        "Authorization": "Bearer $token",
+      };
+
+      // 업로드 요청
+      final response = await dio.put(baseUri + 'member/profile/name', data: {
+        "nickname": name
+      });
+      if (response.statusCode != 200) {
+        print(await response.statusMessage);
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      print('Error putProfileName: $e');
+      return false;
+    }
+  }
+
   static Future<bool> setCalendarTitle(String title, String token) async {
     try {
 

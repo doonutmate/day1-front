@@ -50,19 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBgOG9iLFM-zeOCeqVhx3z3X3e8x7GKxOg',
-    appId: '1:973256760515:android:c6ad5ddc378699c9501676',
-    messagingSenderId: '973256760515',
-    projectId: 'day1-1891f',
-    storageBucket: 'day1-1891f.appspot.com',
+    apiKey: 'AIzaSyCCAtAUWwGZIvgm5BKgkIqmas2hhF5vQSU',
+    appId: '1:88827143845:android:01a9fc1c871088acec8f4c',
+    messagingSenderId: '88827143845',
+    projectId: 'doonut-e933c',
+    storageBucket: 'doonut-e933c.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCjEQy15eqHF2KZhT-DQLTXJTZpHLsfA7U',
-    appId: '1:973256760515:ios:2fc94c51e2a6dbca501676',
-    messagingSenderId: '973256760515',
-    projectId: 'day1-1891f',
-    storageBucket: 'day1-1891f.appspot.com',
+    apiKey: 'AIzaSyCTuBK2NDEnJVhQKFCybUj_TMJjnWz888I',
+    appId: '1:88827143845:ios:45a21b22ea012463ec8f4c',
+    messagingSenderId: '88827143845',
+    projectId: 'doonut-e933c',
+    storageBucket: 'doonut-e933c.appspot.com',
     iosBundleId: 'com.doonut.Day1',
   );
+
 }

@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "973256760515",
-    "project_id": "day1-1891f",
-    "storage_bucket": "day1-1891f.appspot.com"
+    "project_number": "88827143845",
+    "project_id": "doonut-e933c",
+    "storage_bucket": "doonut-e933c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:973256760515:android:c6ad5ddc378699c9501676",
+        "mobilesdk_app_id": "1:88827143845:android:01a9fc1c871088acec8f4c",
         "android_client_info": {
           "package_name": "com.example.day1"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBgOG9iLFM-zeOCeqVhx3z3X3e8x7GKxOg"
+          "current_key": "AIzaSyCCAtAUWwGZIvgm5BKgkIqmas2hhF5vQSU"
         }
       ],
       "services": {

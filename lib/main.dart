@@ -12,6 +12,7 @@ import 'package:day1/services/app_database.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:day1/services/server_token_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -19,6 +20,7 @@ import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
 import 'dart:async';
 import 'package:uni_links/uni_links.dart';
 import 'firebase_options.dart';
+
 
 class MyHttpOverrides extends HttpOverrides{
   @override

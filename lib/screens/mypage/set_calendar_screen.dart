@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:day1/providers/calendar_title_provider.dart';
 import 'package:day1/services/dio.dart';
+import 'package:day1/widgets/organisms/error_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants/colors.dart';
