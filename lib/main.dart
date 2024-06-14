@@ -10,10 +10,12 @@ import 'package:day1/screens/mypage/withdraw_screen.dart';
 import 'package:day1/screens/s_main.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/auth_service.dart';
+import 'package:day1/services/pushnotification.dart';
 import 'package:day1/services/server_token_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
@@ -21,6 +23,26 @@ import 'dart:async';
 import 'package:uni_links/uni_links.dart';
 import 'firebase_options.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  if(message.notification != null){
+    print(message.notification!.title);
+  }
+}
+
+Future<void> setupInteractedMessage() async {
+  RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+  /*if(initialMessage != null){
+    _handleMessage(initialMessage);
+  }*/
+  FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+}
+
+void _handleMessage(RemoteMessage message){
+  Future.delayed(const Duration(seconds: 1), (){
+    navigatorKey.currentState!.pushNamed("/camera");
+  });
+}
 
 class MyHttpOverrides extends HttpOverrides{
   @override
@@ -29,6 +51,7 @@ class MyHttpOverrides extends HttpOverrides{
       ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
   }
 }
+final navigatorKey = GlobalKey<NavigatorState>();
 
 late List<CameraDescription> cameras;
 
@@ -67,6 +90,33 @@ Future<void> main() async {
     nativeAppKey: '96d13b457170f00f736d874770b66f84',
     javaScriptAppKey: '27d258fa70f6d2fd19c92fe135ed0bda',
   );
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+
+  PushNotification.init();
+
+  PushNotification.localNotiInit();
+
+  //앱이 종료 상태일 때, 푸시 처리
+  await FirebaseMessaging.instance.getInitialMessage();
+
+  // 앱이 백그라운드 상태일 때, 푸시 처리
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    /*print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');*/
+
+    if (message.notification != null) {
+      /*print('Message also contained a notification: ${message.notification}');*/
+      PushNotification.showSimpleNotification(title: message.notification!.title!, body: message.notification!.body!);
+    }
+  });
 
 
   // ProviderScope 이하의 위젯에서 provider 사용 가능
@@ -108,6 +158,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
 
       //기본 폰트 설정

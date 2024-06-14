@@ -128,14 +128,14 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
       // 사진 촬영
       final file = await controller.takePicture();
 
-      // 이미지 용량 압축
+      /*// 이미지 용량 압축
       final XFile? _reduceFile;
-      _reduceFile = await compressFile(file);
+      _reduceFile = await compressFile(file);*/
 
       // 이미지를 카메라 화면에 맞게 crop
       final File cropFile;
-      if (_reduceFile != null) {
-        cropFile = await cropImage(_reduceFile);
+      if (file != null) {
+        cropFile = await cropImage(file);
 
         //  changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
         DateTime today = DateTime.now();
