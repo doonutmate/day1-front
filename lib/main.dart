@@ -2,6 +2,9 @@ import 'package:camera/camera.dart';
 import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/community_screen.dart';
 import 'package:day1/screens/login/login.dart';
+
+import 'package:day1/screens/login/permision.dart';
+
 import 'package:day1/screens/mypage/change_profile_screen.dart';
 import 'package:day1/screens/mypage/set_calendar_screen.dart';
 import 'package:day1/screens/mypage/set_notification_screen.dart';
@@ -9,16 +12,54 @@ import 'package:day1/screens/mypage/withdraw_screen.dart';
 import 'package:day1/screens/s_main.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/auth_service.dart';
+import 'package:day1/services/pushnotification.dart';
 import 'package:day1/services/server_token_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:uni_links/uni_links.dart';
 import 'firebase_options.dart';
+
+
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  if(message.notification != null){
+    print(message.notification!.title);
+  }
+}
+
+Future<void> setupInteractedMessage() async {
+  RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+  /*if(initialMessage != null){
+    _handleMessage(initialMessage);
+  }*/
+  FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+}
+
+void _handleMessage(RemoteMessage message){
+  Future.delayed(const Duration(seconds: 1), (){
+    navigatorKey.currentState!.pushNamed("/camera");
+  });
+}
+
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
+final navigatorKey = GlobalKey<NavigatorState>();
 
 late List<CameraDescription> cameras;
 
@@ -31,9 +72,13 @@ class MyHttpOverrides extends HttpOverrides {
 }
 
 Future<void> main() async {
+  String _authStatus = 'Unknown';
+
   // 다음에 호출되는 함수 모두 실행 끝날 때까지 기다림
   WidgetsFlutterBinding.ensureInitialized();
-  
+
+  HttpOverrides.global = MyHttpOverrides();
+
   //언어 설정을 위한 함수 실행
   await initializeDateFormatting();
 
@@ -41,6 +86,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
 
   // 기기에서 사용 가능한 카메라 목록 불러오기
   cameras = await availableCameras();
@@ -65,6 +111,37 @@ Future<void> main() async {
 
   // HTTP Overrides 설정
   HttpOverrides.global = MyHttpOverrides();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+
+  PushNotification.init();
+
+  PushNotification.localNotiInit();
+
+  //앱이 종료 상태일 때, 푸시 처리
+  await FirebaseMessaging.instance.getInitialMessage();
+
+  // 앱이 백그라운드 상태일 때, 푸시 처리
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
+
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification}');
+      PushNotification.showSimpleNotification(title: message.notification!.title!, body: message.notification!.body!);
+    }
+  });
+
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.appTrackingTransparency,
+  ].request();
+
 
   // ProviderScope 이하의 위젯에서 provider 사용 가능
   runApp(ProviderScope(child: MyApp(initialUrl: initialUrl)));
@@ -73,6 +150,7 @@ Future<void> main() async {
 class MyApp extends ConsumerWidget {
   final String? initialUrl;
   String? token;
+
   MyApp({super.key, this.initialUrl});
 
   // 앱내 저장소에서 저장된 토큰을 가져오고 프로바이더에 저장 후 카카오 로그인 유효한지 확인
@@ -104,6 +182,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
 
       //기본 폰트 설정
@@ -118,11 +197,12 @@ class MyApp extends ConsumerWidget {
             if (snapshot.hasData && snapshot.data == true) {
               return CameraScreen(cameras);
             } else {
-              return LoginScreen();
+              return Permision();
             }
           }),
       routes: {
         '/login': (context) => LoginScreen(),
+        '/permision': (context) => Permision(),
         '/main': (context) => MainScreen(),
         '/camera': (context) => CameraScreen(cameras),
         '/withdraw': (context) => WithdrawScreen(),
@@ -133,3 +213,4 @@ class MyApp extends ConsumerWidget {
     );
   }
 }
+

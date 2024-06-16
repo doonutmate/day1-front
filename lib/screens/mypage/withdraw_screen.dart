@@ -125,8 +125,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
                               if(tokenInfo.oauthType == "KAKAO"){
                                 // 서버에 회원 탈퇴 이유 전송
-                                await DioService.signOutDay1(
+                                String? response = await DioService.signOutDay1(
                                     tokenInfo.oauthType, "", tokenInfo.accessToken, submitReasonText);
+                                if(response != null){
+                                  DioService.showErrorPopup(context, response);
+                                  return;
+                                }
                               }
                               else{
                                 AuthorizationCredentialAppleID? appleToken = await AuthService.signInWithApple();
@@ -134,8 +138,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                   if(appleToken.authorizationCode != null){
 
                                     // 서버에 회원 탈퇴 이유 전송
-                                    await DioService.signOutDay1(
+                                    String? response = await DioService.signOutDay1(
                                         tokenInfo.oauthType, appleToken.authorizationCode, tokenInfo.accessToken, submitReasonText);
+                                    if(response != null){
+                                      DioService.showErrorPopup(context, response);
+                                      return;
+                                    }
                                   }
                                 }
                               }
