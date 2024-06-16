@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:day1/constants/colors.dart';
 import 'package:day1/providers/calendar_title_provider.dart';
+
 import 'package:day1/widgets/atoms/flash_change_button.dart';
 import 'package:day1/widgets/atoms/flip_button.dart';
 import 'package:day1/widgets/atoms/reshoot_text_button.dart';
@@ -147,6 +148,13 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
       final File cropFile;
       if (file != null) {
         cropFile = await cropImage(file);
+
+        //  changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
+        DateTime today = DateTime.now();
+        pictureDay = DateFormat("yyyy.MM.dd").format(today) + "일";
+        pictureDayOfWeek = "(" + DateFormat('E', 'ko_KR').format(today) + ")";
+        pictureAMPM = DateFormat('aa', 'ko_KR').format(today) == "AM" ? "오전" : "오후";
+        pictureTime = DateFormat('hh:mm').format(today);
 
         //  changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
         DateTime today = DateTime.now();

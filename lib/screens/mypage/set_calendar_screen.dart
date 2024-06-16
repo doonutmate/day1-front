@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'package:day1/providers/calendar_title_provider.dart';
 import 'package:day1/services/dio.dart';
@@ -23,16 +24,20 @@ class _SetCalendarScreenState extends ConsumerState<SetCalendarScreen> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   late FocusNode focusNode;
   bool isError = false;
+
   String? token;
+
   String currentText = "";
 
   @override
   void initState() {
+
     super.initState();
     token = ref.read(ServerTokenProvider.notifier).getServerToken();
     currentText = ref.read(calendarTitleProvider.notifier).state ?? "";
     myController = TextEditingController();
     focusNode = FocusNode();
+
 
 
 
@@ -73,7 +78,9 @@ class _SetCalendarScreenState extends ConsumerState<SetCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     myController.text = currentText;
+
     return GestureDetector(
       onTap: (){
         FocusScope.of(context).unfocus();
@@ -114,6 +121,7 @@ class _SetCalendarScreenState extends ConsumerState<SetCalendarScreen> {
               ),
               Spacer(),
               GestureDetector(
+
                 onTap: () async {
                   if(isError != true){
                     if(token != null){

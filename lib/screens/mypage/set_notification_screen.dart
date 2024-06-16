@@ -1,7 +1,9 @@
 import 'package:day1/constants/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
 import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:intl/intl.dart';
 
 import '../../constants/size.dart';
@@ -25,6 +27,7 @@ class _SetNotificationScreenState extends State<SetNotificationScreen> {
     //추후에 앱데이터베이스에 저장된 값이 있으면 저장된 값 저장하고, 없으면 오늘 날짜 집어넣는 로직 추가
     changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
   }
+
   
   void showToast(){
     Fluttertoast.showToast(
@@ -35,6 +38,7 @@ class _SetNotificationScreenState extends State<SetNotificationScreen> {
       fontSize: cameraScreenAppBarTextSize,
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +140,9 @@ class _SetNotificationScreenState extends State<SetNotificationScreen> {
                         isMarketing = value;
                         //추후에 앱데이터베이스에 동의 유무 및 날짜 저장하는 로직 추가
                         changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
+
                         showToast();
+
                       }
 
                   });

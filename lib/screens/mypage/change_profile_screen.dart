@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:day1/constants/colors.dart';
@@ -9,10 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../constants/size.dart';
+
 import '../../models/token_information.dart';
 import '../../models/user_profile.dart';
 import '../../providers/user_profile_provider.dart';
 import '../../services/server_token_provider.dart';
+
 
 class ChangeProfileScreen extends ConsumerStatefulWidget {
   const ChangeProfileScreen({super.key});
@@ -49,6 +52,7 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
   void initState() {
     super.initState();
     myController = TextEditingController();
+
     token = ref.read(ServerTokenProvider.notifier).getServerToken();
     final userProfile = ref.read(userProfileProvider); //사용자 프로필 구독
     focusNode = FocusNode();
