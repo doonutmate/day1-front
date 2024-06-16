@@ -40,7 +40,15 @@ class CustomBottomNavigationBar extends StatelessWidget {
                   label: '캘린더',
                 ),
                 BottomNavigationBarItem(
-                  icon: selectedIndex == 1 ? SvgPicture.asset("assets/icons/active_profile_tab.svg") : SvgPicture.asset("assets/icons/inactive_profile_tab.svg"),
+                  icon: SvgPicture.asset("assets/icons/inactive_camera_tab.svg"),
+                  label: '카메라',
+                ),
+                BottomNavigationBarItem(
+                  icon: selectedIndex == 2 ? SvgPicture.asset("assets/icons/active_community_tab.svg") : SvgPicture.asset("assets/icons/inactive_community_tab.svg"),
+                  label: '커뮤니티',
+                ),
+                BottomNavigationBarItem(
+                  icon: selectedIndex == 3 ? SvgPicture.asset("assets/icons/active_profile_tab.svg") : SvgPicture.asset("assets/icons/inactive_profile_tab.svg"),
                   label: '마이페이지',
                 ),
               ],
@@ -50,18 +58,15 @@ class CustomBottomNavigationBar extends StatelessWidget {
               unselectedItemColor: gray500,
               selectedFontSize: 12,
               unselectedFontSize: 12,
-              onTap: onTap, // 선언했던 onItemTapped
+              onTap: (index) {
+                if (index == 1) {
+                  // 카메라 버튼을 누르면 카메라 화면으로 이동
+                  Navigator.of(context, rootNavigator: true).pushNamed("/camera");
+                } else {
+                  onTap(index);
+                }
+              }, // 선언했던 onItemTapped
             ),
-          ),
-        ),
-        Positioned(
-          top: -32,
-          child: GestureDetector(
-            onTap: (){
-              Navigator.of(context)
-                  .pushNamed("/camera");
-            },
-            child: SvgPicture.asset("assets/icons/camera.svg"),
           ),
         ),
       ],

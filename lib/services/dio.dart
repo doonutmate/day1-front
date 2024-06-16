@@ -7,7 +7,7 @@ import 'package:dio/dio.dart';
 // Dio라이브러리를 통한 HTTP 통신용 클래스
 class DioService{
   //기본 주소
-  static const String baseUri = "https://prod.doonut.site/";
+  static const String baseUri = "https://dev.doonut.site/";
 
   static Future<void> signOutDay1(String oauthType, String? appleToken, String? accessToken, String reason) async{
     try{

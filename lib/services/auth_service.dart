@@ -58,6 +58,10 @@ class AuthService {
         print('카카오톡으로 로그인 성공');
         // Navigator.pushNamed(context, '/camera');
         // 백엔드로 토큰 전송
+        if (token != null) {
+          await AppDataBase.setToken(token.accessToken);
+          print('토큰 저장 성공: ${token.accessToken}');
+        }
         return token; // 토큰 반환
       } catch (error) {
         print('카카오톡으로 로그인 실패 $error');
@@ -77,6 +81,10 @@ class AuthService {
         // OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
         // await UserApi.instance.loginWithKakaoAccount();
         print('카카오계정으로 로그인 성공');
+        if (token != null) {
+          await AppDataBase.setToken(token.accessToken);
+        }
+        print('토큰 저장 성공: ${token.accessToken}');
         return token;
       } catch (error) {
         print('카카오계정으로 로그인 실패 $error');

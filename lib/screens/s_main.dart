@@ -1,11 +1,15 @@
 import 'package:day1/constants/colors.dart';
 import 'package:day1/screens/calendar_screen.dart';
+import 'package:day1/screens/camera/camera.dart';
+import 'package:day1/screens/community_screen.dart';
 import 'package:day1/screens/mypage/my_page_screen.dart';
 import 'package:day1/services/device_size_provider.dart';
 import 'package:day1/widgets/molecules/custom_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_file.dart';
+
+import '../main.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -20,6 +24,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   final List<Widget> _widgetOptions = <Widget>[
     CalendarScreen(),
+    CameraScreen(cameras),
+    CommunityScreen(),
     MyPageScreen()
   ]; // 2개의 페이지를 연결할 예정이므로 2개의 페이지를 여기서 지정해준다. 탭 레이아웃은 2개.
 

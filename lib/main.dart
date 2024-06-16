@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:day1/screens/camera/camera.dart';
+import 'package:day1/screens/community_screen.dart';
 import 'package:day1/screens/login/login.dart';
 import 'package:day1/screens/mypage/change_profile_screen.dart';
 import 'package:day1/screens/mypage/set_calendar_screen.dart';
@@ -15,23 +16,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
 import 'dart:async';
+import 'dart:io';
 import 'package:uni_links/uni_links.dart';
 import 'firebase_options.dart';
 
 late List<CameraDescription> cameras;
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 Future<void> main() async {
   // 다음에 호출되는 함수 모두 실행 끝날 때까지 기다림
   WidgetsFlutterBinding.ensureInitialized();
-
+  
   //언어 설정을 위한 함수 실행
   await initializeDateFormatting();
 
-  //firbase 초기화
+  // Firebase 초기화
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
 
   // 기기에서 사용 가능한 카메라 목록 불러오기
   cameras = await availableCameras();
@@ -54,9 +63,11 @@ Future<void> main() async {
     javaScriptAppKey: '27d258fa70f6d2fd19c92fe135ed0bda',
   );
 
+  // HTTP Overrides 설정
+  HttpOverrides.global = MyHttpOverrides();
 
   // ProviderScope 이하의 위젯에서 provider 사용 가능
-  runApp(ProviderScope(child : MyApp(initialUrl: initialUrl)));
+  runApp(ProviderScope(child: MyApp(initialUrl: initialUrl)));
 }
 
 class MyApp extends ConsumerWidget {
@@ -65,7 +76,7 @@ class MyApp extends ConsumerWidget {
   MyApp({super.key, this.initialUrl});
 
   // 앱내 저장소에서 저장된 토큰을 가져오고 프로바이더에 저장 후 카카오 로그인 유효한지 확인
-  Future<bool> getToken(ServerTokenStateNotifier provider) async{
+  Future<bool> getToken(ServerTokenStateNotifier provider) async {
     bool isKaKao = false;
     bool isServerToken = false;
     bool result = false;
@@ -80,10 +91,9 @@ class MyApp extends ConsumerWidget {
     // 카카오 로그인 확인은 부차적으로 확인해주고 사실상 서버 토큰이 있는지가 중요
     result = isKaKao || isServerToken;
 
-    if(result == true){
+    if (result == true) {
       provider.setServerToken(token);
-    }
-    else{
+    } else {
       AppDataBase.clearToken();
     }
 
@@ -106,7 +116,7 @@ class MyApp extends ConsumerWidget {
           future: getToken(tokenProvider),
           builder: (context, AsyncSnapshot<bool> snapshot) {
             if (snapshot.hasData && snapshot.data == true) {
-                return CameraScreen(cameras);
+              return CameraScreen(cameras);
             } else {
               return LoginScreen();
             }
@@ -115,12 +125,11 @@ class MyApp extends ConsumerWidget {
         '/login': (context) => LoginScreen(),
         '/main': (context) => MainScreen(),
         '/camera': (context) => CameraScreen(cameras),
-        '/withdraw' : (context) => WithdrawScreen(),
-        '/changeprofile' : (context) => ChangeProfileScreen(),
-        '/setcalendar' : (context) => SetCalendarScreen(),
-        '/setnotification' : (context) => SetNotificationScreen(),
+        '/withdraw': (context) => WithdrawScreen(),
+        '/changeprofile': (context) => ChangeProfileScreen(),
+        '/setcalendar': (context) => SetCalendarScreen(),
+        '/setnotification': (context) => SetNotificationScreen(),
       },
     );
   }
 }
-
