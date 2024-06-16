@@ -202,10 +202,18 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
                     Map<String, dynamic> tokenMap = jsonDecode(token!);
                     TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
                     if(pickedFile != null){
-                      await DioService.putProfileInfo(pickedFile!.path , myController.text, tokenInfo.accessToken);
+                      String? response = await DioService.putProfileInfo(pickedFile!.path , myController.text, tokenInfo.accessToken);
+                      if(response != null){
+                        DioService.showErrorPopup(context, response);
+                        return;
+                      }
                     }
                     else{
-                      await DioService.putProfileName(myController.text, tokenInfo.accessToken);
+                     String? response =  await DioService.putProfileName(myController.text, tokenInfo.accessToken);
+                     if(response != null){
+                       DioService.showErrorPopup(context, response);
+                       return;
+                     }
                     }
                     final userProfile = await fetchUserProfile(tokenInfo.accessToken);
                     ref.read(userProfileProvider.notifier).state = userProfile!;

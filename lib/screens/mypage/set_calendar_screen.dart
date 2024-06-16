@@ -114,13 +114,18 @@ class _SetCalendarScreenState extends ConsumerState<SetCalendarScreen> {
               ),
               Spacer(),
               GestureDetector(
-                onTap: (){
+                onTap: () async {
                   if(isError != true){
                     if(token != null){
                       Map<String, dynamic> tokenMap = jsonDecode(token!);
                       TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
-                      DioService.setCalendarTitle(myController.text, tokenInfo.accessToken);
-                      ref.watch(calendarTitleProvider.notifier).state = myController.text;
+                      String? response = await DioService.setCalendarTitle(myController.text, tokenInfo.accessToken);
+                      if(response != null){
+                        DioService.showErrorPopup(context, response);
+                      }
+                      else{
+                        ref.watch(calendarTitleProvider.notifier).state = myController.text;
+                      }
                     }
 
                   }

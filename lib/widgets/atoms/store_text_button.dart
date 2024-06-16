@@ -31,14 +31,18 @@ class StoreTextButton extends ConsumerWidget {
             Map<String, dynamic> tokenMap = jsonDecode(token);
             // calendar headermargin 크기
             TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
-            bool uploadResult = await DioService.uploadImage(
+            String? response = await DioService.uploadImage(
                 parent!.responseImage!, tokenInfo.accessToken);
             //이미지 업로드가 정상적으로 수행됐을 때 달력화면으로 전환
-            if (uploadResult) {
+            if (response == null) {
               Navigator.pushReplacementNamed(context, '/main');
-            } else {
-              Navigator.pushNamedAndRemoveUntil(
-                  context, '/login', (route) => false);
+            }
+            else {
+              DioService.showErrorPopup(context, response, navigate: (){
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/login', (route) => false);
+              });
+              ;
             }
           }
         }

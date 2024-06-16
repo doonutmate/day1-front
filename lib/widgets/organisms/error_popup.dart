@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class ErrorPopup extends StatelessWidget {
   String errorMassage;
-  ErrorPopup({required this.errorMassage, super.key});
+  VoidCallback? navigate;
+  ErrorPopup({required this.errorMassage, this.navigate, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +41,9 @@ class ErrorPopup extends StatelessWidget {
           GestureDetector(
             onTap: (){
               Navigator.pop(context);
+              if(navigate != null){
+                navigate!();
+              }
             },
             child: RadiusTextButton(
               width: 140,

@@ -2,7 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
+
+import '../widgets/organisms/error_popup.dart';
 
 
 // GET http://43.201.170.13:8081/challenge?year=2024&month=10
@@ -14,7 +18,7 @@ class DioService{
   //기본 주소
   static const String baseUri = "https://dev.doonut.site/";
 
-  static Future<void> signOutDay1(String oauthType, String? appleToken, String? accessToken, String reason) async{
+  static Future<String?> signOutDay1(String oauthType, String? appleToken, String? accessToken, String reason) async{
     try{
       var dio = Dio();
       dio.options.headers = {
@@ -39,10 +43,26 @@ class DioService{
       var response = await dio.delete(baseUri + "member",data:_data);
       if(response.statusCode != 200){
         print("서버통신 에러");
+        if(response.statusCode! >= 500){
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          return response.data["message"];
+        }
       }
+      return null;
     }
-    catch(e){
-      print(e);
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = e.response!.data["message"];
+        }
+        return errorMessage;
+      }
     }
   }
 
@@ -57,18 +77,27 @@ class DioService{
           return response.data;
         }
         else{
-          return null;
+          return "Error" + response.data["message"];
         }
       }
     }
-    catch (e){
-      print(e);
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = "Error" + e.response!.data["message"];
+        }
+        return errorMessage;
+      }
     }
 
   }
 
   //서버로 이미지 업로드 하는 함수
-  static Future<bool> uploadImage(File file, String token) async {
+  static Future<String?> uploadImage(File file, String token) async {
     try {
 
       // 파일 크기 확인 코드
@@ -91,18 +120,32 @@ class DioService{
       final response = await dio.post(baseUri + 'image-upload', data: formData);
       if (response.statusCode != 200) {
         print(await response.statusMessage);
-        return false;
+        if(response.statusCode! >= 500){
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          return response.data["message"];
+        }
       }
 
-      return true;
-    } catch (e) {
-      print('Error taking picture: $e');
-      return false;
+      return null;
+    }
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = e.response!.data["message"];
+        }
+        return errorMessage;
+      }
     }
   }
 
   //서버에서 캘린더에 표시할 이미지 받는 함수
-  static Future<List<dynamic>?> getImageList(int year, int month, String token) async {
+  static Future<dynamic> getImageList(int year, int month, String token) async {
     try{
       var dio = Dio();
       //get header 설정
@@ -114,18 +157,26 @@ class DioService{
       );
       if (response.statusCode != 200) {
         print(await response.statusMessage);
-        return null;
+        return "Error" + response.data["message"];
       }
       List<dynamic> responseList = response.data;
       return responseList;
     }
-    catch(e){
-      print(e);
-      return null;
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = "Error" + e.response!.data["message"];
+        }
+        return errorMessage;
+      }
     }
   }
 
-  static Future<bool> putProfileInfo(String filePath, String name, String token) async {
+  static Future<String?> putProfileInfo(String filePath, String name, String token) async {
     try {
 
       if(filePath == ""){
@@ -153,17 +204,31 @@ class DioService{
       final response = await dio.put(baseUri + 'member/profile', data: formData);
       if (response.statusCode != 200) {
         print(await response.statusMessage);
-        return false;
+        if(response.statusCode! >= 500){
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          return response.data["message"];
+        }
       }
 
-      return true;
-    } catch (e) {
-      print('Error uploadProfileInfo: $e');
-      return false;
+      return null;
+    }
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = e.response!.data["message"];
+        }
+        return errorMessage;
+      }
     }
   }
 
-  static Future<bool> putProfileName(String name, String token) async {
+  static Future<String?> putProfileName(String name, String token) async {
     try {
 
       if(name == ""){
@@ -182,17 +247,31 @@ class DioService{
       });
       if (response.statusCode != 200) {
         print(await response.statusMessage);
-        return false;
+        if(response.statusCode! >= 500){
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          return response.data["message"];
+        }
       }
 
-      return true;
-    } catch (e) {
-      print('Error putProfileName: $e');
-      return false;
+      return null;
+    }
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = e.response!.data["message"];
+        }
+        return errorMessage;
+      }
     }
   }
 
-  static Future<bool> setCalendarTitle(String title, String token) async {
+  static Future<String?> setCalendarTitle(String title, String token) async {
     try {
 
       // 파일 경로를 통해 formData 생성
@@ -205,13 +284,26 @@ class DioService{
       final response = await dio.put(baseUri + 'calendars/profile', data: {"title": title});
       if (response.statusCode != 200) {
         print(await response.statusMessage);
-        return false;
+        if(response.statusCode! >= 500){
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          return response.data["message"];
+        }
       }
-
-      return true;
-    } catch (e) {
-      print('Error taking picture: $e');
-      return false;
+      return null;
+    }
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = e.response!.data["message"];
+        }
+        return errorMessage;
+      }
     }
   }
   static Future<String?> getCalendarTitle(String token) async {
@@ -226,14 +318,31 @@ class DioService{
       );
       if (response.statusCode != 200) {
         print(await response.statusMessage);
-        return null;
+        return "Error" + response.data["message"];
       }
       String title = response.data["title"];
       return title;
     }
-    catch(e){
-      print(e);
-      return null;
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = "Error" + e.response!.data["message"];
+        }
+        return errorMessage;
+      }
     }
+  }
+
+  static void showErrorPopup(BuildContext context, String msg, {VoidCallback? navigate}){
+    showDialog(context: context, builder: (BuildContext context){
+      return AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: ErrorPopup(errorMassage: msg, navigate: navigate,),
+      );
+    });
   }
 }

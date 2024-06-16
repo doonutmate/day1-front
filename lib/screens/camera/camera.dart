@@ -25,6 +25,7 @@ import '../../services/dio.dart';
 import '../../services/server_token_provider.dart';
 import '../../widgets/atoms/cancel_text_button.dart';
 import '../../widgets/atoms/day1_camera.dart';
+import '../../widgets/organisms/error_popup.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   final List<CameraDescription> cameras;
@@ -62,14 +63,24 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         ref.read(userProfileProvider.notifier).state = userProfile;
 
         String? titleMap = await DioService.getCalendarTitle(tokenInfo.accessToken);
-        String title = userProfile.nickname + "님 캘린더";
-        if( titleMap == null){
-          DioService.setCalendarTitle(title, tokenInfo.accessToken);
-          ref.read(calendarTitleProvider.notifier).state = title;
+        if(titleMap!.contains("Error")){
+          DioService.showErrorPopup(context, titleMap.replaceFirst("Error", ""));
         }
         else{
-          ref.read(calendarTitleProvider.notifier).state = titleMap;
+          String title = userProfile.nickname + "님 캘린더";
+          if( titleMap == null){
+            String? response = await DioService.setCalendarTitle(title, tokenInfo.accessToken);
+            if(null != response){
+              DioService.showErrorPopup(context, response);
+            }
+            else{
+              ref.read(calendarTitleProvider.notifier).state = title;
+            }
+          }
+          else{
+            ref.read(calendarTitleProvider.notifier).state = titleMap;
 
+          }
         }
       }
     });
