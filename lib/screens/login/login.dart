@@ -110,17 +110,25 @@ class LoginScreen extends ConsumerWidget {
                   if (appleToken?.identityToken != null) {
                     dynamic response = await DioService.sendAppleTokenToServer(
                         appleToken!.identityToken!);
-                    //response map 데이터를 TokenInformation 모델 클래스로 변환
-                    TokenInformation tokenInfo = new TokenInformation(
-                        accessToken: response["accessToken"],
-                        oauthType: response["oauthType"]);
-                    //acesstoken, oauthType map 자료 json string으로 인코딩
-                    String json = jsonEncode(tokenInfo);
-                    //서버 토큰을 앱 내부 저장소에 저장
-                    AppDataBase.setToken(json);
-                    //provider에 서버 토큰 저장
-                    oauthProvider.setServerToken(json);
-                    Navigator.pushNamed(context, '/camera');
+                    if(response.toString().contains("Error")){
+                      DioService.showErrorPopup(context, response.toString().replaceFirst("Error", ""), navigate: (){
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/login', (route) => false);
+                      });
+                    }
+                    else{
+                      //response map 데이터를 TokenInformation 모델 클래스로 변환
+                      TokenInformation tokenInfo = new TokenInformation(
+                          accessToken: response["accessToken"],
+                          oauthType: response["oauthType"]);
+                      //acesstoken, oauthType map 자료 json string으로 인코딩
+                      String json = jsonEncode(tokenInfo);
+                      //서버 토큰을 앱 내부 저장소에 저장
+                      AppDataBase.setToken(json);
+                      //provider에 서버 토큰 저장
+                      oauthProvider.setServerToken(json);
+                      Navigator.pushNamed(context, '/camera');
+                    }
                   }
                 }),
               ),

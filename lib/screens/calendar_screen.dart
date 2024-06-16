@@ -38,6 +38,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Future<void> getCalendarImage(int year, int month) async {
     //provider에서 서버 토큰 정보 get
     String? token = ref.read(ServerTokenProvider.notifier).getServerToken();
+    List<dynamic>? responseList;
 
     _year = year;
     _month = month;
@@ -49,7 +50,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       //Map 데이터를 모델클래스로 컨버팅
       TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
       // 캘린더 api 함수
-      List<dynamic>? responseList = await DioService.getImageList(year, month, tokenInfo.accessToken);
+      var response = await DioService.getImageList(year, month, tokenInfo.accessToken);
+      if(response.toString().contains("Error")){
+        DioService.showErrorPopup(context, response.replaceFirst("Error", ""));
+      }
+      else{
+        responseList = response;
+      }
       //responseList가 null일 경우 재로그인
       if(responseList == null){
         AppDataBase.clearToken();

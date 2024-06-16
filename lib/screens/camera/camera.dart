@@ -1,34 +1,46 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:day1/constants/colors.dart';
+import 'package:day1/providers/calendar_title_provider.dart';
+
 import 'package:day1/widgets/atoms/flash_change_button.dart';
 import 'package:day1/widgets/atoms/flip_button.dart';
 import 'package:day1/widgets/atoms/reshoot_text_button.dart';
 import 'package:day1/widgets/atoms/shutter_button.dart';
 import 'package:day1/widgets/atoms/store_text_button.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import '../../constants/size.dart';
+import '../../models/token_information.dart';
+import '../../models/user_profile.dart';
+import '../../providers/user_profile_provider.dart';
+import '../../services/dio.dart';
+import '../../services/server_token_provider.dart';
 import '../../widgets/atoms/cancel_text_button.dart';
 import '../../widgets/atoms/day1_camera.dart';
+import '../../widgets/organisms/error_popup.dart';
 
-class CameraScreen extends StatefulWidget {
+class CameraScreen extends ConsumerStatefulWidget {
   final List<CameraDescription> cameras;
 
   const CameraScreen(List<CameraDescription> this.cameras, {super.key});
 
   @override
-  State<CameraScreen> createState() => CameraScreenState();
+  ConsumerState<CameraScreen> createState() => CameraScreenState();
 }
 
-class CameraScreenState extends State<CameraScreen> {
+class CameraScreenState extends ConsumerState<CameraScreen> {
   late CameraController controller;
   late Future<void> _initializeControllerFuture;
+  String? token;
   String formatDate = "";
   String pictureDay = "";
   String pictureDayOfWeek = "";
@@ -41,6 +53,38 @@ class CameraScreenState extends State<CameraScreen> {
   void initState() {
     super.initState();
     setCamera(isFrontCamera);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      token = ref.read(ServerTokenProvider.notifier).getServerToken();
+
+      if(token != null){
+        Map<String, dynamic> tokenMap = jsonDecode(token!);
+        TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
+
+        final userProfile = await fetchUserProfile(tokenInfo.accessToken);
+        ref.read(userProfileProvider.notifier).state = userProfile;
+
+        String? titleMap = await DioService.getCalendarTitle(tokenInfo.accessToken);
+        if(titleMap!.contains("Error")){
+          DioService.showErrorPopup(context, titleMap.replaceFirst("Error", ""));
+        }
+        else{
+          String title = userProfile.nickname + "님 캘린더";
+          if( titleMap == null){
+            String? response = await DioService.setCalendarTitle(title, tokenInfo.accessToken);
+            if(null != response){
+              DioService.showErrorPopup(context, response);
+            }
+            else{
+              ref.read(calendarTitleProvider.notifier).state = title;
+            }
+          }
+          else{
+            ref.read(calendarTitleProvider.notifier).state = titleMap;
+
+          }
+        }
+      }
+    });
   }
 
   @override
@@ -96,14 +140,21 @@ class CameraScreenState extends State<CameraScreen> {
       // 사진 촬영
       final file = await controller.takePicture();
 
-      // 이미지 용량 압축
+      /*// 이미지 용량 압축
       final XFile? _reduceFile;
-      _reduceFile = await compressFile(file);
+      _reduceFile = await compressFile(file);*/
 
       // 이미지를 카메라 화면에 맞게 crop
       final File cropFile;
-      if (_reduceFile != null) {
-        cropFile = await cropImage(_reduceFile);
+      if (file != null) {
+        cropFile = await cropImage(file);
+
+        //  changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
+        DateTime today = DateTime.now();
+        pictureDay = DateFormat("yyyy.MM.dd").format(today) + "일";
+        pictureDayOfWeek = "(" + DateFormat('E', 'ko_KR').format(today) + ")";
+        pictureAMPM = DateFormat('aa', 'ko_KR').format(today) == "AM" ? "오전" : "오후";
+        pictureTime = DateFormat('hh:mm').format(today);
 
         //  changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
         DateTime today = DateTime.now();
