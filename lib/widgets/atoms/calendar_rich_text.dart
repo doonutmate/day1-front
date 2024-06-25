@@ -5,9 +5,11 @@ import '../../constants/size.dart';
 
 class CalendarRichText extends StatelessWidget {
   int recordNum;
+  String? title;
 
   CalendarRichText({
     required this.recordNum,
+    required this.title,
     super.key,
   });
 
@@ -16,13 +18,22 @@ class CalendarRichText extends StatelessWidget {
     return RichText(
         text: TextSpan(children: [
       TextSpan(
-        text: '한 달 동안\n총',
-        style: TextStyle(color: gray900, fontSize: calendarRichTextSize, fontWeight: FontWeight.bold),
+        text: title!,
+        style: TextStyle(
+            color: gray900,
+            fontSize: calendarRichTextSize,
+            fontWeight: FontWeight.bold),
+      ),
+      TextSpan(
+        text: '에\n총',
+        style: TextStyle(
+          color: gray900,
+          fontSize: calendarRichTextSize,
+        ),
       ),
       TextSpan(
         text: ' ${recordNum}번',
         style: TextStyle(
-          fontWeight: FontWeight.bold,
           color: primary,
           fontSize: calendarRichTextSize,
         ),
@@ -32,7 +43,6 @@ class CalendarRichText extends StatelessWidget {
         style: TextStyle(
           color: gray900,
           fontSize: calendarRichTextSize,
-          fontWeight: FontWeight.bold,
         ),
       ),
     ]));

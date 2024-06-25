@@ -1,34 +1,63 @@
+import 'dart:convert';
+
 import 'package:day1/constants/colors.dart';
+import 'package:day1/services/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
 import '../../constants/size.dart';
+import '../../models/token_information.dart';
+import '../../services/server_token_provider.dart';
 
-class SetNotificationScreen extends StatefulWidget {
+class SetNotificationScreen extends ConsumerStatefulWidget {
   const SetNotificationScreen({super.key});
 
   @override
-  State<SetNotificationScreen> createState() => _SetNotificationScreenState();
+  ConsumerState<SetNotificationScreen> createState() =>
+      _SetNotificationScreenState();
 }
 
-class _SetNotificationScreenState extends State<SetNotificationScreen> {
+class _SetNotificationScreenState extends ConsumerState<SetNotificationScreen> {
   bool isService = false;
   bool isNight = false;
   bool isMarketing = false;
-  late String changeDate;
+  String? token;
+  late String accessToken;
+  String changeDate = "";
 
   @override
   void initState() {
     super.initState();
-    //추후에 앱데이터베이스에 저장된 값이 있으면 저장된 값 저장하고, 없으면 오늘 날짜 집어넣는 로직 추가
-    changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      token = ref.read(ServerTokenProvider.notifier).getServerToken();
+      if (token != null) {
+        Map<String, dynamic> tokenMap = jsonDecode(token!);
+        TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
+        accessToken = tokenInfo.accessToken;
+        var response = await DioService.getAlarmConfig(tokenInfo.accessToken);
+        if (response.toString().contains("Error")) {
+          DioService.showErrorPopup(
+              context, response.replaceFirst("Error", ""));
+        } else {
+          changeDate = response.data["marketingReceiveConsentUpdatedAt"] == ""
+              ? DateFormat("yyyy.MM.dd").format(DateTime.now())
+              : response.data["marketingReceiveConsentUpdatedAt"];
+          isService = response.data["serviceAlarm"];
+          isNight = response.data["lateNightAlarm"];
+          isMarketing = response.data["marketingReceiveConsent"];
+        }
+      }
+      setState(() {});
+    });
   }
-  
-  void showToast(){
+
+  void showToast() {
     Fluttertoast.showToast(
-      msg: "마케팅 정보 수신 " + (isMarketing == true ? "동의" : "해제") + " " + changeDate,
+      msg:
+          "마케팅 정보 수신 " + (isMarketing == true ? "동의" : "해제") + " " + changeDate,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: AlertBackGroudColor,
       timeInSecForIosWeb: 3,
@@ -61,22 +90,35 @@ class _SetNotificationScreenState extends State<SetNotificationScreen> {
               minVerticalPadding: 10,
               title: Text(
                 "서비스 알림",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: gray900
-                ),
+                style: TextStyle(fontSize: 16, color: gray900),
               ),
               trailing: CupertinoSwitch(
                 activeColor: primary,
                 value: isService,
-                onChanged: (value){
-                  setState(() {
-                    isService = value;
-                    if(value == false){
+                onChanged: (value) async {
+                  isService = value;
+                  String? response =
+                      await DioService.setServiceAlarm(isService, accessToken);
+                  if (response != null) {
+                    DioService.showErrorPopup(context, response);
+                  } else {
+                    if (value == false) {
                       isNight = value;
-                      isMarketing =value;
+                      isMarketing = value;
+                      String? responseLate = await DioService.setLateNightAlarm(
+                          isNight, accessToken);
+                      if (responseLate != null) {
+                        DioService.showErrorPopup(context, responseLate);
+                      }
+                      String? responseMarketing =
+                          await DioService.setMarketingAlarm(
+                              isMarketing, accessToken);
+                      if (responseMarketing != null) {
+                        DioService.showErrorPopup(context, responseMarketing);
+                      }
                     }
-                  });
+                  }
+                  setState(() {});
                 },
               ),
             ),
@@ -100,12 +142,17 @@ class _SetNotificationScreenState extends State<SetNotificationScreen> {
               trailing: CupertinoSwitch(
                 activeColor: primary,
                 value: isNight,
-                onChanged: (value){
-                  setState(() {
-                    if(isService == true)
-                      isNight = value;
-                  });
-              },
+                onChanged: (value) async {
+                  if (isService == true) {
+                    isNight = value;
+                    String? response = await DioService.setLateNightAlarm(
+                        isNight, accessToken);
+                    if (response != null) {
+                      DioService.showErrorPopup(context, response);
+                    }
+                  }
+                  setState(() {});
+                },
               ),
             ),
             ListTile(
@@ -117,10 +164,12 @@ class _SetNotificationScreenState extends State<SetNotificationScreen> {
                   fontSize: 16,
                   color: isService == true ? gray900 : gray600,
                 ),
-
               ),
               subtitle: Text(
-                "마케팅 정보 수신 " + (isMarketing == true ? "동의" : "해제") + " : " + changeDate,
+                "마케팅 정보 수신 " +
+                    (isMarketing == true ? "동의" : "해제") +
+                    " : " +
+                    changeDate,
                 style: TextStyle(
                   fontSize: 14,
                   color: isService == true ? gray600 : gray300,
@@ -129,17 +178,20 @@ class _SetNotificationScreenState extends State<SetNotificationScreen> {
               trailing: CupertinoSwitch(
                 activeColor: primary,
                 value: isMarketing,
-                onChanged: (value){
-                  setState(() {
-                    if(isService == true)
-                      {
-                        isMarketing = value;
-                        //추후에 앱데이터베이스에 동의 유무 및 날짜 저장하는 로직 추가
-                        changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
-                        showToast();
-                      }
-
-                  });
+                onChanged: (value) async {
+                  if (isService == true) {
+                    isMarketing = value;
+                    String? response = await DioService.setMarketingAlarm(isMarketing, accessToken);
+                    if (response != null) {
+                      DioService.showErrorPopup(context, response);
+                    }
+                    else{
+                      changeDate =
+                          DateFormat("yyyy.MM.dd").format(DateTime.now());
+                      showToast();
+                    }
+                  }
+                  setState(() {});
                 },
               ),
             ),

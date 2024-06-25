@@ -12,7 +12,6 @@ class MainScreen extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _MainScreenState();
-
 }
 
 class _MainScreenState extends ConsumerState<MainScreen> {
@@ -44,7 +43,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     ref.watch(deviceSizeProvider.notifier).setDeviceHeight(height);
     return Scaffold(
       backgroundColor: backGroundColor,
-      body: SafeArea(child: _widgetOptions.elementAt(_selectedIndex)),
+      body: SafeArea(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: _selectedIndex,
         onTap: _onItemTapped,

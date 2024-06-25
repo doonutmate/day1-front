@@ -306,6 +306,7 @@ class DioService{
       }
     }
   }
+
   static Future<String?> getCalendarTitle(String token) async {
     try{
       var dio = Dio();
@@ -331,6 +332,142 @@ class DioService{
         }
         else{
           errorMessage = "Error" + e.response!.data["message"];
+        }
+        return errorMessage;
+      }
+    }
+  }
+
+  static Future<dynamic> getAlarmConfig(String token) async {
+    try{
+      var dio = Dio();
+      //get header 설정
+      dio.options.headers ={
+        "Authorization": "Bearer $token"
+      };
+      Response response = await dio.get(
+        baseUri + "member/alarm-config",
+      );
+      if (response.statusCode != 200) {
+        print(await response.statusMessage);
+        return "Error" + response.data["message"];
+      }
+
+      return response;
+    }
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = "Error" + e.response!.data["message"];
+        }
+        return errorMessage;
+      }
+    }
+  }
+
+  static Future<String?> setServiceAlarm(bool isService, String token) async {
+    try {
+      // 파일 경로를 통해 formData 생성
+      var dio = Dio();
+      dio.options.headers = {
+        "Authorization": "Bearer $token"
+      };
+
+      // 업로드 요청
+      final response = await dio.put(baseUri + 'member/service-alarm', data: {"serviceAlarm": isService});
+      if (response.statusCode != 200) {
+        print(await response.statusMessage);
+        if(response.statusCode! >= 500){
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          return response.data["message"];
+        }
+      }
+      return null;
+    }
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = e.response!.data["message"];
+        }
+        return errorMessage;
+      }
+    }
+  }
+
+  static Future<String?> setLateNightAlarm(bool isNight, String token) async {
+    try {
+      // 파일 경로를 통해 formData 생성
+      var dio = Dio();
+      dio.options.headers = {
+        "Authorization": "Bearer $token"
+      };
+
+      // 업로드 요청
+      final response = await dio.put(baseUri + 'member/late-night-alarm', data: {"lateNightAlarm": isNight});
+      if (response.statusCode != 200) {
+        print(await response.statusMessage);
+        if(response.statusCode! >= 500){
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          return response.data["message"];
+        }
+      }
+      return null;
+    }
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = e.response!.data["message"];
+        }
+        return errorMessage;
+      }
+    }
+  }
+
+  static Future<String?> setMarketingAlarm(bool isMarketing, String token) async {
+    try {
+      // 파일 경로를 통해 formData 생성
+      var dio = Dio();
+      dio.options.headers = {
+        "Authorization": "Bearer $token"
+      };
+
+      // 업로드 요청
+      final response = await dio.put(baseUri + 'member/marketing-receive-consent', data: {"marketingReceiveConsent": isMarketing});
+      if (response.statusCode != 200) {
+        print(await response.statusMessage);
+        if(response.statusCode! >= 500){
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          return response.data["message"];
+        }
+      }
+      return null;
+    }
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = e.response!.data["message"];
         }
         return errorMessage;
       }
