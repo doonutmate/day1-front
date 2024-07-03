@@ -90,11 +90,16 @@ class LoginScreen extends ConsumerWidget {
                       String? response = await AuthService.sendTokenToServer(
                           token.accessToken);
                       if (response != null) {
-                        //서버 토큰을 앱 내부 저장소에 저장
-                        AppDataBase.setToken(response);
-                        //provider에 서버 토큰 저장
-                        oauthProvider.setServerToken(response);
-                        Navigator.pushNamed(context, '/camera');
+                        if(response.contains("Error")){
+                          DioService.showErrorPopup(context, response.replaceFirst("Error", ""));
+                        }
+                        else{
+                          //서버 토큰을 앱 내부 저장소에 저장
+                          AppDataBase.setToken(response);
+                          //provider에 서버 토큰 저장
+                          oauthProvider.setServerToken(response);
+                          Navigator.pushNamed(context, '/camera');
+                        }
                       }
                     }
                   },

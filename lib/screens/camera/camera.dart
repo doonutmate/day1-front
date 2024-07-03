@@ -60,7 +60,12 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
 
         final userProfile = await fetchUserProfile(tokenInfo.accessToken);
-        ref.read(userProfileProvider.notifier).state = userProfile;
+        if(userProfile.toString().contains("Error")){
+          DioService.showErrorPopup(context, userProfile.replaceFirst("Error", ""));
+        }
+        else{
+          ref.read(userProfileProvider.notifier).state = userProfile;
+        }
 
         String? titleMap = await DioService.getCalendarTitle(tokenInfo.accessToken);
         if(titleMap!.contains("Error")){

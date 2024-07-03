@@ -18,7 +18,7 @@ class UserProfile {
   }
 }
 
-Future<UserProfile> fetchUserProfile(String token) async {
+Future<dynamic> fetchUserProfile(String token) async {
 
   final response = await http.get(
     Uri.parse('https://dev.doonut.site/member/mypage'),
@@ -35,8 +35,15 @@ Future<UserProfile> fetchUserProfile(String token) async {
     return UserProfile.fromJson(data);
 
   } else {
-    // 요청이 실패한 경우 에러를 던짐
-    throw Exception('Failed to load user profile');
+    String errorMessage;
+    // 에러 처리
+    if(response.statusCode >= 500){
+      errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
+    }
+    else{
+      errorMessage = "Error" + response.body;
+    }
+    return errorMessage;
   }
 
 }

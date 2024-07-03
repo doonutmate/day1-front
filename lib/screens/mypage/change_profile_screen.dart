@@ -216,10 +216,16 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
                      }
                     }
                     final userProfile = await fetchUserProfile(tokenInfo.accessToken);
-                    ref.read(userProfileProvider.notifier).state = userProfile!;
-                    setState(() {
-                      myController.text = userProfile.nickname;
-                    });
+                    if(userProfile.toString().contains("Error")){
+                      DioService.showErrorPopup(context, userProfile.replaceFirst("Error", ""));
+                    }
+                    else{
+                      ref.read(userProfileProvider.notifier).state = userProfile!;
+                      setState(() {
+                        myController.text = userProfile.nickname;
+                      });
+                    }
+                    Navigator.pop(context);
                   }
                 },
                 child: RadiusTextButton(
