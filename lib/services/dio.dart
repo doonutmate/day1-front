@@ -474,6 +474,75 @@ class DioService{
     }
   }
 
+  static Future<String?> reportIssue(String oauthType, String? appleToken, String? accessToken, String reason) async {
+    try {
+      var dio = Dio();
+      dio.options.headers = {
+        "Authorization": "Bearer $accessToken"
+      };
+      Map<String, dynamic> _data;
+
+      if (appleToken != null && appleToken.isNotEmpty) {
+        _data = {
+          "oauthType": oauthType,
+          "code": appleToken,
+          "reason": reason
+        };
+      } else {
+        _data = {
+          "oauthType": oauthType,
+          "reason": reason
+        };
+      }
+
+      var response = await dio.post(baseUri + "report", data: _data);
+      if (response.statusCode != 200) {
+        if (response.statusCode! >= 500) {
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        } else {
+          return response.data["message"];
+        }
+      }
+      return null;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        } else {
+          return e.response!.data["message"];
+        }
+      }
+      return "알 수 없는 오류가 발생했습니다";
+    }
+  }
+
+  // 다른 사용자의 캘린더 이미지를 가져오는 함수
+  static Future<dynamic> getUserCalendarImageList(
+      int year, int month, String accessToken, String otherMemberId) async {
+    try {
+      var dio = Dio();
+      dio.options.headers = {"Authorization": "Bearer $accessToken"};
+      Response response = await dio.get(
+          '${baseUri}members/$otherMemberId/challenges', queryParameters: {'year': year, 'month': month});
+      if (response.statusCode != 200) {
+        print(await response.statusMessage);
+        return "Error" + response.data["message"];
+      }
+      List<dynamic> responseList = response.data;
+      return responseList;
+    } on DioException catch (e) {
+      String errorMessage;
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
+          errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
+        } else {
+          errorMessage = "Error" + e.response!.data["message"];
+        }
+        return errorMessage;
+      }
+    }
+  }
+
   static void showErrorPopup(BuildContext context, String msg, {VoidCallback? navigate}){
     showDialog(context: context, builder: (BuildContext context){
       return AlertDialog(

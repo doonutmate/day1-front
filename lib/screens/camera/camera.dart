@@ -9,6 +9,8 @@ import 'package:day1/widgets/atoms/flip_button.dart';
 import 'package:day1/widgets/atoms/reshoot_text_button.dart';
 import 'package:day1/widgets/atoms/shutter_button.dart';
 import 'package:day1/widgets/atoms/store_text_button.dart';
+import 'package:day1/widgets/molecules/show_Error_Popup.dart';
+import 'package:dio/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +27,7 @@ import '../../services/dio.dart';
 import '../../services/server_token_provider.dart';
 import '../../widgets/atoms/cancel_text_button.dart';
 import '../../widgets/atoms/day1_camera.dart';
+import '../../providers/calendar_title_provider.dart';
 import '../../widgets/organisms/error_popup.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {

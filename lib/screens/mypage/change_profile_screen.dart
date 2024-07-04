@@ -4,6 +4,7 @@ import 'package:day1/constants/colors.dart';
 import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/edit_profile_image.dart';
 import 'package:day1/widgets/atoms/radius_text_button.dart';
+import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:day1/widgets/molecules/title_textformfield_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../constants/size.dart';
 import '../../models/token_information.dart';
 import '../../models/user_profile.dart';
+import '../../providers/calendar_title_provider.dart';
 import '../../providers/user_profile_provider.dart';
 import '../../services/server_token_provider.dart';
 
@@ -225,6 +227,22 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
                         myController.text = userProfile.nickname;
                       });
                     }
+                    String? title = ref.read(calendarTitleProvider.notifier).state;
+                    if(title != null){
+                      if(ref.read(calendarTitleProvider.notifier).state!.contains("님 캘린더")){
+                        String? response = await DioService.setCalendarTitle(myController.text + "님 캘린더", tokenInfo.accessToken);
+                        if(response != null){
+                          DioService.showErrorPopup(context, response);
+                          return;
+                        }
+                        else{
+                          ref.watch(calendarTitleProvider.notifier).state = myController.text + "님 캘린더";
+                        }
+
+                      }
+
+                    }
+
                     Navigator.pop(context);
                   }
                 },

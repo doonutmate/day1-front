@@ -1,14 +1,15 @@
 import 'dart:convert';
+import 'package:day1/providers/calendar_title_provider.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/device_size_provider.dart';
 import 'package:day1/services/dio.dart';
 import 'package:day1/services/server_token_provider.dart';
 import 'package:day1/widgets/atoms/calendar_rich_text.dart';
+import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/size.dart';
 import '../models/calendar_image_model.dart';
-import '../providers/calendar_title_provider.dart';
 import '../services/auth_service.dart';
 import '../models/token_information.dart';
 import '../widgets/organisms/custom_table_calendar.dart';
@@ -66,7 +67,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       else{
         // day는 imageMap<Map>의 키로 사용하고 value로는 썸네일 이미지와 원본이미지를 멤버로 갖고 있는 CalendarImage 모델 클래스로 사용
         responseList.forEach((element) {
-          imageMap[DateTime(_year, _month, element['day'])] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl']);
+          imageMap[DateTime(_year, _month, element['day'])] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl'], date: '');
         });
         setState(() {
           // 통신이 끝났는지 플래그값 설정

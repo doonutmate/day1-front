@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:camera/camera.dart';
 import 'package:day1/screens/camera/camera.dart';
+import 'package:day1/screens/community/community_screen.dart'; //curl -sL https://firebase.tools | upgrade=true bash;
 import 'package:day1/screens/login/login.dart';
 import 'package:day1/screens/login/permision.dart';
 import 'package:day1/screens/mypage/change_profile_screen.dart';
@@ -23,6 +24,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
+import 'dart:io';
 import 'package:uni_links/uni_links.dart';
 import 'firebase_options.dart';
 
@@ -137,7 +139,6 @@ Future<void> main() async {
 class MyApp extends ConsumerWidget {
   final String? initialUrl;
   String? token;
-
   MyApp({super.key, this.initialUrl});
 
   // 앱내 저장소에서 저장된 토큰을 가져오고 프로바이더에 저장 후 카카오 로그인 유효한지 확인
