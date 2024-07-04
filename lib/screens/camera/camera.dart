@@ -55,36 +55,35 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       token = ref.read(ServerTokenProvider.notifier).getServerToken();
 
-      if(token != null){
+      if (token != null) {
         Map<String, dynamic> tokenMap = jsonDecode(token!);
         TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
 
         final userProfile = await fetchUserProfile(tokenInfo.accessToken);
-        if(userProfile.toString().contains("Error")){
-          DioService.showErrorPopup(context, userProfile.replaceFirst("Error", ""));
-        }
-        else{
+        if (userProfile.toString().contains("Error")) {
+          DioService.showErrorPopup(
+              context, userProfile.replaceFirst("Error", ""));
+        } else {
           ref.read(userProfileProvider.notifier).state = userProfile;
         }
 
-        String? titleMap = await DioService.getCalendarTitle(tokenInfo.accessToken);
-        if(titleMap!.contains("Error")){
-          DioService.showErrorPopup(context, titleMap.replaceFirst("Error", ""));
-        }
-        else{
+        String? titleMap =
+            await DioService.getCalendarTitle(tokenInfo.accessToken);
+        if (titleMap!.contains("Error")) {
+          DioService.showErrorPopup(
+              context, titleMap.replaceFirst("Error", ""));
+        } else {
           String title = userProfile.nickname + "님 캘린더";
-          if( titleMap == null){
-            String? response = await DioService.setCalendarTitle(title, tokenInfo.accessToken);
-            if(null != response){
+          if (titleMap == null) {
+            String? response =
+                await DioService.setCalendarTitle(title, tokenInfo.accessToken);
+            if (null != response) {
               DioService.showErrorPopup(context, response);
-            }
-            else{
+            } else {
               ref.read(calendarTitleProvider.notifier).state = title;
             }
-          }
-          else{
+          } else {
             ref.read(calendarTitleProvider.notifier).state = titleMap;
-
           }
         }
       }
@@ -157,7 +156,8 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         DateTime today = DateTime.now();
         pictureDay = DateFormat("yyyy.MM.dd").format(today) + "일";
         pictureDayOfWeek = "(" + DateFormat('E', 'ko_KR').format(today) + ")";
-        pictureAMPM = DateFormat('aa', 'ko_KR').format(today) == "AM" ? "오전" : "오후";
+        pictureAMPM =
+            DateFormat('aa', 'ko_KR').format(today) == "AM" ? "오전" : "오후";
         pictureTime = DateFormat('hh:mm').format(today);
 
         setState(() {
@@ -267,18 +267,30 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
                               Text(
                                 pictureDay + " " + pictureDayOfWeek,
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: white
-                                ),
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 5.0,
+                                        color: gray600,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: white),
                               ),
                               Text(
                                 pictureAMPM + " " + pictureTime,
                                 style: TextStyle(
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 5.0,
+                                        color: gray600,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: white
-                                ),
+                                    color: white),
                               )
                             ],
                           ),

@@ -83,6 +83,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     // provider에서 실제 화면 width get
     double deviceWidth = ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
     // calendar headermargin 크기
@@ -100,7 +101,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             height: calendarTopMargin,
           ),
           //서버에서 사진을 저장한 일자대로 리스트를 넘겨주므로 리스트의 길이를 매개변수로 넘겨준다
-          CalendarRichText(title: calendarTitle,recordNum: imageMap.length,),
+          CalendarRichText(title: calendarTitle,recordNum: imageMap.length ?? 0,),
           SizedBox(
             height: 20,
           ),
