@@ -5,60 +5,46 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
-
-import '../widgets/organisms/error_popup.dart';
-
+import 'package:day1/widgets/organisms/error_popup.dart';
 
 // GET http://43.201.170.13:8081/challenge?year=2024&month=10
 // http://43.201.170.13:8081/oauth/login?oauthType=KAKAO
 // Dio라이브러리를 통한 HTTP 통신용 클래스
-class DioService{
+class DioService {
   // dev https://dev.doonut.site/
   // 배포 https://prod.doonut.site/
   //기본 주소
   static const String baseUri = "https://dev.doonut.site/";
 
-  static Future<String?> signOutDay1(String oauthType, String? appleToken, String? accessToken, String reason) async{
-    try{
+  static Future<String?> signOutDay1(String oauthType, String? appleToken,
+      String? accessToken, String reason) async {
+    try {
       var dio = Dio();
-      dio.options.headers = {
-        "Authorization": "Bearer $accessToken"
-      };
+      dio.options.headers = {"Authorization": "Bearer $accessToken"};
       Map<String, dynamic> _data;
 
-      if(appleToken != ""){
-        _data = {
-          "oauthType" : oauthType,
-          "code" : appleToken,
-          "reason" : reason
-        };
-      }
-      else{
-        _data = {
-          "oauthType" : oauthType,
-          "reason" : reason
-        };
+      if (appleToken != "") {
+        _data = {"oauthType": oauthType, "code": appleToken, "reason": reason};
+      } else {
+        _data = {"oauthType": oauthType, "reason": reason};
       }
 
-      var response = await dio.delete(baseUri + "member",data:_data);
-      if(response.statusCode != 200){
+      var response = await dio.delete(baseUri + "member", data: _data);
+      if (response.statusCode != 200) {
         print("서버통신 에러");
-        if(response.statusCode! >= 500){
+        if (response.statusCode! >= 500) {
           return "서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           return response.data["message"];
         }
       }
       return null;
-    }
-    on DioException catch(e){
+    } on DioException catch (e) {
       String errorMessage;
-      if(e.response != null){
-        if(e.response!.statusCode! >= 500){
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
           errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           errorMessage = e.response!.data["message"];
         }
         return errorMessage;
@@ -67,51 +53,44 @@ class DioService{
   }
 
   static Future<dynamic> sendAppleTokenToServer(String token) async {
-    try{
+    try {
       var dio = Dio();
       //
-      var response = await dio.post(baseUri + "oauth/login?oauthType=APPLE",data: {"accessToken": "${token}"});
+      var response = await dio.post(baseUri + "oauth/login?oauthType=APPLE",
+          data: {"accessToken": "${token}"});
 
-      if(response.statusCode != null){
-        if(response.statusCode! >= 200 && response.statusCode! < 300){
+      if (response.statusCode != null) {
+        if (response.statusCode! >= 200 && response.statusCode! < 300) {
           return response.data;
-        }
-        else{
+        } else {
           return "Error" + response.data["message"];
         }
       }
-    }
-    on DioException catch(e){
+    } on DioException catch (e) {
       String errorMessage;
-      if(e.response != null){
-        if(e.response!.statusCode! >= 500){
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
           errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           errorMessage = "Error" + e.response!.data["message"];
         }
         return errorMessage;
       }
     }
-
   }
 
   //서버로 이미지 업로드 하는 함수
   static Future<String?> uploadImage(File file, String token) async {
     try {
-
       // 파일 크기 확인 코드
       Uint8List? byteList = await file.readAsBytes();
       int? byte = byteList?.lengthInBytes;
-      if(byte != null)
-        print("전송전 이미지 크기 : ${(byte / 1048576)}");
+      if (byte != null) print("전송전 이미지 크기 : ${(byte / 1048576)}");
 
       // 파일 경로를 통해 formData 생성
       var dio = Dio();
       dio.options.contentType = 'multipart/form-data';
-      dio.options.headers = {
-        "Authorization": "Bearer $token"
-      };
+      dio.options.headers = {"Authorization": "Bearer $token"};
       dio.options.maxRedirects.isFinite;
       var formData = FormData.fromMap(
           {'multipartFile': await MultipartFile.fromFile(file.path)});
@@ -120,23 +99,20 @@ class DioService{
       final response = await dio.post(baseUri + 'image-upload', data: formData);
       if (response.statusCode != 200) {
         print(await response.statusMessage);
-        if(response.statusCode! >= 500){
+        if (response.statusCode! >= 500) {
           return "서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           return response.data["message"];
         }
       }
 
       return null;
-    }
-    on DioException catch(e){
+    } on DioException catch (e) {
       String errorMessage;
-      if(e.response != null){
-        if(e.response!.statusCode! >= 500){
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
           errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           errorMessage = e.response!.data["message"];
         }
         return errorMessage;
@@ -146,12 +122,10 @@ class DioService{
 
   //서버에서 캘린더에 표시할 이미지 받는 함수
   static Future<dynamic> getImageList(int year, int month, String token) async {
-    try{
+    try {
       var dio = Dio();
       //get header 설정
-      dio.options.headers ={
-        "Authorization": "Bearer $token"
-      };
+      dio.options.headers = {"Authorization": "Bearer $token"};
       Response response = await dio.get(
         baseUri + "challenge?year=${year}&month=${month}",
       );
@@ -161,14 +135,12 @@ class DioService{
       }
       List<dynamic> responseList = response.data;
       return responseList;
-    }
-    on DioException catch(e){
+    } on DioException catch (e) {
       String errorMessage;
-      if(e.response != null){
-        if(e.response!.statusCode! >= 500){
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
           errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           errorMessage = "Error" + e.response!.data["message"];
         }
         return errorMessage;
@@ -176,10 +148,10 @@ class DioService{
     }
   }
 
-  static Future<String?> putProfileInfo(String filePath, String name, String token) async {
+  static Future<String?> putProfileInfo(
+      String filePath, String name, String token) async {
     try {
-
-      if(filePath == ""){
+      if (filePath == "") {
         throw new Exception("프로필 이미지가 비었습니다.");
       }
 
@@ -191,36 +163,31 @@ class DioService{
       };
 
       File file = new File(filePath);
-      var formData = FormData.fromMap(
-          {
-            'multipartFile': await MultipartFile.fromFile(filePath, contentType: new MediaType("image", "png")),
-            'nameRequest' : json.encode({
-              "nickname": name
-            }),
-          }
-      );
+      var formData = FormData.fromMap({
+        'multipartFile': await MultipartFile.fromFile(filePath,
+            contentType: new MediaType("image", "png")),
+        'nameRequest': json.encode({"nickname": name}),
+      });
 
       // 업로드 요청
-      final response = await dio.put(baseUri + 'member/profile', data: formData);
+      final response =
+          await dio.put(baseUri + 'member/profile', data: formData);
       if (response.statusCode != 200) {
         print(await response.statusMessage);
-        if(response.statusCode! >= 500){
+        if (response.statusCode! >= 500) {
           return "서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           return response.data["message"];
         }
       }
 
       return null;
-    }
-    on DioException catch(e){
+    } on DioException catch (e) {
       String errorMessage;
-      if(e.response != null){
-        if(e.response!.statusCode! >= 500){
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
           errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           errorMessage = e.response!.data["message"];
         }
         return errorMessage;
@@ -230,8 +197,7 @@ class DioService{
 
   static Future<String?> putProfileName(String name, String token) async {
     try {
-
-      if(name == ""){
+      if (name == "") {
         throw new Exception("이름이 없습니다.");
       }
 
@@ -242,28 +208,24 @@ class DioService{
       };
 
       // 업로드 요청
-      final response = await dio.put(baseUri + 'member/profile/name', data: {
-        "nickname": name
-      });
+      final response = await dio
+          .put(baseUri + 'member/profile/name', data: {"nickname": name});
       if (response.statusCode != 200) {
         print(await response.statusMessage);
-        if(response.statusCode! >= 500){
+        if (response.statusCode! >= 500) {
           return "서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           return response.data["message"];
         }
       }
 
       return null;
-    }
-    on DioException catch(e){
+    } on DioException catch (e) {
       String errorMessage;
-      if(e.response != null){
-        if(e.response!.statusCode! >= 500){
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
           errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           errorMessage = e.response!.data["message"];
         }
         return errorMessage;
@@ -273,63 +235,71 @@ class DioService{
 
   static Future<String?> setCalendarTitle(String title, String token) async {
     try {
-
       // 파일 경로를 통해 formData 생성
       var dio = Dio();
-      dio.options.headers = {
-        "Authorization": "Bearer $token"
-      };
+      dio.options.headers = {"Authorization": "Bearer $token"};
 
       // 업로드 요청
-      final response = await dio.put(baseUri + 'calendars/profile', data: {"title": title});
+      final response =
+          await dio.put(baseUri + 'calendars/profile', data: {"title": title});
       if (response.statusCode != 200) {
         print(await response.statusMessage);
-        if(response.statusCode! >= 500){
+        if (response.statusCode! >= 500) {
           return "서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           return response.data["message"];
         }
       }
       return null;
-    }
-    on DioException catch(e){
+    } on DioException catch (e) {
       String errorMessage;
-      if(e.response != null){
-        if(e.response!.statusCode! >= 500){
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
           errorMessage = "서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           errorMessage = e.response!.data["message"];
         }
         return errorMessage;
       }
     }
   }
+
   static Future<String?> getCalendarTitle(String token) async {
-    try{
+    try {
       var dio = Dio();
-      //get header 설정
-      dio.options.headers ={
-        "Authorization": "Bearer $token"
-      };
-      Response response = await dio.get(
-        baseUri + "calendars/profile",
-      );
+      dio.options.headers = {"Authorization": "Bearer $token"};
+      Response response = await dio.get(baseUri + "calendars/profile");
+      if (response.statusCode == 200) {
+        return response.data["title"] as String?;
+      } else {
+        print("Failed to get calendar title: ${response.statusMessage}");
+        return null;
+      }
+    } catch (e) {
+      print("Error: $e");
+      return null;
+    }
+  }
+
+
+
+  static Future<String?> getOtherUserCalendarTitle(String token, String otherMemberId) async {
+    try {
+      var dio = Dio();
+      dio.options.headers = {"Authorization": "Bearer $token"};
+      Response response = await dio.get('${baseUri}members/calendars/profile', queryParameters: {'otherMemberId': otherMemberId});
       if (response.statusCode != 200) {
         print(await response.statusMessage);
         return "Error" + response.data["message"];
       }
       String title = response.data["title"];
       return title;
-    }
-    on DioException catch(e){
+    } on DioException catch (e) {
       String errorMessage;
-      if(e.response != null){
-        if(e.response!.statusCode! >= 500){
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
           errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
-        }
-        else{
+        } else {
           errorMessage = "Error" + e.response!.data["message"];
         }
         return errorMessage;
@@ -337,12 +307,89 @@ class DioService{
     }
   }
 
-  static void showErrorPopup(BuildContext context, String msg, {VoidCallback? navigate}){
-    showDialog(context: context, builder: (BuildContext context){
-      return AlertDialog(
-        contentPadding: EdgeInsets.zero,
-        content: ErrorPopup(errorMassage: msg, navigate: navigate,),
-      );
-    });
+  // 다른 사용자의 캘린더 이미지를 가져오는 함수
+  static Future<dynamic> getUserCalendarImageList(
+      int year, int month, String accessToken, String otherMemberId) async {
+    try {
+      var dio = Dio();
+      dio.options.headers = {"Authorization": "Bearer $accessToken"};
+      Response response = await dio.get(
+          '${baseUri}members/$otherMemberId/challenges', queryParameters: {'year': year, 'month': month});
+      if (response.statusCode != 200) {
+        print(await response.statusMessage);
+        return "Error" + response.data["message"];
+      }
+      List<dynamic> responseList = response.data;
+      return responseList;
+    } on DioException catch (e) {
+      String errorMessage;
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
+          errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
+        } else {
+          errorMessage = "Error" + e.response!.data["message"];
+        }
+        return errorMessage;
+      }
+    }
   }
-}
+
+  static Future<String?> reportIssue(String oauthType, String? appleToken, String? accessToken, String reason) async {
+    try {
+      var dio = Dio();
+      dio.options.headers = {
+        "Authorization": "Bearer $accessToken"
+      };
+      Map<String, dynamic> _data;
+
+      if (appleToken != null && appleToken.isNotEmpty) {
+        _data = {
+          "oauthType": oauthType,
+          "code": appleToken,
+          "reason": reason
+        };
+      } else {
+        _data = {
+          "oauthType": oauthType,
+          "reason": reason
+        };
+      }
+
+      var response = await dio.post(baseUri + "report", data: _data);
+      if (response.statusCode != 200) {
+        if (response.statusCode! >= 500) {
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        } else {
+          return response.data["message"];
+        }
+      }
+      return null;
+    } on DioException catch (e) {
+      if (e.response != null) {
+        if (e.response!.statusCode! >= 500) {
+          return "서버가 불안정해 정보를 불러올 수 없어요";
+        } else {
+          return e.response!.data["message"];
+        }
+      }
+      return "알 수 없는 오류가 발생했습니다";
+    }
+  }
+
+  static void showErrorPopup(BuildContext context, String msg,
+      {VoidCallback? navigate}) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: ErrorPopup(
+              errorMassage: msg,
+              navigate: navigate,
+            ),
+          );
+        });
+  }
+
+
+

@@ -5,6 +5,7 @@ import 'package:day1/constants/colors.dart';
 import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/edit_profile_image.dart';
 import 'package:day1/widgets/atoms/radius_text_button.dart';
+import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:day1/widgets/molecules/title_textformfield_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -208,14 +209,14 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
                     if(pickedFile != null){
                       String? response = await DioService.putProfileInfo(pickedFile!.path , myController.text, tokenInfo.accessToken);
                       if(response != null){
-                        DioService.showErrorPopup(context, response);
+                        showErrorPopup(context, response);
                         return;
                       }
                     }
                     else{
                      String? response =  await DioService.putProfileName(myController.text, tokenInfo.accessToken);
                      if(response != null){
-                       DioService.showErrorPopup(context, response);
+                       showErrorPopup(context, response);
                        return;
                      }
                     }

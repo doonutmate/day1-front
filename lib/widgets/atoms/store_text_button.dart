@@ -7,6 +7,7 @@ import '../../constants/colors.dart';
 import '../../constants/size.dart';
 import '../../screens/camera/camera.dart';
 import '../../services/dio.dart';
+import '../molecules/show_Error_Popup.dart';
 
 class StoreTextButton extends ConsumerWidget {
   int count = 0;
@@ -38,7 +39,7 @@ class StoreTextButton extends ConsumerWidget {
               Navigator.pushReplacementNamed(context, '/main');
             }
             else {
-              DioService.showErrorPopup(context, response, navigate: (){
+              showErrorPopup(context, response, navigate: (){
                 Navigator.pushNamedAndRemoveUntil(
                     context, '/login', (route) => false);
               });

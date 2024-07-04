@@ -1,39 +1,47 @@
 class Community {
-  final String userId;
-  final String userName;
-  final String userProfileUrl;
-  final String registrationPeriod;
-  final int registrationCount;
-  final String title;
+  int id;
+  int totalCount;
+  String memberName;
+  String calendarName;
+  String firstUploadedAt;
+  String lastUploadedAt;
+  String updatedAt;
+  String profileImage;
 
   Community({
-    required this.userId,
-    required this.userName,
-    required this.userProfileUrl,
-    required this.registrationPeriod,
-    required this.registrationCount,
-    required this.title,
+    required this.id,
+    required this.totalCount,
+    required this.memberName,
+    required this.calendarName,
+    required this.firstUploadedAt,
+    required this.lastUploadedAt,
+    required this.updatedAt,
+    required this.profileImage,
   });
 
   factory Community.fromJson(Map<String, dynamic> json) {
     return Community(
-      userId: json['userId'],
-      userName: json['userName'],
-      userProfileUrl: json['userProfileUrl'],
-      registrationPeriod: json['registrationPeriod'],
-      registrationCount: json['registrationCount'],
-      title: json['title'],
+      id: json['id'],
+      totalCount: json['totalCount'],
+      memberName: json['memberName'],
+      calendarName: json['calendarName'],
+      firstUploadedAt: json['firstUploadedAt'],
+      lastUploadedAt: json['lastUploadedAt'],
+      updatedAt: json['updatedAt'],
+      profileImage: json['profileImage'],
     );
   }
 
-  Map<String, dynamic> toJson() { // 앱이 서버에 데이터를 전송할 때 데이터를 JSON 포맷으로 인코딩
+  Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
-      'userName': userName,
-      'userProfileUrl': userProfileUrl,
-      'registrationPeriod': registrationPeriod,
-      'registrationCount': registrationCount,
-      'title': title,
+      'id': id,
+      'totalCount': totalCount,
+      'memberName': memberName,
+      'calendarName': calendarName,
+      'firstUploadedAt': firstUploadedAt,
+      'lastUploadedAt': lastUploadedAt,
+      'updatedAt': updatedAt,
+      'profileImage': profileImage,
     };
   }
 }

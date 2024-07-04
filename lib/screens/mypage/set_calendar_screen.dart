@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'package:day1/providers/calendar_title_provider.dart';
 import 'package:day1/services/dio.dart';
+import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:day1/widgets/organisms/error_popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -129,7 +130,7 @@ class _SetCalendarScreenState extends ConsumerState<SetCalendarScreen> {
                       TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
                       String? response = await DioService.setCalendarTitle(myController.text, tokenInfo.accessToken);
                       if(response != null){
-                        DioService.showErrorPopup(context, response);
+                        showErrorPopup(context, response);
                       }
                       else{
                         ref.watch(calendarTitleProvider.notifier).state = myController.text;

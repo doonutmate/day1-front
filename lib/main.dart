@@ -1,6 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:day1/screens/camera/camera.dart';
-import 'package:day1/screens/community_screen.dart';
+import 'package:day1/screens/community/community_screen.dart'; //curl -sL https://firebase.tools | upgrade=true bash;
 import 'package:day1/screens/login/login.dart';
 
 import 'package:day1/screens/login/permision.dart';
@@ -16,18 +16,18 @@ import 'package:day1/services/pushnotification.dart';
 import 'package:day1/services/server_token_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:uni_links/uni_links.dart';
 import 'firebase_options.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 
 
 
@@ -62,14 +62,6 @@ class MyHttpOverrides extends HttpOverrides{
 final navigatorKey = GlobalKey<NavigatorState>();
 
 late List<CameraDescription> cameras;
-
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-  }
-}
 
 Future<void> main() async {
   String _authStatus = 'Unknown';
@@ -111,37 +103,6 @@ Future<void> main() async {
 
   // HTTP Overrides 설정
   HttpOverrides.global = MyHttpOverrides();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-
-  PushNotification.init();
-
-  PushNotification.localNotiInit();
-
-  //앱이 종료 상태일 때, 푸시 처리
-  await FirebaseMessaging.instance.getInitialMessage();
-
-  // 앱이 백그라운드 상태일 때, 푸시 처리
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  await flutterLocalNotificationsPlugin
-      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
-
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Got a message whilst in the foreground!');
-    print('Message data: ${message.data}');
-
-    if (message.notification != null) {
-      print('Message also contained a notification: ${message.notification}');
-      PushNotification.showSimpleNotification(title: message.notification!.title!, body: message.notification!.body!);
-    }
-  });
-
-  Map<Permission, PermissionStatus> statuses = await [
-    Permission.appTrackingTransparency,
-  ].request();
-
 
   // ProviderScope 이하의 위젯에서 provider 사용 가능
   runApp(ProviderScope(child: MyApp(initialUrl: initialUrl)));
@@ -197,7 +158,7 @@ class MyApp extends ConsumerWidget {
             if (snapshot.hasData && snapshot.data == true) {
               return CameraScreen(cameras);
             } else {
-              return Permision();
+              return LoginScreen();
             }
           }),
       routes: {

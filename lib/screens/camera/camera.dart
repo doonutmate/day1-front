@@ -3,13 +3,12 @@ import 'dart:io';
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:day1/constants/colors.dart';
-import 'package:day1/providers/calendar_title_provider.dart';
-
 import 'package:day1/widgets/atoms/flash_change_button.dart';
 import 'package:day1/widgets/atoms/flip_button.dart';
 import 'package:day1/widgets/atoms/reshoot_text_button.dart';
 import 'package:day1/widgets/atoms/shutter_button.dart';
 import 'package:day1/widgets/atoms/store_text_button.dart';
+import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +25,7 @@ import '../../services/dio.dart';
 import '../../services/server_token_provider.dart';
 import '../../widgets/atoms/cancel_text_button.dart';
 import '../../widgets/atoms/day1_camera.dart';
-import '../../widgets/organisms/error_popup.dart';
+import '../../providers/calendar_title_provider.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   final List<CameraDescription> cameras;
@@ -56,32 +55,31 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       token = ref.read(ServerTokenProvider.notifier).getServerToken();
 
-      if(token != null){
+      if (token != null) {
         Map<String, dynamic> tokenMap = jsonDecode(token!);
         TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
 
-        final userProfile = await fetchUserProfile(tokenInfo.accessToken);
-        ref.read(userProfileProvider.notifier).state = userProfile;
+        try {
+          final userProfile = await fetchUserProfile(tokenInfo.accessToken);
+          ref.read(userProfileProvider.notifier).state = userProfile;
 
-        String? titleMap = await DioService.getCalendarTitle(tokenInfo.accessToken);
-        if(titleMap!.contains("Error")){
-          DioService.showErrorPopup(context, titleMap.replaceFirst("Error", ""));
-        }
-        else{
-          String title = userProfile.nickname + "님 캘린더";
-          if( titleMap == null){
+          String? titleMap = await DioService.getCalendarTitle(tokenInfo.accessToken);
+          if (titleMap == null) {
+            String title = userProfile.nickname + "님 캘린더";
             String? response = await DioService.setCalendarTitle(title, tokenInfo.accessToken);
-            if(null != response){
-              DioService.showErrorPopup(context, response);
-            }
-            else{
+            if (response != null) {
+              showErrorPopup(context, response);
+            } else {
               ref.read(calendarTitleProvider.notifier).state = title;
             }
-          }
-          else{
+          } else if (titleMap.contains("Error")) {
+            showErrorPopup(context, titleMap.replaceFirst("Error", ""));
+          } else {
             ref.read(calendarTitleProvider.notifier).state = titleMap;
-
           }
+        } catch (e) {
+          print('Exception: $e');
+          showErrorPopup(context, '캘린더 정보를 가져오는 중 오류가 발생했습니다.');
         }
       }
     });
@@ -148,13 +146,6 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
       final File cropFile;
       if (file != null) {
         cropFile = await cropImage(file);
-
-        //  changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
-        DateTime today = DateTime.now();
-        pictureDay = DateFormat("yyyy.MM.dd").format(today) + "일";
-        pictureDayOfWeek = "(" + DateFormat('E', 'ko_KR').format(today) + ")";
-        pictureAMPM = DateFormat('aa', 'ko_KR').format(today) == "AM" ? "오전" : "오후";
-        pictureTime = DateFormat('hh:mm').format(today);
 
         //  changeDate = DateFormat("yyyy.MM.dd").format(DateTime.now());
         DateTime today = DateTime.now();
