@@ -35,44 +35,42 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  camera: ^0.11.0+1
+  camera: ^0.10.5+9
   flutter_riverpod: ^2.5.1
   dio: ^5.4.0 # http 통신
   image: ^4.1.6
   path_provider: ^2.1.2  #임시 파일 주소 생성
   flutter_image_compress: ^2.0.0
   path: ^1.8.3
-  flutter_svg: ^2.0.10+1
+  flutter_svg: ^2.0.9
   intl: ^0.19.0
   flutter_native_image: ^0.0.6
   fluttertoast: ^8.2.4
   table_calendar: ^3.1.0
   uni_links:
-  http: ^1.2.1
+  http: ^0.13.3
   flutter_screenutil: ^5.9.0
   flutter_native_splash: ^2.3.10
   webview_flutter: ^4.7.0
   url_launcher: ^6.2.5
-  kakao_flutter_sdk: ^1.9.2 # 전체 추가
-  kakao_flutter_sdk_user: ^1.9.2 # 카카오 로그인
-  kakao_flutter_sdk_talk: ^1.9.2 # 카카오톡 메시지, 카카오톡 소셜(프로필 가져오기, 친구 목록 가져오기)
-  kakao_flutter_sdk_share: ^1.9.2 # 카카오톡 공유
-  kakao_flutter_sdk_navi: ^1.9.2 # 카카오내비
-  kakao_flutter_sdk_friend: ^1.9.2 # 카카오톡 소셜(피커: 친구 선택하기)
+  kakao_flutter_sdk: ^1.8.0 # 전체 추가
+  kakao_flutter_sdk_user: ^1.8.0 # 카카오 로그인
+  kakao_flutter_sdk_talk: ^1.8.0 # 카카오톡 메시지, 카카오톡 소셜(프로필 가져오기, 친구 목록 가져오기)
+  kakao_flutter_sdk_share: ^1.8.0 # 카카오톡 공유
+  kakao_flutter_sdk_navi: ^1.8.0 # 카카오내비
+  kakao_flutter_sdk_friend: ^1.8.0 # 카카오톡 소셜(피커: 친구 선택하기)
   shared_preferences: ^2.2.2
-  sign_in_with_apple: ^6.1.1
+  sign_in_with_apple: ^3.2.0
   transparent_image: ^2.0.1
   crypto: ^3.0.3
   flip_card: ^0.7.0
   image_picker: ^1.0.8
-  firebase_core: ^3.1.0
-
+  firebase_core: ^2.27.0
   http_parser: ^4.0.2
+  firebase_messaging: ^14.7.19
+  flutter_local_notifications: ^17.1.2
   app_tracking_transparency: ^2.0.5
   permission_handler: ^11.3.1
-  flutter_local_notifications: ^17.1.2
-  firebase_messaging: ^15.0.1
-
 
 dev_dependencies:
   flutter_test:

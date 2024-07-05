@@ -1,10 +1,11 @@
+import 'dart:io';
+
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:camera/camera.dart';
 import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/community/community_screen.dart'; //curl -sL https://firebase.tools | upgrade=true bash;
 import 'package:day1/screens/login/login.dart';
-
 import 'package:day1/screens/login/permision.dart';
-
 import 'package:day1/screens/mypage/change_profile_screen.dart';
 import 'package:day1/screens/mypage/set_calendar_screen.dart';
 import 'package:day1/screens/mypage/set_notification_screen.dart';
@@ -15,19 +16,17 @@ import 'package:day1/services/auth_service.dart';
 import 'package:day1/services/pushnotification.dart';
 import 'package:day1/services/server_token_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:uni_links/uni_links.dart';
 import 'firebase_options.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 
 
 
@@ -74,7 +73,7 @@ Future<void> main() async {
   //언어 설정을 위한 함수 실행
   await initializeDateFormatting();
 
-  // Firebase 초기화
+  //firbase 초기화
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -101,21 +100,49 @@ Future<void> main() async {
     javaScriptAppKey: '27d258fa70f6d2fd19c92fe135ed0bda',
   );
 
-  // HTTP Overrides 설정
-  HttpOverrides.global = MyHttpOverrides();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+
+  PushNotification.init();
+
+  PushNotification.localNotiInit();
+
+  //앱이 종료 상태일 때, 푸시 처리
+  await FirebaseMessaging.instance.getInitialMessage();
+
+  // 앱이 백그라운드 상태일 때, 푸시 처리
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print('Got a message whilst in the foreground!');
+    print('Message data: ${message.data}');
+
+    if (message.notification != null) {
+      print('Message also contained a notification: ${message.notification}');
+      PushNotification.showSimpleNotification(title: message.notification!.title!, body: message.notification!.body!);
+    }
+  });
+
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.appTrackingTransparency,
+  ].request();
+
 
   // ProviderScope 이하의 위젯에서 provider 사용 가능
-  runApp(ProviderScope(child: MyApp(initialUrl: initialUrl)));
+  runApp(ProviderScope(child : MyApp(initialUrl: initialUrl)));
 }
 
 class MyApp extends ConsumerWidget {
   final String? initialUrl;
   String? token;
-
   MyApp({super.key, this.initialUrl});
 
   // 앱내 저장소에서 저장된 토큰을 가져오고 프로바이더에 저장 후 카카오 로그인 유효한지 확인
-  Future<bool> getToken(ServerTokenStateNotifier provider) async {
+  Future<bool> getToken(ServerTokenStateNotifier provider) async{
     bool isKaKao = false;
     bool isServerToken = false;
     bool result = false;
@@ -130,9 +157,10 @@ class MyApp extends ConsumerWidget {
     // 카카오 로그인 확인은 부차적으로 확인해주고 사실상 서버 토큰이 있는지가 중요
     result = isKaKao || isServerToken;
 
-    if (result == true) {
+    if(result == true){
       provider.setServerToken(token);
-    } else {
+    }
+    else{
       AppDataBase.clearToken();
     }
 
@@ -156,9 +184,9 @@ class MyApp extends ConsumerWidget {
           future: getToken(tokenProvider),
           builder: (context, AsyncSnapshot<bool> snapshot) {
             if (snapshot.hasData && snapshot.data == true) {
-              return CameraScreen(cameras);
+                return CameraScreen(cameras);
             } else {
-              return LoginScreen();
+              return Permision();
             }
           }),
       routes: {
@@ -166,10 +194,10 @@ class MyApp extends ConsumerWidget {
         '/permision': (context) => Permision(),
         '/main': (context) => MainScreen(),
         '/camera': (context) => CameraScreen(cameras),
-        '/withdraw': (context) => WithdrawScreen(),
-        '/changeprofile': (context) => ChangeProfileScreen(),
-        '/setcalendar': (context) => SetCalendarScreen(),
-        '/setnotification': (context) => SetNotificationScreen(),
+        '/withdraw' : (context) => WithdrawScreen(),
+        '/changeprofile' : (context) => ChangeProfileScreen(),
+        '/setcalendar' : (context) => SetCalendarScreen(),
+        '/setnotification' : (context) => SetNotificationScreen(),
       },
     );
   }

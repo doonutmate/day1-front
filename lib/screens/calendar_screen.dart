@@ -54,7 +54,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       // 캘린더 api 함수
       var response = await DioService.getImageList(year, month, tokenInfo.accessToken);
       if(response.toString().contains("Error")){
-        showErrorPopup(context, response.replaceFirst("Error", ""));
+        DioService.showErrorPopup(context, response.replaceFirst("Error", ""));
       }
       else{
         responseList = response;
@@ -85,18 +85,13 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
 
-    void initState() {
-      super.initState();
-      // 프레임이 렌더링된 후에 실행된 작업을 스케줄링
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        AuthService.requestUserInfo(ref);
-      });
-    }
-
     // provider에서 실제 화면 width get
     double deviceWidth = ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
     // calendar headermargin 크기
     double headerMargin = (deviceWidth - 225) / 2;
+    // calendar title get
+    String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
+
 
     return Padding(
       padding: screenHorizontalMargin,
@@ -107,7 +102,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             height: calendarTopMargin,
           ),
           //서버에서 사진을 저장한 일자대로 리스트를 넘겨주므로 리스트의 길이를 매개변수로 넘겨준다
-          CalendarRichText(recordNum: imageMap.length, calendarTitle: ref.watch(calendarTitleProvider)),
+          CalendarRichText(title: calendarTitle,recordNum: imageMap.length ?? 0,),
           SizedBox(
             height: 20,
           ),
@@ -119,4 +114,5 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     );
   }
 }
+
 

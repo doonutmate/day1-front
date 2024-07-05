@@ -1,8 +1,6 @@
-// TODO Implement this library.import 'package:day1/constants/colors.dart';
+import 'package:day1/constants/colors.dart';
 import 'package:day1/widgets/atoms/radius_text_button.dart';
 import 'package:flutter/material.dart';
-
-import '../../constants/colors.dart';
 
 class ErrorPopup extends StatelessWidget {
   String errorMassage;

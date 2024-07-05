@@ -3,12 +3,14 @@ import 'dart:io';
 import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:day1/constants/colors.dart';
+import 'package:day1/providers/calendar_title_provider.dart';
 import 'package:day1/widgets/atoms/flash_change_button.dart';
 import 'package:day1/widgets/atoms/flip_button.dart';
 import 'package:day1/widgets/atoms/reshoot_text_button.dart';
 import 'package:day1/widgets/atoms/shutter_button.dart';
 import 'package:day1/widgets/atoms/store_text_button.dart';
 import 'package:day1/widgets/molecules/show_Error_Popup.dart';
+import 'package:dio/dio.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +28,7 @@ import '../../services/server_token_provider.dart';
 import '../../widgets/atoms/cancel_text_button.dart';
 import '../../widgets/atoms/day1_camera.dart';
 import '../../providers/calendar_title_provider.dart';
+import '../../widgets/organisms/error_popup.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   final List<CameraDescription> cameras;
@@ -59,27 +62,32 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         Map<String, dynamic> tokenMap = jsonDecode(token!);
         TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
 
-        try {
-          final userProfile = await fetchUserProfile(tokenInfo.accessToken);
+        final userProfile = await fetchUserProfile(tokenInfo.accessToken);
+        if (userProfile.toString().contains("Error")) {
+          DioService.showErrorPopup(
+              context, userProfile.replaceFirst("Error", ""));
+        } else {
           ref.read(userProfileProvider.notifier).state = userProfile;
+        }
 
-          String? titleMap = await DioService.getCalendarTitle(tokenInfo.accessToken);
+        String? titleMap =
+            await DioService.getCalendarTitle(tokenInfo.accessToken);
+        if (titleMap!.contains("Error")) {
+          DioService.showErrorPopup(
+              context, titleMap.replaceFirst("Error", ""));
+        } else {
+          String title = userProfile.nickname + "님 캘린더";
           if (titleMap == null) {
-            String title = userProfile.nickname + "님 캘린더";
-            String? response = await DioService.setCalendarTitle(title, tokenInfo.accessToken);
-            if (response != null) {
-              showErrorPopup(context, response);
+            String? response =
+                await DioService.setCalendarTitle(title, tokenInfo.accessToken);
+            if (null != response) {
+              DioService.showErrorPopup(context, response);
             } else {
               ref.read(calendarTitleProvider.notifier).state = title;
             }
-          } else if (titleMap.contains("Error")) {
-            showErrorPopup(context, titleMap.replaceFirst("Error", ""));
           } else {
             ref.read(calendarTitleProvider.notifier).state = titleMap;
           }
-        } catch (e) {
-          print('Exception: $e');
-          showErrorPopup(context, '캘린더 정보를 가져오는 중 오류가 발생했습니다.');
         }
       }
     });
@@ -151,7 +159,8 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         DateTime today = DateTime.now();
         pictureDay = DateFormat("yyyy.MM.dd").format(today) + "일";
         pictureDayOfWeek = "(" + DateFormat('E', 'ko_KR').format(today) + ")";
-        pictureAMPM = DateFormat('aa', 'ko_KR').format(today) == "AM" ? "오전" : "오후";
+        pictureAMPM =
+            DateFormat('aa', 'ko_KR').format(today) == "AM" ? "오전" : "오후";
         pictureTime = DateFormat('hh:mm').format(today);
 
         setState(() {
@@ -261,18 +270,30 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
                               Text(
                                 pictureDay + " " + pictureDayOfWeek,
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: white
-                                ),
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 5.0,
+                                        color: gray600,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: white),
                               ),
                               Text(
                                 pictureAMPM + " " + pictureTime,
                                 style: TextStyle(
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 5.0,
+                                        color: gray600,
+                                        offset: Offset(0, 3),
+                                      ),
+                                    ],
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
-                                    color: white
-                                ),
+                                    color: white),
                               )
                             ],
                           ),

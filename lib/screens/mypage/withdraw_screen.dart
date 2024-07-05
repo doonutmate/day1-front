@@ -4,7 +4,6 @@ import 'package:day1/constants/colors.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:day1/services/dio.dart';
-import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day1/providers/submit_reason_provider.dart';
@@ -12,6 +11,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../constants/size.dart';
 import '../../models/token_information.dart';
+
 
 class WithdrawScreen extends StatefulWidget {
   @override
@@ -21,7 +21,6 @@ class WithdrawScreen extends StatefulWidget {
 class _WithdrawScreenState extends State<WithdrawScreen> {
   bool showTextField = false;
   String otherReason = '';
-  bool isValidOtherReason = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +59,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                         ),
                       ),
                     ),
-                    _buildReasonTile(context, ref, '쓰지 않는 앱이에요'),
+                    _buildReasonTile(context, ref, '쓰지 않는 앱이에요', ),
                     _buildReasonTile(context, ref, '오류가 생겨서 쓸 수 없어요'),
                     _buildReasonTile(context, ref, '보안이 걱정돼요'),
                     _buildReasonTile(context, ref, '앱 사용법을 모르겠어요'),
@@ -78,7 +77,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                     ),
                     if (showTextField)
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Container(
                           height: 130,
                           width: 358,
@@ -86,7 +86,6 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                             onChanged: (value) {
                               setState(() {
                                 otherReason = value;
-                                isValidOtherReason = value.length >= 10 && value.length <= 200;
                               });
                             },
                             maxLines: 5,
@@ -109,56 +108,67 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed: (reason != null && (reason != '기타' || isValidOtherReason))
+                    onPressed: (reason != null &&
+                            (reason != '기타' || otherReason.isNotEmpty))
                         ? () async {
-                      final submitReasonText = reason == '기타' ? otherReason : reason;
+                            final submitReasonText =
+                                reason == '기타' ? otherReason : reason;
 
-                      String? token = await AppDataBase.getToken();
+                            String? token = await AppDataBase.getToken();
 
-                      if (token != null) {
-                        //token 정보 json string 디코딩
-                        Map<String, dynamic> tokenMap = jsonDecode(token);
-                        //Map 데이터를 모델클래스로 컨버팅
-                        TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
+                            if (token != null) {
 
-                        if (tokenInfo.oauthType == "KAKAO") {
-                          // 서버에 회원 탈퇴 이유 전송
-                          String? response = await DioService.signOutDay1(
-                              tokenInfo.oauthType, "", tokenInfo.accessToken, submitReasonText);
-                          if (response != null) {
-                            showErrorPopup(context, response);
-                            return;
-                          }
-                        } else {
-                          AuthorizationCredentialAppleID? appleToken = await AuthService.signInWithApple();
-                          if (appleToken != null) {
-                            if (appleToken.authorizationCode != null) {
-                              // 서버에 회원 탈퇴 이유 전송
-                              String? response = await DioService.signOutDay1(
-                                  tokenInfo.oauthType, appleToken.authorizationCode, tokenInfo.accessToken, submitReasonText);
-                              if (response != null) {
-                                showErrorPopup(context, response);
-                                return;
+                              //token 정보 json string 디코딩
+                              Map<String, dynamic> tokenMap = jsonDecode(token);
+                              //Map 데이터를 모델클래스로 컨버팅
+                              TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
+
+                              if(tokenInfo.oauthType == "KAKAO"){
+                                // 서버에 회원 탈퇴 이유 전송
+                                String? response = await DioService.signOutDay1(
+                                    tokenInfo.oauthType, "", tokenInfo.accessToken, submitReasonText);
+                                if(response != null){
+                                  DioService.showErrorPopup(context, response);
+                                  return;
+                                }
                               }
+                              else{
+                                AuthorizationCredentialAppleID? appleToken = await AuthService.signInWithApple();
+                                if(appleToken != null){
+                                  if(appleToken.authorizationCode != null){
+
+                                    // 서버에 회원 탈퇴 이유 전송
+                                    String? response = await DioService.signOutDay1(
+                                        tokenInfo.oauthType, appleToken.authorizationCode, tokenInfo.accessToken, submitReasonText);
+                                    if(response != null){
+                                      DioService.showErrorPopup(context, response);
+                                      return;
+                                    }
+                                  }
+                                }
+                              }
+                              AppDataBase.clearToken();
+                              Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+
+
+                            } else {
+                              // 오류 처리, 예: 사용자에게 오류 메시지 표시
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                        title: Text("Error"),
+                                        content: Text(
+                                            "Cannot perform sign out. Missing OAuth type or token."),
+                                      ));
                             }
                           }
-                        }
-                        AppDataBase.clearToken();
-                        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-                      } else {
-                        // 오류 처리, 예: 사용자에게 오류 메시지 표시
-                        showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text("Error"),
-                              content: Text("Cannot perform sign out. Missing OAuth type or token."),
-                            ));
-                      }
-                    }
                         : null,
                     child: Text('탈퇴하기', style: TextStyle(color: Colors.white)),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: reason != null && (reason != '기타' || isValidOtherReason) ? primary : gray300,
+                      backgroundColor: reason != null &&
+                              (reason != '기타' || otherReason.isNotEmpty)
+                          ? primary
+                          : gray300,
                       minimumSize: Size(double.infinity, 50),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
@@ -177,14 +187,14 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   ListTile _buildReasonTile(BuildContext context, WidgetRef ref, String title) {
     final reason = ref.watch(reasonProvider);
     return ListTile(
-      title: Text(title, style: TextStyle(color: reason == title ? primary : null)),
+      title: Text(title,
+          style: TextStyle(color: reason == title ? Colors.purple : null)),
       onTap: () {
         ref.read(reasonProvider.notifier).state = title;
         if (title != '기타') {
           setState(() {
             showTextField = false;
             otherReason = '';
-            isValidOtherReason = false;
           });
         }
       },

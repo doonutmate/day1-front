@@ -158,9 +158,15 @@ class AuthService {
         print('토큰 서버 전송 성공: ${response.body}');
         return response.body;
       } else {
+        String errorMessage;
         // 에러 처리
-        print('카카오 토큰 서버 전송 실패: ${response.body}');
-        return null;
+        if(response.statusCode >= 500){
+          errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = "Error" + response.body;
+        }
+        return errorMessage;
       }
     } catch (e) {
       print('서버 전송 중 에러 발생: $e');

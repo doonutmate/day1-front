@@ -3,21 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-
 	<string>AIzaSyCTuBK2NDEnJVhQKFCybUj_TMJjnWz888I</string>
 	<key>GCM_SENDER_ID</key>
 	<string>88827143845</string>
-
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.doonut.Day1</string>
 	<key>PROJECT_ID</key>
-
 	<string>doonut-e933c</string>
 	<key>STORAGE_BUCKET</key>
 	<string>doonut-e933c.appspot.com</string>
-
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-
 	<string>1:88827143845:ios:45a21b22ea012463ec8f4c</string>
-
 </dict>
 </plist>
