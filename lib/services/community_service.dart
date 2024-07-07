@@ -7,7 +7,7 @@ import 'package:day1/services/app_database.dart';
 class CommunityService {
   final String baseUrl = 'https://dev.doonut.site';
 
-  Future<Map<String, dynamic>> fetchCalendars({DateTime? time}) async {
+  Future<Map<String, dynamic>> fetchCalendars() async {
     String? accessTokenJson = await AppDataBase.getToken();
 
     if (accessTokenJson == null) {
@@ -22,9 +22,7 @@ class CommunityService {
     }
 
     try {
-      // DateTime을 "yyyy-MM-dd" 형식의 문자열로 변환
-      String timeString = time != null ? DateFormat('yyyy-MM-dd').format(time) : '';
-      final uri = Uri.parse('$baseUrl/calendars?size=10${timeString.isNotEmpty ? '&time=$timeString' : ''}');
+      final uri = Uri.parse('$baseUrl/calendars?size=10');
 
       print('Request URI: $uri');
       final response = await http.get(
@@ -32,11 +30,10 @@ class CommunityService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-          'Authorization': 'Bearer $accessToken', // 여기에 accessToken만 포함
+          'Authorization': 'Bearer $accessToken',
         },
       );
 
-      // 응답의 인코딩을 utf-8로 설정
       final decodedResponse = utf8.decode(response.bodyBytes);
 
       print('Request Headers: ${response.request!.headers}');

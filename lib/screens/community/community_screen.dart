@@ -40,7 +40,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     _isLoading = true;
 
     try {
-      final result = await CommunityService().fetchCalendars(time: _lastUpdatedAt);
+      final result = await CommunityService().fetchCalendars();
       List<Community> fetchedCalendars = result['communities'];
       setState(() {
         _calendars.addAll(fetchedCalendars);
@@ -68,7 +68,6 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {

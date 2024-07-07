@@ -110,7 +110,7 @@ class _SetCalendarScreenState extends ConsumerState<SetCalendarScreen> {
                 myController: myController,
                 validateTextFormField: validateTextFormField,
                 isError: isError,
-                errorText: '1자 이상 8자 이하로 작성해주세요.',
+                errorText: '1자 이상 12자 이하로 작성해주세요.',
               ),
               Spacer(),
               GestureDetector(
@@ -126,6 +126,7 @@ class _SetCalendarScreenState extends ConsumerState<SetCalendarScreen> {
                       else{
                         ref.watch(calendarTitleProvider.notifier).state = myController.text;
                       }
+                      Navigator.pop(context);
                     }
 
                   }
