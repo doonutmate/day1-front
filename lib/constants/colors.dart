@@ -17,6 +17,10 @@ const Color gray400 = Color(0xFFB7B7B7);
 const Color gray300 = Color(0xFFDFDFDF);
 const Color gray200 = Color(0xFFEFEFEF);
 const Color gray100 = Color(0xFFFCFCFC);
+const Color editCameraBorder = Color(0xFFEDEDED);
+const Color editProfileBorder = Color(0xFFDEDEDE);
+
+
 const Color white = Color(0xFFFFFFFF);
 
 //Blue Scale
@@ -27,5 +31,8 @@ const Color blue400 = Color(0xFF4F8FFF);
 
 //Red Scale
 const Color red500 = Color(0xFFFF243E);
+
+//Profile More Button
+const Color profileMoreButton = Color(0x1A733EE3);
 
 
