@@ -14,16 +14,19 @@ import '../../models/calendar_image_model.dart';
 import '../../models/token_information.dart';
 import '../../widgets/molecules/report_dialogs.dart';
 import '../../widgets/organisms/custom_table_calendar.dart';
+import '../../widgets/molecules/custom_bottom_navigation_bar.dart'; // 네비게이션 바 import 추가
 
 class UserCalendarScreen extends ConsumerStatefulWidget {
   final String otherMemberId;
   final String profileImage;
   final String memberName;
+  final String calendarName; // 캘린더 이름 추가
 
   UserCalendarScreen({
     required this.otherMemberId,
     required this.profileImage,
     required this.memberName,
+    required this.calendarName, // 캘린더 이름 추가
     super.key,
   });
 
@@ -89,7 +92,7 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${widget.memberName}님의 캘린더',
+          widget.calendarName, // 캘린더 이름을 앱바 제목으로 사용
           style: TextStyle(fontSize: 18),
         ),
         actions: [
@@ -156,7 +159,7 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
           ],
         ),
       )
-          : Center(child: CircularProgressIndicator()),
+          : Center(child: CircularProgressIndicator())
     );
   }
 }
