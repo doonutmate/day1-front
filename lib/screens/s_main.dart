@@ -8,12 +8,12 @@ import 'package:day1/screens/mypage/my_page_screen.dart';
 import 'package:day1/services/device_size_provider.dart';
 import 'package:day1/services/community_service.dart';
 import 'package:day1/widgets/molecules/custom_bottom_navigation_bar.dart';
-import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../main.dart';
-import '../widgets/organisms/error_popup.dart'; // 추가
+import '../widgets/molecules/show_Error_Popup.dart';
+import '../widgets/organisms/error_popup.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -45,20 +45,20 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         final List<Community> communities = result['communities'];
         final bool hasNext = result['hasNext'];
 
-        if (hasNext) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CommunityScreen(communities: communities)),
-          );
-        } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CommunityScreen(communities: communities)),
+        );
+      } catch (e) {
+        if (e.toString().contains('Failed to load community with status: 400')) {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => CommunityLockScreen(onTap: _onItemTapped)),
           );
+        } else {
+          print('Error: $e');
+          showErrorPopup(context, 'Failed to load calendars: $e');
         }
-      } catch (e) {
-        print('Error: $e');
-        showErrorPopup(context, 'Failed to load calendars: $e'); // 에러 팝업 호출
       }
     } else {
       setState(() {
