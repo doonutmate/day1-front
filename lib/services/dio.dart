@@ -9,8 +9,6 @@ import 'package:http_parser/http_parser.dart';
 import '../widgets/organisms/error_popup.dart';
 
 
-
-
 // GET http://43.201.170.13:8081/challenge?year=2024&month=10
 // http://43.201.170.13:8081/oauth/login?oauthType=KAKAO
 // Dio라이브러리를 통한 HTTP 통신용 클래스

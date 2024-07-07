@@ -7,7 +7,6 @@ const double appBarTitleFontSize = 18;
 
 
 //카메라 화면 사이즈
-const double cameraScreenAppbarHeight = 50;
 const double cameraScreenAppBarTextSize = 16;
 
 //캘린더 화면 사이즈

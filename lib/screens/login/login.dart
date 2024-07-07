@@ -5,6 +5,7 @@ import 'package:day1/services/app_database.dart';
 import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/appleLogin_button.dart';
 import 'package:day1/widgets/atoms/kakaoLogin_button.dart';
+import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:flutter/material.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -90,11 +91,16 @@ class LoginScreen extends ConsumerWidget {
                       String? response = await AuthService.sendTokenToServer(
                           token.accessToken);
                       if (response != null) {
-                        //서버 토큰을 앱 내부 저장소에 저장
-                        AppDataBase.setToken(response);
-                        //provider에 서버 토큰 저장
-                        oauthProvider.setServerToken(response);
-                        Navigator.pushNamed(context, '/camera');
+                        if(response.contains("Error")){
+                          DioService.showErrorPopup(context, response.replaceFirst("Error", ""));
+                        }
+                        else{
+                          //서버 토큰을 앱 내부 저장소에 저장
+                          AppDataBase.setToken(response);
+                          //provider에 서버 토큰 저장
+                          oauthProvider.setServerToken(response);
+                          Navigator.pushNamed(context, '/camera');
+                        }
                       }
                     }
                   },
@@ -110,17 +116,25 @@ class LoginScreen extends ConsumerWidget {
                   if (appleToken?.identityToken != null) {
                     dynamic response = await DioService.sendAppleTokenToServer(
                         appleToken!.identityToken!);
-                    //response map 데이터를 TokenInformation 모델 클래스로 변환
-                    TokenInformation tokenInfo = new TokenInformation(
-                        accessToken: response["accessToken"],
-                        oauthType: response["oauthType"]);
-                    //acesstoken, oauthType map 자료 json string으로 인코딩
-                    String json = jsonEncode(tokenInfo);
-                    //서버 토큰을 앱 내부 저장소에 저장
-                    AppDataBase.setToken(json);
-                    //provider에 서버 토큰 저장
-                    oauthProvider.setServerToken(json);
-                    Navigator.pushNamed(context, '/camera');
+                    if(response.toString().contains("Error")){
+                      DioService.showErrorPopup(context, response.toString().replaceFirst("Error", ""), navigate: (){
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/login', (route) => false);
+                      });
+                    }
+                    else{
+                      //response map 데이터를 TokenInformation 모델 클래스로 변환
+                      TokenInformation tokenInfo = new TokenInformation(
+                          accessToken: response["accessToken"],
+                          oauthType: response["oauthType"]);
+                      //acesstoken, oauthType map 자료 json string으로 인코딩
+                      String json = jsonEncode(tokenInfo);
+                      //서버 토큰을 앱 내부 저장소에 저장
+                      AppDataBase.setToken(json);
+                      //provider에 서버 토큰 저장
+                      oauthProvider.setServerToken(json);
+                      Navigator.pushNamed(context, '/camera');
+                    }
                   }
                 }),
               ),

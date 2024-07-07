@@ -1,6 +1,6 @@
 import 'package:day1/constants/colors.dart';
+import 'package:day1/widgets/atoms/radius_text_button.dart';
 import 'package:flutter/material.dart';
-import '../atoms/radio_text_button.dart';
 
 class ErrorPopup extends StatelessWidget {
   String errorMassage;
@@ -31,8 +31,8 @@ class ErrorPopup extends StatelessWidget {
           Text(
             errorMassage,
             style: TextStyle(
-                fontSize: 16,
-                color: gray600
+              fontSize: 16,
+              color: gray600
             ),
           ),
           SizedBox(

@@ -15,13 +15,13 @@ class EditProfileImage extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                  filterQuality: FilterQuality.high,
-                  fit: BoxFit.fill,
-                  image: profileImage
-              ),
-              border: Border.all(color: editProfileBorder)
+            shape: BoxShape.circle,
+            image: DecorationImage(
+              filterQuality: FilterQuality.high,
+              fit: BoxFit.fill,
+              image: profileImage
+            ),
+            border: Border.all(color: editProfileBorder)
           ),
         ),
         Positioned(
@@ -31,9 +31,9 @@ class EditProfileImage extends StatelessWidget {
             width: 28,
             height: 28,
             decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: editCameraBorder),
-                color: Colors.white
+              shape: BoxShape.circle,
+              border: Border.all(color: editCameraBorder),
+              color: Colors.white
             ),
             child: Image.asset(
               'assets/icons/edit_camera.png',

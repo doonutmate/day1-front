@@ -6,13 +6,15 @@ class AppDataBase{
   // 저장 함수
   static Future<void> setToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('accessToken', token);
+    await prefs.setString('accessToken', token);
+    print('토큰 저장: $token');  // 토큰 저장 확인 로그
   }
 
   // 불러오는 함수
   static Future<String?> getToken() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('accessToken');
+    print('불러온 토큰: $token');  // 토큰 불러오기 확인 로그
     return token;
   }
 
@@ -20,5 +22,6 @@ class AppDataBase{
   static Future<void> clearToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
+    print('토큰 초기화');
   }
 }

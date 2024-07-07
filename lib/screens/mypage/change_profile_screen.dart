@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:day1/constants/colors.dart';
 import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/atoms/edit_profile_image.dart';
+import 'package:day1/widgets/atoms/radius_text_button.dart';
+import 'package:day1/widgets/molecules/show_Error_Popup.dart';
+import 'package:day1/widgets/molecules/title_textformfield_group.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,8 +15,6 @@ import '../../models/user_profile.dart';
 import '../../providers/calendar_title_provider.dart';
 import '../../providers/user_profile_provider.dart';
 import '../../services/server_token_provider.dart';
-import '../../widgets/atoms/radio_text_button.dart';
-import '../../widgets/molecules/title_text_form_field.dart';
 
 class ChangeProfileScreen extends ConsumerStatefulWidget {
   const ChangeProfileScreen({super.key});
@@ -150,24 +151,24 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: appBarHeight,
-          title: Text(
-            "프로필 수정",
-            style: TextStyle(
-              fontSize: appBarTitleFontSize,
+            toolbarHeight: appBarHeight,
+            title: Text(
+              "프로필 수정",
+              style: TextStyle(
+                fontSize: appBarTitleFontSize,
+              ),
             ),
-          ),
-          leading: GestureDetector(
-            onTap: (){
-              if(focusNode.hasFocus == false)
-                Navigator.pop(context);
-            },
-            child: Icon(Icons.arrow_back_ios),
-          ),
+            leading: GestureDetector(
+              onTap: (){
+                if(focusNode.hasFocus == false)
+                  Navigator.pop(context);
+              },
+              child: Icon(Icons.arrow_back_ios),
+            ),
         ),
         body: Padding(
           padding:
-          const EdgeInsets.symmetric(horizontal: mypageHorizontalMargin),
+              const EdgeInsets.symmetric(horizontal: mypageHorizontalMargin),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -218,7 +219,7 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
                     }
                     final userProfile = await fetchUserProfile(tokenInfo.accessToken);
                     if(userProfile.toString().contains("Error")){
-                      DioService.showErrorPopup(context, userProfile.toString().replaceFirst("Error", ""));
+                      DioService.showErrorPopup(context, userProfile.replaceFirst("Error", ""));
                     }
                     else{
                       ref.read(userProfileProvider.notifier).state = userProfile!;

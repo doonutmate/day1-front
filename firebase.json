@@ -1,0 +1,2 @@
+
+{"flutter":{"platforms":{"android":{"default":{"projectId":"doonut-e933c","appId":"1:88827143845:android:01a9fc1c871088acec8f4c","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"doonut-e933c","appId":"1:88827143845:ios:45a21b22ea012463ec8f4c","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"doonut-e933c","configurations":{"android":"1:88827143845:android:01a9fc1c871088acec8f4c","ios":"1:88827143845:ios:45a21b22ea012463ec8f4c"}}}}}}

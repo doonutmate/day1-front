@@ -4,6 +4,8 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>지금 권한을 허용해 주시면 회원님께 꼭 필요한 맞춤형 정보와 서비스를 받아보실 수 있어요 :)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -53,8 +55,15 @@
 	<string>To enable GPS location access for Exif data</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>To enable microphone access when recording video</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>To enable photo library access for changing profile image</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

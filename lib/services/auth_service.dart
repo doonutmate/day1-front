@@ -58,6 +58,10 @@ class AuthService {
         print('카카오톡으로 로그인 성공');
         // Navigator.pushNamed(context, '/camera');
         // 백엔드로 토큰 전송
+        if (token != null) {
+          await AppDataBase.setToken(token.accessToken);
+          print('토큰 저장 성공: ${token.accessToken}');
+        }
         return token; // 토큰 반환
       } catch (error) {
         print('카카오톡으로 로그인 실패 $error');
@@ -77,6 +81,10 @@ class AuthService {
         // OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
         // await UserApi.instance.loginWithKakaoAccount();
         print('카카오계정으로 로그인 성공');
+        if (token != null) {
+          await AppDataBase.setToken(token.accessToken);
+        }
+        print('토큰 저장 성공: ${token.accessToken}');
         return token;
       } catch (error) {
         print('카카오계정으로 로그인 실패 $error');
@@ -132,7 +140,7 @@ class AuthService {
     print('서버로 전송할 토큰: $token'); // 요청 데이터 로깅
     try {
       var response = await http.post(
-        Uri.parse('https://prod.doonut.site/oauth/login?oauthType=KAKAO'),
+        Uri.parse('https://dev.doonut.site/oauth/login?oauthType=KAKAO'),
         // 백엔드 서버의 토큰 검증 엔드포인트
         headers: {
           'Content-Type': 'application/json',
@@ -150,9 +158,15 @@ class AuthService {
         print('토큰 서버 전송 성공: ${response.body}');
         return response.body;
       } else {
+        String errorMessage;
         // 에러 처리
-        print('카카오 토큰 서버 전송 실패: ${response.body}');
-        return null;
+        if(response.statusCode >= 500){
+          errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = "Error" + response.body;
+        }
+        return errorMessage;
       }
     } catch (e) {
       print('서버 전송 중 에러 발생: $e');
