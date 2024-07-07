@@ -36,6 +36,7 @@ class CalendarRichText extends StatelessWidget {
         style: TextStyle(
           color: primary,
           fontSize: calendarRichTextSize,
+          fontWeight: FontWeight.bold,
         ),
       ),
       TextSpan(

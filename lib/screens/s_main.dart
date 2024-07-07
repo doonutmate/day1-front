@@ -13,7 +13,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../main.dart';
 import '../widgets/molecules/show_Error_Popup.dart';
-import '../widgets/organisms/error_popup.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});
@@ -36,34 +35,42 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     super.initState();
+    _loadInitialData();
+  }
+
+  void _loadInitialData() async {
+    if (_selectedIndex == 2) {
+      await _fetchCommunityData();
+    }
+  }
+
+  Future<void> _fetchCommunityData() async {
+    try {
+      final result = await communityService.fetchCalendars();
+      final List<Community> communities = result['communities'];
+      setState(() {
+        _widgetOptions[2] = CommunityScreen(communities: communities);
+      });
+    } catch (e) {
+      if (e.toString().contains('Failed to load community with status: 400')) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CommunityLockScreen(onTap: _onItemTapped)),
+        );
+      } else {
+        print('Error: $e');
+        showErrorPopup(context, 'Failed to load calendars: $e');
+      }
+    }
   }
 
   void _onItemTapped(int index) async {
-    if (index == 2) { // 커뮤니티 탭의 인덱스
-      try {
-        final result = await communityService.fetchCalendars();
-        final List<Community> communities = result['communities'];
-        final bool hasNext = result['hasNext'];
+    setState(() {
+      _selectedIndex = index;
+    });
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => CommunityScreen(communities: communities)),
-        );
-      } catch (e) {
-        if (e.toString().contains('Failed to load community with status: 400')) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CommunityLockScreen(onTap: _onItemTapped)),
-          );
-        } else {
-          print('Error: $e');
-          showErrorPopup(context, 'Failed to load calendars: $e');
-        }
-      }
-    } else {
-      setState(() {
-        _selectedIndex = index;
-      });
+    if (index == 2) {
+      await _fetchCommunityData();
     }
   }
 
@@ -73,6 +80,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     double height = MediaQuery.of(context).size.height;
     ref.watch(deviceSizeProvider.notifier).setDeviceWidth(width);
     ref.watch(deviceSizeProvider.notifier).setDeviceHeight(height);
+
     return Scaffold(
       backgroundColor: backGroundColor,
       body: SafeArea(
