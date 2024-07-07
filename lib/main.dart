@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:camera/camera.dart';
+import 'package:day1/screens/calendar_screen.dart';
 import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/community/community_screen.dart'; //curl -sL https://firebase.tools | upgrade=true bash;
 import 'package:day1/screens/login/login.dart';
 import 'package:day1/screens/login/permision.dart';
 import 'package:day1/screens/mypage/change_profile_screen.dart';
+import 'package:day1/screens/mypage/my_page_screen.dart';
 import 'package:day1/screens/mypage/set_calendar_screen.dart';
 import 'package:day1/screens/mypage/set_notification_screen.dart';
 import 'package:day1/screens/mypage/withdraw_screen.dart';
@@ -193,11 +195,13 @@ class MyApp extends ConsumerWidget {
         '/login': (context) => LoginScreen(),
         '/permision': (context) => Permision(),
         '/main': (context) => MainScreen(),
+        '/calendar' : (context) => CalendarScreen(),
         '/camera': (context) => CameraScreen(cameras),
         '/withdraw' : (context) => WithdrawScreen(),
         '/changeprofile' : (context) => ChangeProfileScreen(),
         '/setcalendar' : (context) => SetCalendarScreen(),
         '/setnotification' : (context) => SetNotificationScreen(),
+        '/mypage': (context) => MyPageScreen(),
       },
     );
   }

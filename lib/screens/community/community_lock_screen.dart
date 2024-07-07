@@ -1,9 +1,12 @@
-import 'package:day1/screens/calendar_screen.dart';
+import 'package:day1/widgets/molecules/custom_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import '../../constants/colors.dart';
 
 class CommunityLockScreen extends StatelessWidget {
+  final void Function(int) onTap; // onTap 콜백 추가
+
+  const CommunityLockScreen({Key? key, required this.onTap}) : super(key: key); // 생성자에 onTap 콜백 추가
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,10 +14,10 @@ class CommunityLockScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             RichText(
-              textAlign: TextAlign.left, // 왼쪽 정렬
+              textAlign: TextAlign.left,
               text: TextSpan(
                 children: [
                   TextSpan(
@@ -60,22 +63,17 @@ class CommunityLockScreen extends StatelessWidget {
             ),
             SizedBox(height: 40.0),
             Center(
-              child: SvgPicture.asset(
-                'assets/images/lock.svg',
+              child: Image.asset(
+                'assets/icons/lock.png',
                 height: 150,
                 width: 150,
               ),
             ),
-            SizedBox(height: 40.0),
+            SizedBox(height: 90.0),
             Center(
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CalendarScreen(), // CalendarScreen으로 변경
-                    ),
-                  );
+                  Navigator.pop(context); // 이전 화면으로 돌아가기
                 },
                 child: Text(
                   '확인',
@@ -95,27 +93,6 @@ class CommunityLockScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: '캘린더',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.camera_alt),
-            label: '카메라',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            label: '커뮤니티',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '마이페이지',
-          ),
-        ],
       ),
     );
   }

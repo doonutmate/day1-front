@@ -3,10 +3,10 @@ import 'package:day1/models/community_model.dart';
 import 'package:day1/screens/calendar_screen.dart';
 import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/community/community_screen.dart';
-import 'package:day1/screens/community/community_lock_screen.dart'; // 추가
+import 'package:day1/screens/community/community_lock_screen.dart';
 import 'package:day1/screens/mypage/my_page_screen.dart';
 import 'package:day1/services/device_size_provider.dart';
-import 'package:day1/services/community_service.dart'; // 추가
+import 'package:day1/services/community_service.dart';
 import 'package:day1/widgets/molecules/custom_bottom_navigation_bar.dart';
 import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +53,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         } else {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CommunityLockScreen()),
+            MaterialPageRoute(builder: (context) => CommunityLockScreen(onTap: _onItemTapped)),
           );
         }
       } catch (e) {
