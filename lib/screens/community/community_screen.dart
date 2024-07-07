@@ -1,4 +1,4 @@
-import 'package:day1/screens/community/user_calendar_screen.dart';
+import 'package:day1/widgets/molecules/custom_bottom_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:day1/constants/colors.dart';
@@ -9,6 +9,7 @@ import '../../widgets/molecules/report_dialogs.dart';
 import 'community_card.dart';
 import '../report_screen.dart';
 import '../../providers/calendar_title_provider.dart'; // 프로바이더 import 추가
+import 'user_calendar_screen.dart'; // 추가
 
 class CommunityScreen extends ConsumerStatefulWidget {
   final List<Community> communities;
@@ -64,6 +65,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
           otherMemberId: community.id.toString(),
           profileImage: community.profileImage,
           memberName: community.memberName,
+          calendarName: community.calendarName, // 캘린더 이름 전달
         ),
       ),
     );
@@ -135,6 +137,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
           ),
         ],
       ),
+
     );
   }
 }
