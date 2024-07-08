@@ -14,7 +14,6 @@ import '../../models/calendar_image_model.dart';
 import '../../models/token_information.dart';
 import '../../widgets/molecules/report_dialogs.dart';
 import '../../widgets/organisms/custom_table_calendar.dart';
-import '../../widgets/molecules/custom_bottom_navigation_bar.dart'; // 네비게이션 바 import 추가
 
 class UserCalendarScreen extends ConsumerStatefulWidget {
   final String otherMemberId;
@@ -159,7 +158,7 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
           ],
         ),
       )
-          : Center(child: CircularProgressIndicator())
+          : Center(child: CircularProgressIndicator()),
     );
   }
 }
