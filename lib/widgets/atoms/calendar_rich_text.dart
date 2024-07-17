@@ -4,7 +4,7 @@ import '../../constants/colors.dart';
 import '../../constants/size.dart';
 
 class CalendarRichText extends StatelessWidget {
-  int recordNum;
+  String? recordNum;
   String? title;
 
   CalendarRichText({
@@ -32,7 +32,7 @@ class CalendarRichText extends StatelessWidget {
         ),
       ),
       TextSpan(
-        text: ' ${recordNum}번',
+        text: ' ${recordNum ?? '0'}번',
         style: TextStyle(
           color: primary,
           fontSize: calendarRichTextSize,

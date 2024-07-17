@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:day1/providers/calendar_title_provider.dart';
+import 'package:day1/providers/total_record_count_provider.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/device_size_provider.dart';
 import 'package:day1/services/dio.dart';
@@ -75,6 +76,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           print("response success");
         });
       }
+
+
+
+
     }
     else{
       Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
@@ -92,6 +97,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     // calendar title get
     String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
 
+    String? totalCount = ref.watch(totalRecordCount.notifier).state;
+
 
     return Padding(
       padding: screenHorizontalMargin,
@@ -102,7 +109,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             height: calendarTopMargin,
           ),
           //서버에서 사진을 저장한 일자대로 리스트를 넘겨주므로 리스트의 길이를 매개변수로 넘겨준다
-          CalendarRichText(title: calendarTitle,recordNum: imageMap.length ?? 0,),
+          CalendarRichText(title: calendarTitle,recordNum: totalCount,),
           SizedBox(
             height: 20,
           ),
