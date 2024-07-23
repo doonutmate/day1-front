@@ -4,7 +4,7 @@ import '../../constants/colors.dart';
 import '../../constants/size.dart';
 
 class CalendarRichText extends StatelessWidget {
-  String? recordNum;
+  String recordNum;
   String? title;
 
   CalendarRichText({
