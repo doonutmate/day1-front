@@ -24,54 +24,64 @@ class MainScreen extends ConsumerStatefulWidget {
 class _MainScreenState extends ConsumerState<MainScreen> {
   int _selectedIndex = 0;
   final CommunityService communityService = CommunityService();
+  bool _showCommunityLock = false;
 
   final List<Widget> _widgetOptions = <Widget>[
     CalendarScreen(),
     CameraScreen(cameras),
-    Container(), // 커뮤니티 화면을 비워두고, 로직에서 처리합니다.
+    Container(), // 커뮤니티 화면을 위한 빈 컨테이너
     MyPageScreen()
   ];
 
   @override
   void initState() {
     super.initState();
-    _loadInitialData();
-  }
-
-  void _loadInitialData() async {
-    if (_selectedIndex == 2) {
-      await _fetchCommunityData();
-    }
+    // 초기에 커뮤니티 탭을 로드하지 않음
   }
 
   Future<void> _fetchCommunityData() async {
     try {
-      final result = await communityService.fetchCalendars();
-      final List<Community> communities = result['communities'];
-      setState(() {
-        _widgetOptions[2] = CommunityScreen(communities: communities);
-      });
-    } catch (e) {
-      if (e.toString().contains('Failed to load community with status: 400')) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => CommunityLockScreen(onTap: _onItemTapped)),
-        );
+      final result = await communityService.fetchCalendars(context, null); // null을 lastUpdatedAt으로 전달
+      final status = result['status'];
+      final message = result['message'];
+      final errorCode = result['errorCode'];
+      print('Status code: $status'); // 상태 코드 출력
+      print('Result data: ${result.toString()}'); // 결과 데이터 출력
+
+      if (status == 200) {
+        final List<Community> communities = result['communities'];
+        setState(() {
+          _widgetOptions[2] = CommunityScreen(communities: communities);
+          _showCommunityLock = false;
+        });
+      } else if (status == 400 && errorCode == null) {
+        setState(() {
+          _showCommunityLock = true;
+        });
       } else {
-        print('Error: $e');
-        showErrorPopup(context, 'Failed to load calendars: $e');
+        print('Error: $message');
+        showErrorPopup(context, 'Failed to load calendars: $message');
       }
+    } catch (e) {
+      print('Error: $e');
+      showErrorPopup(context, 'Failed to load calendars: $e');
     }
   }
 
   void _onItemTapped(int index) async {
+    if (index == 2) { // 커뮤니티 탭의 인덱스
+      await _fetchCommunityData();
+    }
     setState(() {
       _selectedIndex = index;
     });
+  }
 
-    if (index == 2) {
-      await _fetchCommunityData();
-    }
+  void _navigateToCalendar() {
+    setState(() {
+      _selectedIndex = 0; // 캘린더 화면 인덱스로 설정
+      _showCommunityLock = false;
+    });
   }
 
   @override
@@ -84,7 +94,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     return Scaffold(
       backgroundColor: backGroundColor,
       body: SafeArea(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: _showCommunityLock && _selectedIndex == 2
+            ? CommunityLockScreen(onTap: _navigateToCalendar)
+            : _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         selectedIndex: _selectedIndex,

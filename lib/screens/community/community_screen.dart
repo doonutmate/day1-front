@@ -29,10 +29,10 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
   void initState() {
     super.initState();
     _calendars = widget.communities; // 초기 데이터를 설정
-    _hasNext = _calendars.isNotEmpty;
     if (_calendars.isNotEmpty) {
-      _lastUpdatedAt = DateTime.parse(_calendars.last.updatedAt);
+      _lastUpdatedAt = DateTime.parse(_calendars.last.updatedAt as String); // 초기화 시 마지막 게시물의 updatedAt 저장
     }
+    _hasNext = _calendars.isNotEmpty;
   }
 
   Future<void> _fetchCalendars() async {
@@ -40,13 +40,15 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     _isLoading = true;
 
     try {
-      final result = await CommunityService().fetchCalendars();
+      final result = await CommunityService().fetchCalendars(context, _lastUpdatedAt); // _lastUpdatedAt 전달
       List<Community> fetchedCalendars = result['communities'];
+
       setState(() {
-        _calendars.addAll(fetchedCalendars);
+        // 중복 항목 제거
+        _calendars.addAll(fetchedCalendars.where((newCalendar) => !_calendars.any((existingCalendar) => existingCalendar.id == newCalendar.id)));
         _hasNext = result['hasNext'];
         if (fetchedCalendars.isNotEmpty) {
-          _lastUpdatedAt = DateTime.parse(fetchedCalendars.last.updatedAt);
+          _lastUpdatedAt = DateTime.parse(fetchedCalendars.last.updatedAt as String); // 새로운 마지막 게시물의 updatedAt 저장
         }
       });
     } catch (e) {
