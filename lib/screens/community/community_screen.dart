@@ -1,7 +1,8 @@
+import 'package:day1/widgets/molecules/custom_bottom_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:day1/constants/colors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../constants/colors.dart';
 import '../../models/community_model.dart';
 import '../../services/community_service.dart';
 import '../../widgets/molecules/report_dialogs.dart';
@@ -76,65 +77,69 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
   Widget build(BuildContext context) {
     final calendarTitle = ref.watch(calendarTitleProvider) ?? 'calendarName'; // 캘린더 제목 가져오기
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 32.0),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(
-                  text: 'DAY1',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: primary,
+    return Scaffold(
+      backgroundColor: backGroundColor,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 32.0),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'DAY1',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: primary,
+                    ),
                   ),
-                ),
-                TextSpan(
-                  text: ' 캘린더 모아보기',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: gray900,
+                  TextSpan(
+                    text: ' 캘린더 모아보기',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: gray900,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification scrollInfo) {
-              if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && _hasNext) {
-                _fetchCalendars();
-              }
-              return true;
-            },
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              itemCount: _calendars.length + 1,
-              itemBuilder: (context, index) {
-                if (index == _calendars.length) {
-                  return _isLoading ? Center(child: CircularProgressIndicator()) : SizedBox.shrink();
+          Expanded(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification scrollInfo) {
+                if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent && _hasNext) {
+                  _fetchCalendars();
                 }
-                return CommunityCard(
-                  community: _calendars[index],
-                  calendarTitle: calendarTitle, // 캘린더 제목 전달
-                  onTap: () {
-                    _navigateToUserCalendar(_calendars[index]);
-                  },
-                  onMoreOptionsTap: () {
-                    showMoreOptionsDialog(context);
-                  },
-                );
+                return true;
               },
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                itemCount: _calendars.length + 1,
+                itemBuilder: (context, index) {
+                  if (index == _calendars.length) {
+                    return _isLoading ? Center(child: CircularProgressIndicator()) : SizedBox.shrink();
+                  }
+                  return CommunityCard(
+                    community: _calendars[index],
+                    calendarTitle: calendarTitle, // 캘린더 제목 전달
+                    onTap: () {
+                      _navigateToUserCalendar(_calendars[index]);
+                    },
+                    onMoreOptionsTap: () {
+                      showMoreOptionsDialog(context);
+                    },
+                  );
+                },
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
+
     );
   }
 }

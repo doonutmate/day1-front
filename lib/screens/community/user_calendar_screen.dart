@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/calendar_image_model.dart';
 import '../../widgets/organisms/custom_table_Calendar.dart';
+import '../../widgets/organisms/custom_table_calendar.dart';
 
 class UserCalendarScreen extends ConsumerStatefulWidget {
   final String otherMemberId;
@@ -169,7 +170,7 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
           ],
         ),
       )
-          : Center(child: CircularProgressIndicator()),
+          : Center(child: CircularProgressIndicator())
     );
   }
 }
