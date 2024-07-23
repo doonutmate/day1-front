@@ -9,9 +9,6 @@ import 'package:day1/widgets/atoms/flip_button.dart';
 import 'package:day1/widgets/atoms/reshoot_text_button.dart';
 import 'package:day1/widgets/atoms/shutter_button.dart';
 import 'package:day1/widgets/atoms/store_text_button.dart';
-import 'package:day1/widgets/molecules/show_Error_Popup.dart';
-import 'package:dio/dio.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
@@ -22,13 +19,12 @@ import 'package:path/path.dart' as path;
 import '../../constants/size.dart';
 import '../../models/token_information.dart';
 import '../../models/user_profile.dart';
+import '../../providers/total_record_count_provider.dart';
 import '../../providers/user_profile_provider.dart';
 import '../../services/dio.dart';
 import '../../services/server_token_provider.dart';
 import '../../widgets/atoms/cancel_text_button.dart';
 import '../../widgets/atoms/day1_camera.dart';
-import '../../providers/calendar_title_provider.dart';
-import '../../widgets/organisms/error_popup.dart';
 
 class CameraScreen extends ConsumerStatefulWidget {
   final List<CameraDescription> cameras;
@@ -88,6 +84,13 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
           } else {
             ref.read(calendarTitleProvider.notifier).state = titleMap;
           }
+        }
+        var totalCount = await DioService.getTotalRecordCount(tokenInfo.accessToken);
+        if(totalCount.toString().contains("Error")){
+          DioService.showErrorPopup(context, totalCount.toString().replaceFirst("Error", ""));
+        }
+        else{
+          ref.read(totalRecordCount.notifier).state = totalCount;
         }
       }
     });

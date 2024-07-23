@@ -1,16 +1,15 @@
 import 'dart:convert';
 import 'package:day1/providers/calendar_title_provider.dart';
+import 'package:day1/providers/total_record_count_provider.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/device_size_provider.dart';
 import 'package:day1/services/dio.dart';
 import 'package:day1/services/server_token_provider.dart';
 import 'package:day1/widgets/atoms/calendar_rich_text.dart';
-import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/size.dart';
 import '../models/calendar_image_model.dart';
-import '../services/auth_service.dart';
 import '../models/token_information.dart';
 import '../widgets/organisms/custom_table_calendar.dart';
 
@@ -77,7 +76,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           print("response success");
         });
       }
-    } else {
       Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
     }
   }
@@ -89,7 +87,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     // calendar headermargin 크기
     double headerMargin = (deviceWidth - 225) / 2;
     // calendar title get
-    String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
+    String? calendarTitle = ref.watch(calendarTitleProvider);
+
+    // total count get
+    String? totalCount = ref.watch(totalRecordCountProvider);
 
     return Padding(
       padding: screenHorizontalMargin,
@@ -100,7 +101,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             height: calendarTopMargin,
           ),
           //서버에서 사진을 저장한 일자대로 리스트를 넘겨주므로 리스트의 길이를 매개변수로 넘겨준다
-          CalendarRichText(title: calendarTitle, recordNum: imageMap.length ?? 0),
+          CalendarRichText(title: calendarTitle, recordNum: totalCount ?? '0'),
           SizedBox(
             height: 20,
           ),
@@ -112,7 +113,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
             month: _month,
             headerMargin: headerMargin,
             imageMap: imageMap,
-            shifhtMonth: getCalendarImage, // 여기서 함수 이름 수정
+            shifhtMonth: getCalendarImage, // 함수 이름 수정
           ),
         ],
       ),
