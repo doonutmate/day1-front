@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../constants/colors.dart';
 import '../../constants/size.dart';
+import '../../providers/total_record_count_provider.dart';
 import '../../screens/camera/camera.dart';
 import '../../services/dio.dart';
 
@@ -43,6 +44,13 @@ class StoreTextButton extends ConsumerWidget {
                     context, '/login', (route) => false);
               });
               ;
+            }
+            var totalCount = await DioService.getTotalRecordCount(tokenInfo.accessToken);
+            if(totalCount.toString().contains("Error")){
+              DioService.showErrorPopup(context, totalCount.toString().replaceFirst("Error", ""));
+            }
+            else{
+              ref.read(totalRecordCount.notifier).state = totalCount;
             }
           }
         }
