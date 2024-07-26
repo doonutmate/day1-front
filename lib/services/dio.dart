@@ -543,6 +543,40 @@ class DioService{
     }
   }
 
+  static Future<String?> getTotalRecordCount(String token) async {
+    try{
+      var dio = Dio();
+      //get header 설정
+      dio.options.headers ={
+        "Authorization": "Bearer $token"
+      };
+      Response response = await dio.get(
+        baseUri + "calendars/total-count",
+      );
+      if (response.statusCode != 200) {
+        print(await response.statusMessage);
+        return "Error" + response.data["message"];
+      }
+      String title = response.data["totalCount"].toString();
+      return title;
+    }
+    on DioException catch(e){
+      String errorMessage;
+      if(e.response != null){
+        if(e.response!.statusCode! >= 500){
+          errorMessage = "Error서버가 불안정해 정보를 불러올 수 없어요";
+        }
+        else{
+          errorMessage = "Error" + e.response!.data["message"];
+        }
+        return errorMessage;
+      }
+    }
+    catch(x){
+      print(x);
+    }
+  }
+
   static void showErrorPopup(BuildContext context, String msg, {VoidCallback? navigate}){
     showDialog(context: context, builder: (BuildContext context){
       return AlertDialog(
