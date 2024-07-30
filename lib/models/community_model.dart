@@ -28,7 +28,7 @@ class Community {
       firstUploadedAt: json['firstUploadedAt'],
       lastUploadedAt: json['lastUploadedAt'],
       updatedAt: json['updatedAt'],
-      profileImage: json['profileImage'],
+      profileImage: json['profileImage'] ?? "null",
     );
   }
 

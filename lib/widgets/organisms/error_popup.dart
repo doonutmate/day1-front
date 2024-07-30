@@ -32,7 +32,8 @@ class ErrorPopup extends StatelessWidget {
             errorMassage,
             style: TextStyle(
               fontSize: 16,
-              color: gray600
+              color: gray600,
+              overflow: TextOverflow.ellipsis
             ),
           ),
           SizedBox(
