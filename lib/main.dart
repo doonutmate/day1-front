@@ -195,7 +195,6 @@ class MyApp extends ConsumerWidget {
         '/login': (context) => LoginScreen(),
         '/permision': (context) => Permision(),
         '/main': (context) => MainScreen(),
-        '/calendar' : (context) => CalendarScreen(),
         '/camera': (context) => CameraScreen(cameras),
         '/withdraw' : (context) => WithdrawScreen(),
         '/changeprofile' : (context) => ChangeProfileScreen(),

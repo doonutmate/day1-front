@@ -4,7 +4,7 @@ import '../../constants/colors.dart';
 import '../../constants/size.dart';
 
 class CalendarRichText extends StatelessWidget {
-  String recordNum;
+  String? recordNum;
   String? title;
 
   CalendarRichText({
@@ -17,34 +17,35 @@ class CalendarRichText extends StatelessWidget {
   Widget build(BuildContext context) {
     return RichText(
         text: TextSpan(children: [
-      TextSpan(
-        text: title!,
-        style: TextStyle(
-            color: gray900,
-            fontSize: calendarRichTextSize,
-            fontWeight: FontWeight.bold),
-      ),
-      TextSpan(
-        text: '에\n총',
-        style: TextStyle(
-          color: gray900,
-          fontSize: calendarRichTextSize,
-        ),
-      ),
-      TextSpan(
-        text: ' ${recordNum ?? '0'}번',
-        style: TextStyle(
-          color: primary,
-          fontSize: calendarRichTextSize,
-        ),
-      ),
-      TextSpan(
-        text: '을 기록했어요!',
-        style: TextStyle(
-          color: gray900,
-          fontSize: calendarRichTextSize,
-        ),
-      ),
-    ]));
+          TextSpan(
+            text: title!,
+            style: TextStyle(
+                color: gray900,
+                fontSize: calendarRichTextSize,
+                fontWeight: FontWeight.bold),
+          ),
+          TextSpan(
+            text: '에\n총',
+            style: TextStyle(
+              color: gray900,
+              fontSize: calendarRichTextSize,
+            ),
+          ),
+          TextSpan(
+            text: ' ${recordNum ?? '0'}번',
+            style: TextStyle(
+              color: primary,
+              fontSize: calendarRichTextSize,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          TextSpan(
+            text: '을 기록했어요!',
+            style: TextStyle(
+              color: gray900,
+              fontSize: calendarRichTextSize,
+            ),
+          ),
+        ]));
   }
 }

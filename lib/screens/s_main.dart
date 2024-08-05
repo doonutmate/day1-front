@@ -37,7 +37,13 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     super.initState();
-    // 초기에 커뮤니티 탭을 로드하지 않음
+    _loadInitialData();
+  }
+
+  void _loadInitialData() async {
+    if (_selectedIndex == 2){
+      await _fetchCommunityData();
+    }
   }
 
   Future<void> _fetchCommunityData() async {
@@ -61,21 +67,22 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         });
       } else {
         print('Error: $message');
-        showErrorPopup(context, 'Failed to load calendars: $message');
+        showErrorPopup(context, '서버가 불안정해 정보를 불러올 수 없어요');
       }
     } catch (e) {
       print('Error: $e');
-      showErrorPopup(context, 'Failed to load calendars: $e');
+      showErrorPopup(context, '서버가 불안정해 정보를 불러올 수 없어요');
     }
   }
 
   void _onItemTapped(int index) async {
-    if (index == 2) { // 커뮤니티 탭의 인덱스
-      await _fetchCommunityData();
-    }
     setState(() {
       _selectedIndex = index;
     });
+
+    if (index == 2) {
+      await _fetchCommunityData();
+    }
   }
 
   void _navigateToCalendar() {

@@ -64,10 +64,12 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => UserCalendarScreen(
-          otherMemberId: community.id.toString(),
           profileImage: community.profileImage,
           memberName: community.memberName,
-          calendarName: community.calendarName, // 캘린더 이름 전달
+          calendarName: community.calendarName,
+          totalCount: community.totalCount,
+          memberId: community.memberId,
+          lastUploadedAt: community.lastUploadedAt, // 캘린더 이름 전달
         ),
       ),
     );

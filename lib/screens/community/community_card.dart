@@ -44,7 +44,10 @@ class CommunityCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   CircleAvatar(
-                    backgroundImage: NetworkImage(community.profileImage),
+                    backgroundImage: community.profileImage != "null"
+                        ? NetworkImage(community.profileImage) as ImageProvider
+                        : AssetImage("assets/icons/mypage_profile.png")
+                            as ImageProvider,
                     radius: 27,
                   ),
                   SizedBox(height: 16.0),

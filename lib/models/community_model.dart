@@ -1,5 +1,6 @@
 class Community {
   int id;
+  int memberId;
   int totalCount;
   String memberName;
   String calendarName;
@@ -10,6 +11,7 @@ class Community {
 
   Community({
     required this.id,
+    required this.memberId,
     required this.totalCount,
     required this.memberName,
     required this.calendarName,
@@ -22,19 +24,21 @@ class Community {
   factory Community.fromJson(Map<String, dynamic> json) {
     return Community(
       id: json['id'],
+      memberId: json['memberId'],
       totalCount: json['totalCount'],
       memberName: json['memberName'],
       calendarName: json['calendarName'],
       firstUploadedAt: json['firstUploadedAt'],
       lastUploadedAt: json['lastUploadedAt'],
       updatedAt: json['updatedAt'],
-      profileImage: json['profileImage'],
+      profileImage: json['profileImage']?? "null",
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'memberId': memberId,
       'totalCount': totalCount,
       'memberName': memberName,
       'calendarName': calendarName,
