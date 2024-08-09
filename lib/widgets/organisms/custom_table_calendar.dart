@@ -5,23 +5,22 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../constants/colors.dart';
 import '../../models/calendar_image_model.dart';
-import 'custom_table_Calendar.dart';
 import 'default_image_dialog.dart';
 
 class CustomTableCalendar extends StatelessWidget {
-  CustomTableCalendar(
-      {super.key,
-      required this.year,
-      required this.month,
-      required this.headerMargin,
-      required this.imageMap,
-      required this.shifhtMonth});
+  CustomTableCalendar({required this.year,
+  required this.month,
+  required this.headerMargin,
+  required this.imageMap,
+  required this.shifhtMonth,
+});
 
   int year;
   int month;
   final double headerMargin;
   final Map<DateTime, CalendarImage> imageMap;
-  Future<void> Function(int year, int month) shifhtMonth;
+  Function(int year, int month) shifhtMonth;
+
 
   //원본 이미지 보여주는 함수
   Future<void> showImage(BuildContext context, DateTime day) {
@@ -30,7 +29,10 @@ class CustomTableCalendar extends StatelessWidget {
       barrierDismissible: true,
       builder: (context) {
         // builder 에서 생성할 위젯
-        return DefaultImageDialog(imageMap: imageMap, day: day,);
+        return DefaultImageDialog(
+          imageMap: imageMap,
+          day: day,
+        );
       },
     );
   }
@@ -79,8 +81,12 @@ class CustomTableCalendar extends StatelessWidget {
         print("${date.year}/${date.month}");
       },
       onDaySelected: (selectedDay, focusedDay) {
-        if (imageMap[DateTime(selectedDay.year, selectedDay.month, selectedDay.day)]?.defaultUrl != null) {
-          showImage(context, DateTime(selectedDay.year, selectedDay.month, selectedDay.day));
+        if (imageMap[DateTime(
+                    selectedDay.year, selectedDay.month, selectedDay.day)]
+                ?.defaultUrl !=
+            null) {
+          showImage(context,
+              DateTime(selectedDay.year, selectedDay.month, selectedDay.day));
         }
       },
       calendarBuilders: CalendarBuilders(
@@ -97,17 +103,18 @@ class CustomTableCalendar extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 image: DecorationImage(
-                    image: NetworkImage(imageMap[DateTime(day.year, day.month, day.day)]!.thumbNailUrl)),
+                    image: NetworkImage(
+                        imageMap[DateTime(day.year, day.month, day.day)]!
+                            .thumbNailUrl)),
               ),
               child: Text(
                 day.day.toString(),
-                style: today.compareTo(calendarDay) != 0 ? TextStyle(
-                    fontSize: calendarDayFontSize, color: white) :
-                    TextStyle(
-                      fontSize: calendarDayFontSize,
-                      color: primary,
-                      fontWeight: FontWeight.bold
-                    ),
+                style: today.compareTo(calendarDay) != 0
+                    ? TextStyle(fontSize: calendarDayFontSize, color: white)
+                    : TextStyle(
+                        fontSize: calendarDayFontSize,
+                        color: primary,
+                        fontWeight: FontWeight.bold),
               ),
             );
           } else {
@@ -118,20 +125,17 @@ class CustomTableCalendar extends StatelessWidget {
               alignment: Alignment.center,
               child: Text(
                 day.day.toString(),
-                style: today.compareTo(calendarDay) != 0 ? TextStyle(
-                    fontSize: calendarDayFontSize) :
-                TextStyle(
-                    fontSize: calendarDayFontSize,
-                    color: primary,
-                    fontWeight: FontWeight.bold
-                ),
+                style: today.compareTo(calendarDay) != 0
+                    ? TextStyle(fontSize: calendarDayFontSize)
+                    : TextStyle(
+                        fontSize: calendarDayFontSize,
+                        color: primary,
+                        fontWeight: FontWeight.bold),
               ),
             );
           }
         },
-
       ),
     );
   }
 }
-
