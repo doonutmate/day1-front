@@ -1,9 +1,8 @@
-import 'package:day1/widgets/molecules/custom_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import '../../constants/colors.dart';
 
 class CommunityLockScreen extends StatelessWidget {
-  final void Function(int) onTap; // onTap 콜백 추가
+  final VoidCallback onTap; // onTap 콜백 정의
 
   const CommunityLockScreen({Key? key, required this.onTap}) : super(key: key); // 생성자에 onTap 콜백 추가
 
@@ -72,9 +71,7 @@ class CommunityLockScreen extends StatelessWidget {
             SizedBox(height: 90.0),
             Center(
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context); // 이전 화면으로 돌아가기
-                },
+                onPressed: onTap,
                 child: Text(
                   '확인',
                   style: TextStyle(

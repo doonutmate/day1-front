@@ -67,7 +67,7 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         }
 
         String? titleMap =
-            await DioService.getCalendarTitle(tokenInfo.accessToken);
+        await DioService.getCalendarTitle(tokenInfo.accessToken);
         if (titleMap!.contains("Error")) {
           DioService.showErrorPopup(
               context, titleMap.replaceFirst("Error", ""));
@@ -75,7 +75,7 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
           String title = userProfile.nickname + "님 캘린더";
           if (titleMap == null) {
             String? response =
-                await DioService.setCalendarTitle(title, tokenInfo.accessToken);
+            await DioService.setCalendarTitle(title, tokenInfo.accessToken);
             if (null != response) {
               DioService.showErrorPopup(context, response);
             } else {
@@ -121,7 +121,7 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         // 코드 작성
       });
     })
-        // 카메라 오류 시
+    // 카메라 오류 시
         .catchError((Object e) {
       if (e is CameraException) {
         switch (e.code) {
@@ -163,7 +163,7 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         pictureDay = DateFormat("yyyy.MM.dd").format(today) + "일";
         pictureDayOfWeek = "(" + DateFormat('E', 'ko_KR').format(today) + ")";
         pictureAMPM =
-            DateFormat('aa', 'ko_KR').format(today) == "AM" ? "오전" : "오후";
+        DateFormat('aa', 'ko_KR').format(today) == "AM" ? "오전" : "오후";
         pictureTime = DateFormat('hh:mm').format(today);
 
         setState(() {
@@ -200,7 +200,7 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
   //찍은 사진을 카메라 화면 크기대로 자르는 함수
   Future<File> cropImage(XFile _imageFile) async {
     ImageProperties properties =
-        await FlutterNativeImage.getImageProperties(_imageFile.path);
+    await FlutterNativeImage.getImageProperties(_imageFile.path);
     var cropSize = min(properties.width!, properties.height!);
     int offsetX = (properties.width! - cropSize) ~/ 2;
     int offsetY = (properties.height! - cropSize) ~/ 2;
@@ -215,7 +215,7 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
     var fileFromImage = File(file.path);
     var basename = path.basenameWithoutExtension(fileFromImage.path);
     var pathString =
-        fileFromImage.path.split(path.basename(fileFromImage.path))[0];
+    fileFromImage.path.split(path.basename(fileFromImage.path))[0];
 
     var pathStringWithExtension = "$pathString${basename}_image.jpg";
     var result = await FlutterImageCompress.compressAndGetFile(
@@ -241,19 +241,19 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
                 //카메라 화면을 보여줄 때는 취소 버튼만 있고, 사진찍고 나서는 다시찍기 버튼과 저장버튼이 있다.
                 children: responseImage == null
                     ? [
-                        CancelTextButton(),
-                      ]
+                  CancelTextButton(),
+                ]
                     : [
-                        ReshootTextButton(
-                          func: () {
-                            setState(() {
-                              responseImage = null;
-                            });
-                          },
-                        ),
-                        Spacer(),
-                        StoreTextButton()
-                      ],
+                  ReshootTextButton(
+                    func: () {
+                      setState(() {
+                        responseImage = null;
+                      });
+                    },
+                  ),
+                  Spacer(),
+                  StoreTextButton()
+                ],
               ),
             ),
             // 카메라 화면 가로 세로 비율을 1대1로 고정
@@ -262,50 +262,50 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
               // 서버에서 응답받은 이미지가 있을 경우 이미지를 화면에 보여주고 없으면 카메라 화면을 보여준다
               child: responseImage != null
                   ? Stack(
+                children: [
+                  Image.file(responseImage!),
+                  Positioned(
+                    left: 30,
+                    bottom: 30,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Image.file(responseImage!),
-                        Positioned(
-                          left: 30,
-                          bottom: 30,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                pictureDay + " " + pictureDayOfWeek,
-                                style: TextStyle(
-                                    shadows: [
-                                      Shadow(
-                                        blurRadius: 5.0,
-                                        color: gray600,
-                                        offset: Offset(0, 3),
-                                      ),
-                                    ],
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: white),
-                              ),
-                              Text(
-                                pictureAMPM + " " + pictureTime,
-                                style: TextStyle(
-                                    shadows: [
-                                      Shadow(
-                                        blurRadius: 5.0,
-                                        color: gray600,
-                                        offset: Offset(0, 3),
-                                      ),
-                                    ],
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: white),
-                              )
-                            ],
-                          ),
+                        Text(
+                          pictureDay + " " + pictureDayOfWeek,
+                          style: TextStyle(
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 5.0,
+                                  color: gray600,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: white),
                         ),
+                        Text(
+                          pictureAMPM + " " + pictureTime,
+                          style: TextStyle(
+                              shadows: [
+                                Shadow(
+                                  blurRadius: 5.0,
+                                  color: gray600,
+                                  offset: Offset(0, 3),
+                                ),
+                              ],
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: white),
+                        )
                       ],
-                    )
+                    ),
+                  ),
+                ],
+              )
                   : Day1Camera(
-                      initializeControllerFuture: _initializeControllerFuture,
-                      controller: controller),
+                  initializeControllerFuture: _initializeControllerFuture,
+                  controller: controller),
             ),
             Expanded(flex: 1, child: SizedBox()),
             Padding(

@@ -133,7 +133,21 @@ class _ReportScreenState extends State<ReportScreen> {
                           showErrorPopup(context, response);
                           return;
                         }
-                        Navigator.pop(context);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Center(
+                              child: Text("신고가 정상적으로 완료되었어요", style: TextStyle(fontSize: 16),),),
+                            duration: Duration(seconds: 3),
+                            behavior: SnackBarBehavior.floating,
+                            margin: EdgeInsets.only(bottom: 20, left: 60, right: 60),
+                            padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10), // padding을 줄여서 크기 조정
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                        );
+                        Navigator.popAndPushNamed(context, '/main');
                       } else {
                         showDialog(
                           context: context,
