@@ -33,6 +33,9 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     if (_calendars.isNotEmpty) {
       _lastUpdatedAt = DateTime.parse(_calendars.last.updatedAt as String); // 초기화 시 마지막 게시물의 updatedAt 저장
     }
+
+    //이러면 api에서 반환하는 hasNext 값에 상관없이 무조건 true가 저장된다. 08/09
+    //s_main 파일에서 CommunityScreen생성자를 호출할 때 hasNext값도 넘겨줘야 한다.
     _hasNext = _calendars.isNotEmpty;
   }
 
@@ -48,7 +51,8 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
         // 중복 항목 제거
         _calendars.addAll(fetchedCalendars.where((newCalendar) => !_calendars.any((existingCalendar) => existingCalendar.id == newCalendar.id)));
         _hasNext = result['hasNext'];
-        if (fetchedCalendars.isNotEmpty) {
+        // hasNext 값으로 다음 리스트가 있을경우 다음 리스트를 불러오기위해 lastupdatedat 변수 업데이트 08/09
+        if (_hasNext) {
           _lastUpdatedAt = DateTime.parse(fetchedCalendars.last.updatedAt as String); // 새로운 마지막 게시물의 updatedAt 저장
         }
       });

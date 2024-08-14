@@ -23,14 +23,16 @@ class CommunityService {
     }
 
     try {
-      String uri = '$baseUrl/calendars?size=10';
+      /*String uri = '$baseUrl/calendars?size=10';
       if (lastUpdatedAt != null) {
         uri += '&updated_at=${lastUpdatedAt.toIso8601String()}';
-      }
-
+      }*/
+      String uri = '$baseUrl/calendars';
+      String? time = lastUpdatedAt?.toIso8601String();
       print('Request URI: $uri');
       final response = await dio.get(
         uri,
+        queryParameters: {'time' : time},
         options: Options(
           headers: {
             'Content-Type': 'application/json',
