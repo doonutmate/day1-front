@@ -143,7 +143,7 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
                     children: [
                       CircleAvatar(
                         radius: 30,
-                        backgroundImage: NetworkImage(widget.profileImage),
+                        backgroundImage: widget.profileImage != "null" ? NetworkImage(widget.profileImage) : AssetImage("assets/icons/mypage_profile.png") as ImageProvider,
                       ),
                       SizedBox(width: 10),
                       RichText(

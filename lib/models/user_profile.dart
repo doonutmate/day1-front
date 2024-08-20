@@ -21,7 +21,7 @@ class UserProfile {
 Future<dynamic> fetchUserProfile(String token) async {
 
   final response = await http.get(
-    Uri.parse('https://dev.doonut.site/member/mypage'),
+    Uri.parse('https://prod.doonut.site/member/mypage'),
     headers: {
       'Authorization': 'Bearer $token',
     },

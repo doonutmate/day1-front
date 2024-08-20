@@ -16,7 +16,7 @@ class DioService{
   // dev https://dev.doonut.site/
   // 배포 https://prod.doonut.site/
   //기본 주소
-  static const String baseUri = "https://dev.doonut.site/";
+  static const String baseUri = "https://prod.doonut.site/";
 
   static Future<String?> signOutDay1(String oauthType, String? appleToken, String? accessToken, String reason) async{
     try{
