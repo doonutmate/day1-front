@@ -16,6 +16,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
+import 'package:permission_handler/permission_handler.dart';
 import '../../constants/size.dart';
 import '../../models/token_information.dart';
 import '../../models/user_profile.dart';
@@ -92,6 +93,33 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         else{
           ref.read(totalRecordCount.notifier).state = totalCount;
         }
+
+        var status = await Permission.notification.status;
+
+        if(status.isGranted){
+          String? response = await DioService.setServiceAlarm(true, tokenInfo.accessToken);
+          if (response != null) {
+            DioService.showErrorPopup(context, response);
+          }
+        }
+        else{
+          String? response = await DioService.setServiceAlarm(false, tokenInfo.accessToken);
+          if (response != null) {
+            DioService.showErrorPopup(context, response);
+          }
+          String? responseLate = await DioService.setLateNightAlarm(
+              false, tokenInfo.accessToken);
+          if (responseLate != null) {
+            DioService.showErrorPopup(context, responseLate);
+          }
+          String? responseMarketing =
+          await DioService.setMarketingAlarm(
+              false, tokenInfo.accessToken);
+          if (responseMarketing != null) {
+            DioService.showErrorPopup(context, responseMarketing);
+          }
+        }
+
       }
     });
   }
