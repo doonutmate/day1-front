@@ -102,10 +102,15 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
     }
 
     for (var item in responseList) {
-      CalendarImage calendarImage = CalendarImage.fromJson(item);
-      DateTime date =
-          DateTime(_year, _month, int.parse(item['day'].toString()));
-      imageMap[date] = calendarImage;
+      try{
+        CalendarImage calendarImage = CalendarImage.fromJson(item);
+        DateTime date =
+        DateTime(_year, _month, int.parse(item['day'].toString()));
+        imageMap[date] = calendarImage;
+      }
+      catch(e){
+        DioService.showErrorPopup(context, e.toString());
+      }
     }
 
     setState(() {
