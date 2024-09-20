@@ -36,7 +36,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     int month = DateTime.now().month;
     getCalendarImage(year, month);
   }
-
   // 서버에서 캘린더 이미지를 불러오는 함수
   Future<void> getCalendarImage(int year, int month) async {
     //provider에서 서버 토큰 정보 get
@@ -103,6 +102,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
 
     String? totalCount = ref.watch(totalRecordCount.notifier).state;
+
+
 
 
     return Padding(

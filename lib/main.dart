@@ -180,9 +180,11 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       builder: (BuildContext context, Widget? widget) {
         ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-          return AlertDialog(
-            contentPadding: EdgeInsets.zero,
-            content: ErrorPopup(errorMassage: errorDetails.summary.toString(), navigate: navigate,),
+          return Scaffold(
+            body: AlertDialog(
+              contentPadding: EdgeInsets.zero,
+              content: ErrorPopup(errorMassage: errorDetails.summary.toString(), navigate: navigate,),
+            ),
           );
         };
         return widget!;
