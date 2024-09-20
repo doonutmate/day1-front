@@ -59,12 +59,6 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
       if (token != null) {
         Map<String, dynamic> tokenMap = jsonDecode(token!);
         TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
-        String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
-
-        if(calendarTitle == null ) {
-          logout();
-        }
-
 
         final userProfile = await fetchUserProfile(tokenInfo.accessToken);
         if (userProfile.toString().contains("Error")) {
@@ -136,11 +130,6 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
     // 카메라 컨트롤러 해제
     controller.dispose();
     super.dispose();
-  }
-
-  Future<void> logout() async {
-    await AppDataBase.clearToken();
-    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
 
   //카메라 설정하는 함수

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:camera/camera.dart';
+import 'package:day1/providers/calendar_title_provider.dart';
 import 'package:day1/screens/calendar_screen.dart';
 import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/community/community_screen.dart'; //curl -sL https://firebase.tools | upgrade=true bash;
@@ -174,6 +175,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
+    String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
     VoidCallback? navigate;
     return MaterialApp(
       navigatorKey: navigatorKey,
@@ -198,7 +200,7 @@ class MyApp extends ConsumerWidget {
       home: FutureBuilder(
           future: getToken(tokenProvider),
           builder: (context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.hasData && snapshot.data == true) {
+            if (snapshot.hasData && snapshot.data == true && calendarTitle != null) {
                 return CameraScreen(cameras);
             } else {
               return Permision();
