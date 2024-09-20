@@ -15,8 +15,10 @@ import 'package:day1/screens/mypage/withdraw_screen.dart';
 import 'package:day1/screens/s_main.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/auth_service.dart';
+import 'package:day1/services/dio.dart';
 import 'package:day1/services/pushnotification.dart';
 import 'package:day1/services/server_token_provider.dart';
+import 'package:day1/widgets/organisms/error_popup.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -172,10 +174,19 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
+    VoidCallback? navigate;
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-
+      builder: (BuildContext context, Widget? widget) {
+        ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.zero,
+            content: ErrorPopup(errorMassage: errorDetails.summary.toString(), navigate: navigate,),
+          );
+        };
+        return widget!;
+      },
       //기본 폰트 설정
       theme: ThemeData(
         fontFamily: "Pretendard",
