@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:camera/camera.dart';
+import 'package:day1/providers/calendar_title_provider.dart';
 import 'package:day1/screens/calendar_screen.dart';
 import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/community/community_screen.dart'; //curl -sL https://firebase.tools | upgrade=true bash;
@@ -15,8 +16,10 @@ import 'package:day1/screens/mypage/withdraw_screen.dart';
 import 'package:day1/screens/s_main.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/auth_service.dart';
+import 'package:day1/services/dio.dart';
 import 'package:day1/services/pushnotification.dart';
 import 'package:day1/services/server_token_provider.dart';
+import 'package:day1/widgets/organisms/error_popup.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -172,10 +175,22 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
+    String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
+    VoidCallback? navigate;
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-
+      builder: (BuildContext context, Widget? widget) {
+        ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+          return Scaffold(
+            body: AlertDialog(
+              contentPadding: EdgeInsets.zero,
+              content: ErrorPopup(errorMassage: errorDetails.summary.toString(), navigate: navigate,),
+            ),
+          );
+        };
+        return widget!;
+      },
       //기본 폰트 설정
       theme: ThemeData(
         fontFamily: "Pretendard",
@@ -185,7 +200,7 @@ class MyApp extends ConsumerWidget {
       home: FutureBuilder(
           future: getToken(tokenProvider),
           builder: (context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.hasData && snapshot.data == true) {
+            if (snapshot.hasData && snapshot.data == true && calendarTitle != null) {
                 return CameraScreen(cameras);
             } else {
               return Permision();

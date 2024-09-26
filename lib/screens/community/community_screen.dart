@@ -145,7 +145,6 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
           ),
         ],
       ),
-
     );
   }
 }

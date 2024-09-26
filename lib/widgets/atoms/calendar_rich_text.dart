@@ -18,7 +18,7 @@ class CalendarRichText extends StatelessWidget {
     return RichText(
         text: TextSpan(children: [
           TextSpan(
-            text: title!,
+            text: title ?? '',
             style: TextStyle(
                 color: gray900,
                 fontSize: calendarRichTextSize,

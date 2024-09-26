@@ -36,7 +36,6 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     int month = DateTime.now().month;
     getCalendarImage(year, month);
   }
-
   // 서버에서 캘린더 이미지를 불러오는 함수
   Future<void> getCalendarImage(int year, int month) async {
     //provider에서 서버 토큰 정보 get
@@ -68,7 +67,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       else{
         // day는 imageMap<Map>의 키로 사용하고 value로는 썸네일 이미지와 원본이미지를 멤버로 갖고 있는 CalendarImage 모델 클래스로 사용
         responseList.forEach((element) {
-          imageMap[DateTime(_year, _month, element['day'])] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl'], date: '');
+          try{
+            imageMap[DateTime(_year, _month, element['day'])] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl'], date: element['timestamp']);
+          }
+          catch(e){
+            DioService.showErrorPopup(context, e.toString());
+          }
         });
         setState(() {
           // 통신이 끝났는지 플래그값 설정
@@ -98,6 +102,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
 
     String? totalCount = ref.watch(totalRecordCount.notifier).state;
+
+
 
 
     return Padding(
