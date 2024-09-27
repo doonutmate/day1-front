@@ -60,6 +60,9 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         Map<String, dynamic> tokenMap = jsonDecode(token!);
         TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
 
+
+
+
         final userProfile = await fetchUserProfile(tokenInfo.accessToken);
         if (userProfile.toString().contains("Error")) {
           DioService.showErrorPopup(
@@ -87,6 +90,7 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
             ref.read(calendarTitleProvider.notifier).state = titleMap;
           }
         }
+
         var totalCount = await DioService.getTotalRecordCount(tokenInfo.accessToken);
         if(totalCount.toString().contains("Error")){
           DioService.showErrorPopup(context, totalCount.toString().replaceFirst("Error", ""));
@@ -131,6 +135,7 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
     controller.dispose();
     super.dispose();
   }
+
 
   //카메라 설정하는 함수
   void setCamera(bool isFront) {

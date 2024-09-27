@@ -175,7 +175,6 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
-    String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
     VoidCallback? navigate;
     return MaterialApp(
       navigatorKey: navigatorKey,
@@ -200,7 +199,7 @@ class MyApp extends ConsumerWidget {
       home: FutureBuilder(
           future: getToken(tokenProvider),
           builder: (context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.hasData && snapshot.data == true && calendarTitle != null) {
+            if (snapshot.hasData && snapshot.data == true) {
                 return CameraScreen(cameras);
             } else {
               return Permision();
