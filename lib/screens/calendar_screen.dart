@@ -111,14 +111,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
     calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
 
+    //캘린더 제목 변수가 null이면 logout
     if(calendarTitle == null ) {
       logout();
     }
-
-
-
-
-
     return Padding(
       padding: screenHorizontalMargin,
       child: Column(
