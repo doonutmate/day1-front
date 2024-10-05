@@ -12,7 +12,7 @@ class ShutterButton extends StatelessWidget {
   File? responseImage;
 
 
-  ShutterButton(
+   ShutterButton(
       {required this.shutterFunc, required this.responseImage, super.key});
 
 
@@ -29,6 +29,7 @@ class ShutterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
+      iconSize: 72,
       onPressed: responseImage != null ? null : () {
           shutterFunc();
           showToast();

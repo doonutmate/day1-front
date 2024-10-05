@@ -23,6 +23,7 @@ import 'package:day1/widgets/organisms/error_popup.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -31,6 +32,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:uni_links/uni_links.dart';
+import 'constants/colors.dart';
 import 'firebase_options.dart';
 
 
@@ -72,6 +74,8 @@ Future<void> main() async {
 
   // 다음에 호출되는 함수 모두 실행 끝날 때까지 기다림
   WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
 
   HttpOverrides.global = MyHttpOverrides();
 
@@ -195,6 +199,7 @@ class MyApp extends ConsumerWidget {
         fontFamily: "Pretendard",
         bottomSheetTheme: BottomSheetThemeData(
             backgroundColor: Colors.black.withOpacity(0)),
+        scaffoldBackgroundColor: backGroundColor,
       ),
       home: FutureBuilder(
           future: getToken(tokenProvider),
