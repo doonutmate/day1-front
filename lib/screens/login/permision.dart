@@ -82,7 +82,7 @@ class _PermisionState extends State<Permision> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: 59,
+              height: 79,
             ),
             Text(
               "원활한 Day1 이용을 위해\n아래의 접근 권한을 받고 있어요",
