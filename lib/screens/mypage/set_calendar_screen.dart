@@ -80,6 +80,7 @@ class _SetCalendarScreenState extends ConsumerState<SetCalendarScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: backGroundColor,
           toolbarHeight: appBarHeight,
           title: Text(
             "캘린더 설정",

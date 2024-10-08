@@ -104,8 +104,8 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Widget build(BuildContext context) {
     // provider에서 실제 화면 width get
     double deviceWidth = ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
-    // calendar headermargin 크기
-    double headerMargin = (deviceWidth - 225) / 2;
+    // calendar headermargin 크기 225
+    double headerMargin = (deviceWidth - 231) / 2;
     // calendar title get
     String? totalCount = ref.watch(totalRecordCount.notifier).state;
 

@@ -180,6 +180,8 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
     VoidCallback? navigate;
+
+
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
@@ -192,7 +194,13 @@ class MyApp extends ConsumerWidget {
             ),
           );
         };
-        return widget!;
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            //사용자 기기 설정에 상관없이 텍스트 크기 고정
+            textScaler: TextScaler.linear(1.0),
+          ),
+          child: widget!,
+        );
       },
       //기본 폰트 설정
       theme: ThemeData(
@@ -200,6 +208,14 @@ class MyApp extends ConsumerWidget {
         bottomSheetTheme: BottomSheetThemeData(
             backgroundColor: Colors.black.withOpacity(0)),
         scaffoldBackgroundColor: backGroundColor,
+        /*appBarTheme: AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle(
+            // Status bar color
+            statusBarColor: backGroundColor, // 안드로이드만?? (iOS에서는 아무 변화없음)
+            // statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.dark, // iOS에서 먹히는 설정(검정 글씨로 표시됨)
+          ),
+        ),*/
       ),
       home: FutureBuilder(
           future: getToken(tokenProvider),

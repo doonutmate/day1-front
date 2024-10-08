@@ -39,7 +39,7 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
   //이미지를 가져오는 함수
   Future getImage(ImageSource imageSource) async {
     //pickedFile에 ImagePicker로 가져온 이미지가 담긴다.
-    pickedFile = await picker.pickImage(source: imageSource, imageQuality:30);
+    pickedFile = await picker.pickImage(source: imageSource, imageQuality: 30);
     if (pickedFile != null) {
       setState(() {
         profileImage = FileImage(File(pickedFile!.path)); //가져온 이미지를 _image에 저장
@@ -151,20 +151,20 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-            toolbarHeight: appBarHeight,
-            title: Text(
-              "프로필 수정",
-              style: TextStyle(
-                fontSize: appBarTitleFontSize,
-              ),
+          backgroundColor: backGroundColor,
+          toolbarHeight: appBarHeight,
+          title: Text(
+            "프로필 수정",
+            style: TextStyle(
+              fontSize: appBarTitleFontSize,
             ),
-            leading: GestureDetector(
-              onTap: (){
-                if(focusNode.hasFocus == false)
-                  Navigator.pop(context);
-              },
-              child: Icon(Icons.arrow_back_ios),
-            ),
+          ),
+          leading: GestureDetector(
+            onTap: () {
+              if (focusNode.hasFocus == false) Navigator.pop(context);
+            },
+            child: Icon(Icons.arrow_back_ios),
+          ),
         ),
         body: Padding(
           padding:
@@ -195,52 +195,63 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
                 myController: myController,
                 validateTextFormField: validateTextFormField,
                 isError: isError,
-                errorText: '1자 이상 12자 이하로 작성해주세요.',
+                errorText: '1자 이상 8자 이하로 작성해주세요.',
               ),
               Spacer(),
               GestureDetector(
                 onTap: () async {
-                  if(isError == false && myController.text != null && token != null){
+                  if (isError == false &&
+                      myController.text != null &&
+                      token != null) {
                     Map<String, dynamic> tokenMap = jsonDecode(token!);
-                    TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
-                    if(pickedFile != null){
-                      String? response = await DioService.putProfileInfo(pickedFile!.path , myController.text, tokenInfo.accessToken);
-                      if(response != null){
+                    TokenInformation tokenInfo =
+                        TokenInformation.fromJson(tokenMap);
+                    if (pickedFile != null) {
+                      String? response = await DioService.putProfileInfo(
+                          pickedFile!.path,
+                          myController.text,
+                          tokenInfo.accessToken);
+                      if (response != null) {
+                        DioService.showErrorPopup(context, response);
+                        return;
+                      }
+                    } else {
+                      String? response = await DioService.putProfileName(
+                          myController.text, tokenInfo.accessToken);
+                      if (response != null) {
                         DioService.showErrorPopup(context, response);
                         return;
                       }
                     }
-                    else{
-                     String? response =  await DioService.putProfileName(myController.text, tokenInfo.accessToken);
-                     if(response != null){
-                       DioService.showErrorPopup(context, response);
-                       return;
-                     }
-                    }
-                    final userProfile = await fetchUserProfile(tokenInfo.accessToken);
-                    if(userProfile.toString().contains("Error")){
-                      DioService.showErrorPopup(context, userProfile.replaceFirst("Error", ""));
-                    }
-                    else{
-                      ref.read(userProfileProvider.notifier).state = userProfile!;
+                    final userProfile =
+                        await fetchUserProfile(tokenInfo.accessToken);
+                    if (userProfile.toString().contains("Error")) {
+                      DioService.showErrorPopup(
+                          context, userProfile.replaceFirst("Error", ""));
+                    } else {
+                      ref.read(userProfileProvider.notifier).state =
+                          userProfile!;
                       setState(() {
                         myController.text = userProfile.nickname;
                       });
                     }
-                    String? title = ref.read(calendarTitleProvider.notifier).state;
-                    if(title != null){
-                      if(ref.read(calendarTitleProvider.notifier).state!.contains("님 캘린더")){
-                        String? response = await DioService.setCalendarTitle(myController.text + "님 캘린더", tokenInfo.accessToken);
-                        if(response != null){
+                    String? title =
+                        ref.read(calendarTitleProvider.notifier).state;
+                    if (title != null) {
+                      if (ref
+                          .read(calendarTitleProvider.notifier)
+                          .state!
+                          .contains("님 캘린더")) {
+                        String? response = await DioService.setCalendarTitle(
+                            myController.text + "님 캘린더", tokenInfo.accessToken);
+                        if (response != null) {
                           DioService.showErrorPopup(context, response);
                           return;
+                        } else {
+                          ref.watch(calendarTitleProvider.notifier).state =
+                              myController.text + "님 캘린더";
                         }
-                        else{
-                          ref.watch(calendarTitleProvider.notifier).state = myController.text + "님 캘린더";
-                        }
-
                       }
-
                     }
 
                     Navigator.pop(context);

@@ -141,6 +141,7 @@ class _SetNotificationScreenState extends ConsumerState<SetNotificationScreen> {
               ),
               trailing: CupertinoSwitch(
                 activeColor: primary,
+                trackColor: isService != true ? Color(0x80EFEFEF) : Color(0xFFEFEFEF),
                 value: isNight,
                 onChanged: (value) async {
                   if (isService == true) {
@@ -177,6 +178,7 @@ class _SetNotificationScreenState extends ConsumerState<SetNotificationScreen> {
               ),
               trailing: CupertinoSwitch(
                 activeColor: primary,
+                trackColor: isService != true ? Color(0x80EFEFEF) : Color(0xFFEFEFEF),
                 value: isMarketing,
                 onChanged: (value) async {
                   if (isService == true) {
