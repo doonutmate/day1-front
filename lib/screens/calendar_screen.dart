@@ -45,6 +45,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
 
+
   // 서버에서 캘린더 이미지를 불러오는 함수
   Future<void> getCalendarImage(int year, int month) async {
     //provider에서 서버 토큰 정보 get
@@ -111,10 +112,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
     calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
 
+
     //캘린더 제목 변수가 null이면 logout
     if(calendarTitle == null ) {
       logout();
     }
+
     return Padding(
       padding: screenHorizontalMargin,
       child: Column(

@@ -181,7 +181,6 @@ class MyApp extends ConsumerWidget {
     ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
     VoidCallback? navigate;
 
-
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
@@ -194,6 +193,7 @@ class MyApp extends ConsumerWidget {
             ),
           );
         };
+
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
             //사용자 기기 설정에 상관없이 텍스트 크기 고정
@@ -201,6 +201,7 @@ class MyApp extends ConsumerWidget {
           ),
           child: widget!,
         );
+
       },
       //기본 폰트 설정
       theme: ThemeData(
@@ -220,7 +221,7 @@ class MyApp extends ConsumerWidget {
       home: FutureBuilder(
           future: getToken(tokenProvider),
           builder: (context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.hasData && snapshot.data == true) {
+            if (snapshot.hasData && snapshot.data == true && calendarTitle != null) {
                 return CameraScreen(cameras);
             } else {
               return Permision();
