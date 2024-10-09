@@ -11,13 +11,15 @@ class CustomBottomNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("Selected index: $selectedIndex"); // 디버깅을 위해 추가
+    print("Selected index: $selectedIndex");
     return Stack(
       alignment: Alignment.topCenter,
       clipBehavior: Clip.none,
       children: [
         Container(
+
           height: 91, // 높이 설정
+
           decoration: BoxDecoration(
             boxShadow: <BoxShadow>[
               BoxShadow(
@@ -36,7 +38,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               topRight: Radius.circular(30),
             ),
             child: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed, // 모든 라벨을 항상 표시하도록 설정
+              type: BottomNavigationBarType.fixed,
               items: <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                   icon: selectedIndex == 0
@@ -70,7 +72,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
               selectedFontSize: 12,
               unselectedFontSize: 12,
               onTap: (index) {
-                print("Tab $index selected"); // 디버깅을 위해 추가
+                print("Tab $index selected");
                 if (index == 1) {
                   Navigator.of(context, rootNavigator: true).pushNamed("/camera");
                 } else {

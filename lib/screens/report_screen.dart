@@ -6,6 +6,7 @@ import 'package:day1/services/auth_service.dart';
 import 'package:day1/services/dio.dart';
 import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day1/providers/submit_reason_provider.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -25,16 +26,27 @@ class _ReportScreenState extends State<ReportScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+
     return Consumer(builder: (context, ref, _) {
       final reason = ref.watch(reasonProvider);
 
       return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           toolbarHeight: appBarHeight,
           title: Text(
             '신고하기',
             style: TextStyle(
-              fontSize: appBarTitleFontSize,
+              fontSize: 18,
+              fontFamily: 'Pretendard',
+              fontWeight: FontWeight.w500
             ),
           ),
         ),
@@ -55,8 +67,9 @@ class _ReportScreenState extends State<ReportScreen> {
                       child: Text(
                         '신고하는 이유가 무엇인가요?',
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
+                            fontSize: 20,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w500
                         ),
                       ),
                     ),
@@ -67,7 +80,11 @@ class _ReportScreenState extends State<ReportScreen> {
                     ListTile(
                       title: Text('기타',
                           style: TextStyle(
-                              color: reason == '기타' ? primary : null)),
+                              color: reason == '기타' ? primary : null,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                            height: 1.5, )),
                       onTap: () {
                         ref.read(reasonProvider.notifier).state = '기타';
                         setState(() {
@@ -108,65 +125,75 @@ class _ReportScreenState extends State<ReportScreen> {
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
-                    onPressed: (reason != null && (reason != '기타' || isValidOtherReason))
-                        ? () async {
-                      final submitReasonText = reason == '기타' ? otherReason : reason;
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(height: 341),
+                      ElevatedButton(
+                        onPressed: (reason != null && (reason != '기타' || isValidOtherReason))
+                            ? () async {
+                          final submitReasonText = reason == '기타' ? otherReason : reason;
 
-                      String? token = await AppDataBase.getToken();
+                          String? token = await AppDataBase.getToken();
 
-                      if (token != null) {
-                        Map<String, dynamic> tokenMap = jsonDecode(token);
-                        TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
+                          if (token != null) {
+                            Map<String, dynamic> tokenMap = jsonDecode(token);
+                            TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
 
-                        String? response;
-                        if (tokenInfo.oauthType == "KAKAO") {
-                          response = await DioService.reportIssue(tokenInfo.oauthType, "", tokenInfo.accessToken, submitReasonText);
-                        } else {
-                          AuthorizationCredentialAppleID? appleToken = await AuthService.signInWithApple();
-                          if (appleToken != null && appleToken.authorizationCode != null) {
-                            response = await DioService.reportIssue(tokenInfo.oauthType, appleToken.authorizationCode, tokenInfo.accessToken, submitReasonText);
+                            String? response;
+                            if (tokenInfo.oauthType == "KAKAO") {
+                              response = await DioService.reportIssue(tokenInfo.oauthType, "", tokenInfo.accessToken, submitReasonText);
+                            } else {
+                              AuthorizationCredentialAppleID? appleToken = await AuthService.signInWithApple();
+                              if (appleToken != null && appleToken.authorizationCode != null) {
+                                response = await DioService.reportIssue(tokenInfo.oauthType, appleToken.authorizationCode, tokenInfo.accessToken, submitReasonText);
+                              }
+                            }
+
+                            if (response != null) {
+                              showErrorPopup(context, response);
+                              return;
+                            }
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Center(
+                                  child: Text(
+                                    "신고가 정상적으로 완료되었어요",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                                duration: Duration(seconds: 3),
+                                behavior: SnackBarBehavior.floating,
+                                margin: EdgeInsets.only(bottom: 20, left: 60, right: 60),
+                                padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                            );
+                            Navigator.popAndPushNamed(context, '/main');
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text("Error"),
+                                content: Text("Cannot perform sign out. Missing OAuth type or token."),
+                              ),
+                            );
                           }
                         }
-
-                        if (response != null) {
-                          showErrorPopup(context, response);
-                          return;
-                        }
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Center(
-                              child: Text("신고가 정상적으로 완료되었어요", style: TextStyle(fontSize: 16),),),
-                            duration: Duration(seconds: 3),
-                            behavior: SnackBarBehavior.floating,
-                            margin: EdgeInsets.only(bottom: 20, left: 60, right: 60),
-                            padding: EdgeInsets.symmetric(horizontal: 18, vertical: 10), // padding을 줄여서 크기 조정
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
+                            : null,
+                        child: Text('신고하기', style: TextStyle(color: Colors.white)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: reason != null && (reason != '기타' || isValidOtherReason) ? primary : gray300,
+                          minimumSize: Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                        );
-                        Navigator.popAndPushNamed(context, '/main');
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text("Error"),
-                            content: Text("Cannot perform sign out. Missing OAuth type or token."),
-                          ),
-                        );
-                      }
-                    }
-                        : null,
-                    child: Text('신고하기', style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: reason != null && (reason != '기타' || isValidOtherReason) ? primary : gray300,
-                      minimumSize: Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               ),

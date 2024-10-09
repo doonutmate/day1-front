@@ -4,11 +4,13 @@ import 'package:day1/services/app_database.dart';
 import 'package:day1/services/auth_service.dart';
 import 'package:day1/services/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day1/providers/submit_reason_provider.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../constants/size.dart';
 import '../../models/token_information.dart';
+import '../../widgets/organisms/withdraw_popup.dart';
 
 class WithdrawScreen extends StatefulWidget {
   @override
@@ -21,17 +23,28 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+
     return Consumer(builder: (context, ref, _) {
       final reason = ref.watch(reasonProvider);
 
       return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: backGroundColor,
           toolbarHeight: appBarHeight,
           title: Text(
             '탈퇴하기',
             style: TextStyle(
-              fontSize: appBarTitleFontSize,
+              fontSize: 18,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w500
             ),
           ),
         ),
@@ -43,7 +56,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
           child: Stack(
             children: [
               SingleChildScrollView(
-                padding: EdgeInsets.only(bottom: 60), // 버튼 높이만큼 여백을 줍니다.
+                padding: EdgeInsets.only(bottom: 60),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -65,7 +78,11 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                     ListTile(
                       title: Text('기타',
                           style: TextStyle(
-                              color: reason == '기타' ? primary : null)),
+                              color: reason == '기타' ? primary : null,
+                            fontFamily: 'Pretendard',
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                            height: 1.5,)),
                       onTap: () {
                         ref.read(reasonProvider.notifier).state = '기타';
                         setState(() {
@@ -98,6 +115,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                           ),
                         ),
                       ),
+                    SizedBox(height: 289),
                   ],
                 ),
               ),
@@ -106,48 +124,18 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed: (reason != null &&
-                        (reason != '기타' || otherReason.isNotEmpty))
-                        ? () async {
-                      final submitReasonText =
-                      reason == '기타' ? otherReason : reason;
+                    onPressed: (reason != null && (reason != '기타' || otherReason.isNotEmpty))
+                        ? () {
+                      final submitReasonText = reason == '기타' ? otherReason : reason;
 
-                      String? token = await AppDataBase.getToken();
-
-                      if (token != null) {
-                        Map<String, dynamic> tokenMap = jsonDecode(token);
-                        TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
-
-                        if(tokenInfo.oauthType == "KAKAO") {
-                          String? response = await DioService.signOutDay1(
-                              tokenInfo.oauthType, "", tokenInfo.accessToken, submitReasonText);
-                          if(response != null) {
-                            DioService.showErrorPopup(context, response);
-                            return;
-                          }
-                          await AuthService.unlinkKakao(); // 카카오톡 계정 연결 끊기
-                        } else {
-                          AuthorizationCredentialAppleID? appleToken = await AuthService.signInWithApple();
-                          if(appleToken != null && appleToken.authorizationCode != null) {
-                            String? response = await DioService.signOutDay1(
-                                tokenInfo.oauthType, appleToken.authorizationCode, tokenInfo.accessToken, submitReasonText);
-                            if(response != null) {
-                              DioService.showErrorPopup(context, response);
-                              return;
-                            }
-                          }
-                        }
-
-                        await AppDataBase.clearToken(); // 로컬 데이터베이스에서 사용자 데이터 삭제
-                        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-                      } else {
-                        showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text("Error"),
-                              content: Text("Cannot perform sign out. Missing OAuth type or token."),
-                            ));
-                      }
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor: Colors.transparent,
+                          contentPadding: EdgeInsets.zero,
+                          content: WithdrawPopup(submitReasonText: submitReasonText),
+                        ),
+                      );
                     }
                         : null,
                     child: Text('탈퇴하기', style: TextStyle(color: Colors.white)),
@@ -175,7 +163,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     final reason = ref.watch(reasonProvider);
     return ListTile(
       title: Text(title,
-          style: TextStyle(color: reason == title ? Colors.purple : null)),
+          style: TextStyle(color: reason == title ? primary : null)),
       onTap: () {
         ref.read(reasonProvider.notifier).state = title;
         if (title != '기타') {

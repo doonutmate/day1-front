@@ -221,7 +221,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
 					331C8080294A63A400263BE5 = {
@@ -501,14 +501,20 @@
 				DEVELOPMENT_TEAM = DASKP64V6P;
 				ENABLE_BITCODE = NO;
 
-				FLUTTER_BUILD_NAME = 2.0.7;
-				FLUTTER_BUILD_NUMBER = 1;
+				FLUTTER_BUILD_NAME = 2.0.4;
+				FLUTTER_BUILD_NUMBER = 4;
+
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DAY1;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+
+				MARKETING_VERSION = 2.0.4;
+
+
 				PRODUCT_BUNDLE_IDENTIFIER = com.doonut.Day1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -694,15 +700,20 @@
 				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = DASKP64V6P;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NAME = 2.0.7;
 
-				FLUTTER_BUILD_NUMBER = 1;
+				FLUTTER_BUILD_NAME = 2.0.4;
+				FLUTTER_BUILD_NUMBER = 4;
+
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DAY1;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+
+				MARKETING_VERSION = 2.0.4;
+
 				PRODUCT_BUNDLE_IDENTIFIER = com.doonut.Day1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -725,15 +736,20 @@
 				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = DASKP64V6P;
 				ENABLE_BITCODE = NO;
-				FLUTTER_BUILD_NAME = 2.0.7;
 
-				FLUTTER_BUILD_NUMBER = 1;
+				FLUTTER_BUILD_NAME = 2.0.4;
+				FLUTTER_BUILD_NUMBER = 4;
+
 				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = DAY1;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.0.1;
+
+				MARKETING_VERSION = 2.0.4;
+
 				PRODUCT_BUNDLE_IDENTIFIER = com.doonut.Day1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

@@ -12,6 +12,7 @@ import 'package:day1/widgets/molecules/report_dialogs.dart';
 import 'package:day1/widgets/molecules/show_Error_Popup.dart';
 import 'package:day1/widgets/organisms/custom_table_calendar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -120,16 +121,25 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
+
     double deviceWidth =
         ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
     double headerMargin = (deviceWidth - 231) / 2;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: backGroundColor,
         title: Text(
           widget.calendarName,
-          style: TextStyle(fontSize: 18),
+          style: TextStyle(fontSize: 18, fontFamily: 'Pretendard', fontWeight: FontWeight.w500),
         ),
         actions: [
           IconButton(
