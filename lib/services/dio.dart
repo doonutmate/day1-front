@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:day1/constants/api_url.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,6 @@ class DioService{
   // dev https://dev.doonut.site/
   // 배포 https://prod.doonut.site/
   //기본 주소
-  static const String baseUri = "https://dev.doonut.site/";
 
   static Future<String?> signOutDay1(String oauthType, String? appleToken, String? accessToken, String reason) async{
     try{
@@ -40,7 +40,7 @@ class DioService{
         };
       }
 
-      var response = await dio.delete(baseUri + "member",data:_data);
+      var response = await dio.delete(baseUrl + "member",data:_data);
       if(response.statusCode != 200){
         print("서버통신 에러");
         if(response.statusCode! >= 500){
@@ -70,7 +70,7 @@ class DioService{
     try{
       var dio = Dio();
       //
-      var response = await dio.post(baseUri + "oauth/login?oauthType=APPLE",data: {"accessToken": "${token}"});
+      var response = await dio.post(baseUrl + "oauth/login?oauthType=APPLE",data: {"accessToken": "${token}"});
 
       if(response.statusCode != null){
         if(response.statusCode! >= 200 && response.statusCode! < 300){
@@ -117,7 +117,7 @@ class DioService{
           {'multipartFile': await MultipartFile.fromFile(file.path)});
 
       // 업로드 요청
-      final response = await dio.post(baseUri + 'image-upload', data: formData);
+      final response = await dio.post(baseUrl + 'image-upload', data: formData);
       if (response.statusCode != 200) {
         print(await response.statusMessage);
         if(response.statusCode! >= 500){
@@ -153,7 +153,7 @@ class DioService{
         "Authorization": "Bearer $token"
       };
       Response response = await dio.get(
-        baseUri + "challenge?year=${year}&month=${month}",
+        baseUrl + "challenge?year=${year}&month=${month}",
       );
       if (response.statusCode != 200) {
         print(await response.statusMessage);
@@ -201,7 +201,7 @@ class DioService{
       );
 
       // 업로드 요청
-      final response = await dio.put(baseUri + 'member/profile', data: formData);
+      final response = await dio.put(baseUrl + 'member/profile', data: formData);
       if (response.statusCode != 200) {
         print(await response.statusMessage);
         if(response.statusCode! >= 500){
@@ -242,7 +242,7 @@ class DioService{
       };
 
       // 업로드 요청
-      final response = await dio.put(baseUri + 'member/profile/name', data: {
+      final response = await dio.put(baseUrl + 'member/profile/name', data: {
         "nickname": name
       });
       if (response.statusCode != 200) {
@@ -281,7 +281,7 @@ class DioService{
       };
 
       // 업로드 요청
-      final response = await dio.put(baseUri + 'calendars/profile', data: {"title": title});
+      final response = await dio.put(baseUrl + 'calendars/profile', data: {"title": title});
       if (response.statusCode != 200) {
         print(await response.statusMessage);
         if(response.statusCode! >= 500){
@@ -315,7 +315,7 @@ class DioService{
         "Authorization": "Bearer $token"
       };
       Response response = await dio.get(
-        baseUri + "calendars/profile",
+        baseUrl + "calendars/profile",
       );
       if (response.statusCode != 200) {
         print(await response.statusMessage);
@@ -346,7 +346,7 @@ class DioService{
         "Authorization": "Bearer $token"
       };
       Response response = await dio.get(
-        baseUri + "member/alarm-config",
+        baseUrl + "member/alarm-config",
       );
       if (response.statusCode != 200) {
         print(await response.statusMessage);
@@ -378,7 +378,7 @@ class DioService{
       };
 
       // 업로드 요청
-      final response = await dio.put(baseUri + 'member/service-alarm', data: {"serviceAlarm": isService});
+      final response = await dio.put(baseUrl + 'member/service-alarm', data: {"serviceAlarm": isService});
       if (response.statusCode != 200) {
         print(await response.statusMessage);
         if(response.statusCode! >= 500){
@@ -413,7 +413,7 @@ class DioService{
       };
 
       // 업로드 요청
-      final response = await dio.put(baseUri + 'member/late-night-alarm', data: {"lateNightAlarm": isNight});
+      final response = await dio.put(baseUrl + 'member/late-night-alarm', data: {"lateNightAlarm": isNight});
       if (response.statusCode != 200) {
         print(await response.statusMessage);
         if(response.statusCode! >= 500){
@@ -448,7 +448,7 @@ class DioService{
       };
 
       // 업로드 요청
-      final response = await dio.put(baseUri + 'member/marketing-receive-consent', data: {"marketingReceiveConsent": isMarketing});
+      final response = await dio.put(baseUrl + 'member/marketing-receive-consent', data: {"marketingReceiveConsent": isMarketing});
       if (response.statusCode != 200) {
         print(await response.statusMessage);
         if(response.statusCode! >= 500){
@@ -495,7 +495,7 @@ class DioService{
         };
       }
 
-      var response = await dio.post(baseUri + "report", data: _data);
+      var response = await dio.post(baseUrl + "report", data: _data);
       if (response.statusCode != 200) {
         if (response.statusCode! >= 500) {
           return "서버가 불안정해 정보를 불러올 수 없어요";
@@ -523,7 +523,7 @@ class DioService{
       var dio = Dio();
       dio.options.headers = {"Authorization": "Bearer $accessToken"};
       Response response = await dio.get(
-          '${baseUri}members/$otherMemberId/challenges', queryParameters: {'year': year, 'month': month});
+          '${baseUrl}members/$otherMemberId/challenges', queryParameters: {'year': year, 'month': month});
       if (response.statusCode != 200) {
         print(await response.statusMessage);
         return "Error" + response.data["message"];
@@ -551,7 +551,7 @@ class DioService{
         "Authorization": "Bearer $token"
       };
       Response response = await dio.get(
-        baseUri + "calendars/total-count",
+        baseUrl + "calendars/total-count",
       );
       if (response.statusCode != 200) {
         print(await response.statusMessage);

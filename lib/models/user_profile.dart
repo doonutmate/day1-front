@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../constants/api_url.dart';
+
 
 
 // 사용자 정보를 담을 모델
@@ -21,7 +23,7 @@ class UserProfile {
 Future<dynamic> fetchUserProfile(String token) async {
 
   final response = await http.get(
-    Uri.parse('https://dev.doonut.site/member/mypage'),
+    Uri.parse(baseUrl + 'member/mypage'),
     headers: {
       'Authorization': 'Bearer $token',
     },

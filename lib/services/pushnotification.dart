@@ -8,7 +8,7 @@ class PushNotification {
   static String? _token;
 
   static Future init() async {
-    await _firebaseMessaging.requestPermission(
+    NotificationSettings response = await _firebaseMessaging.requestPermission(
       alert: true,
       badge: true,
       carPlay: false,
@@ -17,6 +17,14 @@ class PushNotification {
       sound: true,
     );
 
+    if(response.alert.name == "enabled"){
+
+    }
+    else{
+
+    }
+
+
     _token = await _firebaseMessaging.getToken();
     print("device token : $_token");
   }
@@ -24,6 +32,9 @@ class PushNotification {
   static Future localNotiInit() async {
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
+      requestSoundPermission: false,
+      requestBadgePermission: false,
+      requestAlertPermission: false,
       onDidReceiveLocalNotification: (id, title, body, payload) => null,
     );
 
@@ -39,13 +50,12 @@ class PushNotification {
     required String title,
     required String body,
   }) async {
-    try{
+    try {
       const NotificationDetails notificationDetails =
-      NotificationDetails(iOS: DarwinNotificationDetails(badgeNumber: 1));
+          NotificationDetails(iOS: DarwinNotificationDetails(badgeNumber: 1));
       await _flutterLocalNotificationsPlugin.show(
           0, title, body, notificationDetails);
-    }
-    catch(e){
+    } catch (e) {
       print(e);
     }
   }

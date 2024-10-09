@@ -19,6 +19,7 @@ class _FlipButtonState extends State<FlipButton> {
   @override
   Widget build(BuildContext context) {
     return IconButton(
+      iconSize: 48,
       onPressed: widget.responseImage != null ? null : (){
         setState(() {
             _isFrontCamera = !_isFrontCamera;

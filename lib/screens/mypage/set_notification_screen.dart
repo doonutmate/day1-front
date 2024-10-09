@@ -10,7 +10,9 @@ import 'package:intl/intl.dart';
 
 import '../../constants/size.dart';
 import '../../models/token_information.dart';
+import '../../services/device_size_provider.dart';
 import '../../services/server_token_provider.dart';
+import '../../widgets/atoms/radio_text_button.dart';
 
 class SetNotificationScreen extends ConsumerStatefulWidget {
   const SetNotificationScreen({super.key});
@@ -27,6 +29,9 @@ class _SetNotificationScreenState extends ConsumerState<SetNotificationScreen> {
   String? token;
   late String accessToken;
   String changeDate = "";
+  late double deviceWidth;
+  late FToast fToast;
+
 
   @override
   void initState() {
@@ -50,30 +55,58 @@ class _SetNotificationScreenState extends ConsumerState<SetNotificationScreen> {
           isMarketing = response.data["marketingReceiveConsent"];
         }
       }
+      deviceWidth = ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
+      fToast = FToast();
+      fToast.init(context);
       setState(() {});
     });
   }
 
   void showToast() {
-    Fluttertoast.showToast(
+    double leftpadding = (deviceWidth / 2) - 130;
+
+    fToast.showToast(
+      toastDuration: Duration(seconds: 3),
+      gravity: ToastGravity.CENTER,
+      positionedToastBuilder: (context, child) {
+        return Positioned(
+          child: child,
+          bottom: 74.0,
+          left: leftpadding,
+        );
+      },
+      child: RadiusTextButton(
+          width: 260,
+          height: 39,
+          backgroudColor:AlertBackGroudColor,
+          radius: 6,
+          text: "마케팅 정보 수신 " + (isMarketing == true ? "동의" : "해제") + " " + changeDate,
+          textColor: Colors.white,
+          fontSize: cameraScreenAppBarTextSize
+      ),
+    );
+
+    /*Fluttertoast.showToast(
       msg:
           "마케팅 정보 수신 " + (isMarketing == true ? "동의" : "해제") + " " + changeDate,
       gravity: ToastGravity.BOTTOM,
       backgroundColor: AlertBackGroudColor,
       timeInSecForIosWeb: 3,
       fontSize: cameraScreenAppBarTextSize,
-    );
+    );*/
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: backGroundColor,
         toolbarHeight: appBarHeight,
         title: Text(
           "알림 설정",
           style: TextStyle(
             fontSize: appBarTitleFontSize,
+            fontWeight: FontWeight.w500
           ),
         ),
       ),
@@ -141,6 +174,7 @@ class _SetNotificationScreenState extends ConsumerState<SetNotificationScreen> {
               ),
               trailing: CupertinoSwitch(
                 activeColor: primary,
+                trackColor: isService != true ? Color(0x80EFEFEF) : Color(0xFFEFEFEF),
                 value: isNight,
                 onChanged: (value) async {
                   if (isService == true) {
@@ -177,6 +211,7 @@ class _SetNotificationScreenState extends ConsumerState<SetNotificationScreen> {
               ),
               trailing: CupertinoSwitch(
                 activeColor: primary,
+                trackColor: isService != true ? Color(0x80EFEFEF) : Color(0xFFEFEFEF),
                 value: isMarketing,
                 onChanged: (value) async {
                   if (isService == true) {

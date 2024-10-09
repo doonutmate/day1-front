@@ -16,11 +16,13 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
+import 'package:permission_handler/permission_handler.dart';
 import '../../constants/size.dart';
 import '../../models/token_information.dart';
 import '../../models/user_profile.dart';
 import '../../providers/total_record_count_provider.dart';
 import '../../providers/user_profile_provider.dart';
+import '../../services/app_database.dart';
 import '../../services/dio.dart';
 import '../../services/server_token_provider.dart';
 import '../../widgets/atoms/cancel_text_button.dart';
@@ -58,6 +60,9 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         Map<String, dynamic> tokenMap = jsonDecode(token!);
         TokenInformation tokenInfo = TokenInformation.fromJson(tokenMap);
 
+
+
+
         final userProfile = await fetchUserProfile(tokenInfo.accessToken);
         if (userProfile.toString().contains("Error")) {
           DioService.showErrorPopup(
@@ -85,6 +90,7 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
             ref.read(calendarTitleProvider.notifier).state = titleMap;
           }
         }
+
         var totalCount = await DioService.getTotalRecordCount(tokenInfo.accessToken);
         if(totalCount.toString().contains("Error")){
           DioService.showErrorPopup(context, totalCount.toString().replaceFirst("Error", ""));
@@ -92,6 +98,33 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
         else{
           ref.read(totalRecordCount.notifier).state = totalCount;
         }
+
+        var status = await Permission.notification.status;
+
+        if(status.isGranted){
+          String? response = await DioService.setServiceAlarm(true, tokenInfo.accessToken);
+          if (response != null) {
+            DioService.showErrorPopup(context, response);
+          }
+        }
+        else{
+          String? response = await DioService.setServiceAlarm(false, tokenInfo.accessToken);
+          if (response != null) {
+            DioService.showErrorPopup(context, response);
+          }
+          String? responseLate = await DioService.setLateNightAlarm(
+              false, tokenInfo.accessToken);
+          if (responseLate != null) {
+            DioService.showErrorPopup(context, responseLate);
+          }
+          String? responseMarketing =
+          await DioService.setMarketingAlarm(
+              false, tokenInfo.accessToken);
+          if (responseMarketing != null) {
+            DioService.showErrorPopup(context, responseMarketing);
+          }
+        }
+
       }
     });
   }
@@ -102,6 +135,7 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
     controller.dispose();
     super.dispose();
   }
+
 
   //카메라 설정하는 함수
   void setCamera(bool isFront) {
@@ -228,113 +262,112 @@ class CameraScreenState extends ConsumerState<CameraScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: appBarHeight,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                //카메라 화면을 보여줄 때는 취소 버튼만 있고, 사진찍고 나서는 다시찍기 버튼과 저장버튼이 있다.
-                children: responseImage == null
-                    ? [
-                  CancelTextButton(),
-                ]
-                    : [
-                  ReshootTextButton(
-                    func: () {
-                      setState(() {
-                        responseImage = null;
-                      });
-                    },
-                  ),
-                  Spacer(),
-                  StoreTextButton()
-                ],
-              ),
+    return Scaffold(
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 47,),
+          SizedBox(
+            height: appBarHeight,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              //카메라 화면을 보여줄 때는 취소 버튼만 있고, 사진찍고 나서는 다시찍기 버튼과 저장버튼이 있다.
+              children: responseImage == null
+                  ? [
+                CancelTextButton(),
+              ]
+                  : [
+                ReshootTextButton(
+                  func: () {
+                    setState(() {
+                      responseImage = null;
+                    });
+                  },
+                ),
+                Spacer(),
+                StoreTextButton()
+              ],
             ),
-            // 카메라 화면 가로 세로 비율을 1대1로 고정
-            AspectRatio(
-              aspectRatio: 1,
-              // 서버에서 응답받은 이미지가 있을 경우 이미지를 화면에 보여주고 없으면 카메라 화면을 보여준다
-              child: responseImage != null
-                  ? Stack(
-                children: [
-                  Image.file(responseImage!),
-                  Positioned(
-                    left: 30,
-                    bottom: 30,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          pictureDay + " " + pictureDayOfWeek,
-                          style: TextStyle(
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 5.0,
-                                  color: gray600,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: white),
-                        ),
-                        Text(
-                          pictureAMPM + " " + pictureTime,
-                          style: TextStyle(
-                              shadows: [
-                                Shadow(
-                                  blurRadius: 5.0,
-                                  color: gray600,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: white),
-                        )
-                      ],
-                    ),
+          ),
+          // 카메라 화면 가로 세로 비율을 1대1로 고정
+          AspectRatio(
+            aspectRatio: 1,
+            // 서버에서 응답받은 이미지가 있을 경우 이미지를 화면에 보여주고 없으면 카메라 화면을 보여준다
+            child: responseImage != null
+                ? Stack(
+              children: [
+                Image.file(responseImage!),
+                Positioned(
+                  left: 30,
+                  bottom: 30,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        pictureDay + " " + pictureDayOfWeek,
+                        style: TextStyle(
+                            shadows: [
+                              Shadow(
+                                blurRadius: 5.0,
+                                color: gray600,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: white),
+                      ),
+                      Text(
+                        pictureAMPM + " " + pictureTime,
+                        style: TextStyle(
+                            shadows: [
+                              Shadow(
+                                blurRadius: 5.0,
+                                color: gray600,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: white),
+                      )
+                    ],
                   ),
-                ],
-              )
-                  : Day1Camera(
-                  initializeControllerFuture: _initializeControllerFuture,
-                  controller: controller),
-            ),
-            Expanded(flex: 1, child: SizedBox()),
-            Padding(
-              padding: screenHorizontalMargin,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // 플래시 on/off 버튼
-                  FlashChangeButton(
-                    controller: controller,
-                    responseImage: responseImage,
-                  ),
-                  //사진촬영 버튼
-                  ShutterButton(
-                    shutterFunc: _takePicture,
-                    responseImage: responseImage,
-                  ),
+                ),
+              ],
+            )
+                : Day1Camera(
+                initializeControllerFuture: _initializeControllerFuture,
+                controller: controller),
+          ),
+          Expanded(flex: 1, child: SizedBox()),
+          Padding(
+            padding: screenHorizontalMargin,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // 플래시 on/off 버튼
+                FlashChangeButton(
+                  controller: controller,
+                  responseImage: responseImage,
+                ),
+                //사진촬영 버튼
+                ShutterButton(
+                  shutterFunc: _takePicture,
+                  responseImage: responseImage,
+                ),
 
-                  //카메라 전면/후면 전환 버튼
-                  FlipButton(
-                    func: setCamera,
-                    responseImage: responseImage,
-                  ),
-                ],
-              ),
+                //카메라 전면/후면 전환 버튼
+                FlipButton(
+                  func: setCamera,
+                  responseImage: responseImage,
+                ),
+              ],
             ),
-            Expanded(flex: 2, child: SizedBox()),
-          ],
-        ),
+          ),
+          Expanded(flex: 2, child: SizedBox()),
+        ],
       ),
     );
   }

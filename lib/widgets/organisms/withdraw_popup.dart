@@ -12,11 +12,11 @@ import '../../models/token_information.dart';
 import 'package:day1/widgets/atoms/radius_text_button.dart';
 import 'package:day1/services/auth_provider.dart';
 
+
 class WithdrawPopup extends ConsumerWidget {
   final String submitReasonText;
 
   WithdrawPopup({required this.submitReasonText, super.key});
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -77,14 +77,17 @@ class WithdrawPopup extends ConsumerWidget {
                   radius: screenWidth * 0.013,
                   text: "더 써볼게요",
                   textColor: Colors.black,
+
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
+
                   borderColor: Color(0xFFDEDEDE),
                 ),
               ),
               GestureDetector(
                 onTap: () async {
                   Navigator.pop(context);
+
 
                   String? token = await AppDataBase.getToken();
 
@@ -122,6 +125,7 @@ class WithdrawPopup extends ConsumerWidget {
                     }
 
                     await AppDataBase.clearToken();
+
 
                     // 상태 변경을 통한 화면 전환
                     authNotifier.signOut();  // 상태 변경 트리거
