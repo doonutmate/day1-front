@@ -8,14 +8,33 @@ Future<void> LogoutDialog(BuildContext context, VoidCallback onLogout) async {
       return CupertinoAlertDialog(
         title: Text(
           '로그아웃',
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 20,
+            fontFamily: 'Pretendard',
+          ),
         ),
-        content: Text('정말 로그아웃 하시겠습니까?'),
+        content: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Text(
+            '정말 로그아웃 하시겠습니까?',
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: 'Pretendard',
+              color: Color(0xFF222222).withOpacity(0.5),
+            ),
+          ),
+        ),
         actions: <Widget>[
           CupertinoDialogAction(
             child: Text(
               '취소',
-              style: TextStyle(color: Colors.blue),
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 16,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+              ),
             ),
             onPressed: () {
               Navigator.of(context).pop();
@@ -24,11 +43,15 @@ Future<void> LogoutDialog(BuildContext context, VoidCallback onLogout) async {
           CupertinoDialogAction(
             child: Text(
               '로그아웃',
-              style: TextStyle(color: Colors.red),
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 16,
+                fontFamily: 'Pretendard',
+                fontWeight: FontWeight.w400,
+              ),
             ),
             onPressed: () {
               onLogout();
-              //stack에 쌓여있는 page들을 다 지우고 login 화면 push
               Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
             },
           )

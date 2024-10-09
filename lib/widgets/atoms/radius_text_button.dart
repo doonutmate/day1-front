@@ -9,10 +9,20 @@ class RadiusTextButton extends StatelessWidget {
   Color textColor;
   double fontSize;
   FontWeight fontWeight;
+  Color borderColor;
 
-  RadiusTextButton({this.width = double.infinity, required this.height,
-    required this.backgroudColor, required this.radius, required this.text, required this.textColor,
-    required this.fontSize, this.fontWeight = FontWeight.normal, super.key});
+  RadiusTextButton({
+    this.width = double.infinity,
+    required this.height,
+    required this.backgroudColor,
+    required this.radius,
+    required this.text,
+    required this.textColor,
+    required this.fontSize,
+    this.fontWeight = FontWeight.normal,
+    super.key,
+    this.borderColor = Colors.transparent,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +31,9 @@ class RadiusTextButton extends StatelessWidget {
       height: height,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(radius),
-        color: backgroudColor,
-      ),
+          borderRadius: BorderRadius.circular(radius),
+          color: backgroudColor,
+          border: Border.all(color: borderColor, width: 1.0)),
       child: Text(
         text,
         style: TextStyle(
