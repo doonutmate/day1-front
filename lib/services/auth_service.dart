@@ -1,3 +1,4 @@
+import 'package:day1/constants/api_url.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -140,7 +141,7 @@ class AuthService {
     print('서버로 전송할 토큰: $token'); // 요청 데이터 로깅
     try {
       var response = await http.post(
-        Uri.parse('https://dev.doonut.site/oauth/login?oauthType=KAKAO'),
+        Uri.parse(baseUrl + 'oauth/login?oauthType=KAKAO'),
         // 백엔드 서버의 토큰 검증 엔드포인트
         headers: {
           'Content-Type': 'application/json',

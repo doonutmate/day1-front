@@ -26,16 +26,25 @@ class CalendarScreen extends ConsumerStatefulWidget {
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Map<DateTime, CalendarImage> imageMap = {};
   bool isGetFinish = false;
+  String? calendarTitle;
   late int _year;
   late int _month;
   @override
   void initState() {
     super.initState();
 
+
+
     int year = DateTime.now().year;
     int month = DateTime.now().month;
     getCalendarImage(year, month);
   }
+
+  Future<void> logout() async {
+    await AppDataBase.clearToken();
+    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+  }
+
 
   // 서버에서 캘린더 이미지를 불러오는 함수
   Future<void> getCalendarImage(int year, int month) async {
@@ -68,7 +77,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
       else{
         // day는 imageMap<Map>의 키로 사용하고 value로는 썸네일 이미지와 원본이미지를 멤버로 갖고 있는 CalendarImage 모델 클래스로 사용
         responseList.forEach((element) {
-          imageMap[DateTime(_year, _month, element['day'])] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl'], date: '');
+          try{
+            imageMap[DateTime(_year, _month, element['day'])] = CalendarImage(thumbNailUrl: element['thumbNailUrl'], defaultUrl: element['defaultUrl'], date: element['timestamp']);
+          }
+          catch(e){
+            DioService.showErrorPopup(context, e.toString());
+          }
         });
         setState(() {
           // 통신이 끝났는지 플래그값 설정
@@ -89,16 +103,20 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     // provider에서 실제 화면 width get
     double deviceWidth = ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
-    // calendar headermargin 크기
-    double headerMargin = (deviceWidth - 225) / 2;
+    // calendar headermargin 크기 225
+    double headerMargin = (deviceWidth - 231) / 2;
     // calendar title get
-    String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
-
     String? totalCount = ref.watch(totalRecordCount.notifier).state;
 
+    calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
+
+
+    //캘린더 제목 변수가 null이면 logout
+    if(calendarTitle == null ) {
+      logout();
+    }
 
     return Padding(
       padding: screenHorizontalMargin,

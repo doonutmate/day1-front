@@ -16,12 +16,39 @@ class Permision extends StatefulWidget {
 class _PermisionState extends State<Permision> {
   String _authStatus = 'Unknown';
 
+  Future<void> showCustomTrackingDialog(BuildContext context) async =>
+      await showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Dear User'),
+          content: const Text(
+            'We care about your privacy and data security. We keep this app free by showing ads. '
+                'Can we continue to use your data to tailor ads for you?\n\nYou can change your choice anytime in the app settings. '
+                'Our partners will collect data and use a unique identifier on your device to show you ads.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Continue'),
+            ),
+          ],
+        ),
+      );
+
   Future<void> initPlugin() async {
     try {
       final TrackingStatus status =
       await AppTrackingTransparency.trackingAuthorizationStatus;
       setState(() => _authStatus = '$status');
       if (status == TrackingStatus.notDetermined) {
+
+        // Show a custom explainer dialog before the system dialog
+        //await showCustomTrackingDialog(context);
+        // Wait for dialog popping animation
+        await Future.delayed(const Duration(milliseconds: 200));
+        print("requestTracking1");
+        // Request system's tracking authorization dialog
+
         final TrackingStatus status =
         await AppTrackingTransparency.requestTrackingAuthorization();
         setState(() => _authStatus = '$status');
@@ -39,21 +66,35 @@ class _PermisionState extends State<Permision> {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => initPlugin());
+
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView( // SingleChildScrollView로 감싸서 스크롤 가능하게 만듭니다.
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 59),
-              Text(
-                "원활한 Day1 이용을 위해\n아래의 접근 권한을 받고 있어요",
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 79,
+            ),
+            Text(
+              "원활한 Day1 이용을 위해\n아래의 접근 권한을 받고 있어요",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+            ),
+            SizedBox(
+              height: 32,
+            ),
+            Text(
+              "필수 접근 권한",
+              style: TextStyle(
+                color: primary,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
               SizedBox(height: 32),
               Text(

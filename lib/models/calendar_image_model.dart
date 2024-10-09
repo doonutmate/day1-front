@@ -11,7 +11,7 @@ class CalendarImage {
 
   factory CalendarImage.fromJson(Map<String, dynamic> json) {
     return CalendarImage(
-      date: json['date'].toString(), // Ensure date is a string
+      date: json['timestamp'].toString(), // Ensure date is a string
       thumbNailUrl: json['thumbNailUrl'],
       defaultUrl: json['defaultUrl'],
     );

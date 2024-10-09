@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:camera/camera.dart';
+import 'package:day1/providers/calendar_title_provider.dart';
 import 'package:day1/screens/calendar_screen.dart';
 import 'package:day1/screens/camera/camera.dart';
 import 'package:day1/screens/community/community_screen.dart';
@@ -16,17 +17,21 @@ import 'package:day1/screens/s_main.dart';
 import 'package:day1/services/app_database.dart';
 import 'package:day1/services/auth_provider.dart';
 import 'package:day1/services/auth_service.dart';
+import 'package:day1/services/dio.dart';
 import 'package:day1/services/pushnotification.dart';
 import 'package:day1/services/server_token_provider.dart';
+import 'package:day1/widgets/organisms/error_popup.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:kakao_flutter_sdk/kakao_flutter_sdk_common.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:uni_links/uni_links.dart';
+import 'constants/colors.dart';
 import 'firebase_options.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -60,6 +65,8 @@ late List<CameraDescription> cameras;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
 
   HttpOverrides.global = MyHttpOverrides();
   await initializeDateFormatting();
@@ -107,44 +114,54 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSignedOut = ref.watch(authProvider);
+
+    ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
+    VoidCallback? navigate;
+
 
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
+
+      builder: (BuildContext context, Widget? widget) {
+        ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+          return Scaffold(
+            body: AlertDialog(
+              contentPadding: EdgeInsets.zero,
+              content: ErrorPopup(errorMassage: errorDetails.summary.toString(), navigate: navigate,),
+            ),
+          );
+        };
+
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            //사용자 기기 설정에 상관없이 텍스트 크기 고정
+            textScaler: TextScaler.linear(1.0),
+          ),
+          child: widget!,
+        );
+
+      },
+      //기본 폰트 설정
       theme: ThemeData(
         fontFamily: "Pretendard",
         bottomSheetTheme: BottomSheetThemeData(
-          backgroundColor: Colors.black.withOpacity(0),
-        ),
+            backgroundColor: Colors.black.withOpacity(0)),
+        scaffoldBackgroundColor: backGroundColor,
+        /*appBarTheme: AppBarTheme(
+          systemOverlayStyle: SystemUiOverlayStyle(
+            // Status bar color
+            statusBarColor: backGroundColor, // 안드로이드만?? (iOS에서는 아무 변화없음)
+            // statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.dark, // iOS에서 먹히는 설정(검정 글씨로 표시됨)
+          ),
+        ),*/
       ),
-      home: Consumer(
-        builder: (context, ref, child) {
-          if (isSignedOut) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WithdrawScreen2(
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginScreen()),
-                            (Route<dynamic> route) => false,
-                      );
-                    },key: Key('withdraw_screen2'),
-                  ),
-                ),
-              );
-            });
-          }
+      home: FutureBuilder(
+          future: getToken(tokenProvider),
+          builder: (context, AsyncSnapshot<bool> snapshot) {
+            if (snapshot.hasData && snapshot.data == true && calendarTitle != null) {
 
-          return FutureBuilder<bool>(
-            future: getToken(ref.read(ServerTokenProvider.notifier)),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasData && snapshot.data == true) {
                 return CameraScreen(cameras);
               } else {
                 return Permision();

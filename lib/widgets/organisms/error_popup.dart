@@ -24,7 +24,7 @@ class ErrorPopup extends StatelessWidget {
           Text(
             "오류 발생",
             style: TextStyle(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               fontSize: 18,
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:day1/constants/api_url.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'dart:convert';
@@ -5,7 +6,6 @@ import '../models/community_model.dart';
 import 'package:day1/services/app_database.dart';
 
 class CommunityService {
-  final String baseUrl = 'https://dev.doonut.site';
   final Dio dio = Dio();
 
   Future<Map<String, dynamic>> fetchCalendars(BuildContext context, DateTime? lastUpdatedAt) async {
@@ -27,7 +27,7 @@ class CommunityService {
       if (lastUpdatedAt != null) {
         uri += '&updated_at=${lastUpdatedAt.toIso8601String()}';
       }*/
-      String uri = '$baseUrl/calendars';
+      String uri =  baseUrl + 'calendars';
       String? time = lastUpdatedAt?.toIso8601String();
       print('Request URI: $uri');
       final response = await dio.get(

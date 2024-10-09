@@ -103,10 +103,15 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
     }
 
     for (var item in responseList) {
-      CalendarImage calendarImage = CalendarImage.fromJson(item);
-      DateTime date =
-          DateTime(_year, _month, int.parse(item['day'].toString()));
-      imageMap[date] = calendarImage;
+      try{
+        CalendarImage calendarImage = CalendarImage.fromJson(item);
+        DateTime date =
+        DateTime(_year, _month, int.parse(item['day'].toString()));
+        imageMap[date] = calendarImage;
+      }
+      catch(e){
+        DioService.showErrorPopup(context, e.toString());
+      }
     }
 
     setState(() {
@@ -126,11 +131,12 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
 
     double deviceWidth =
         ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
-    double headerMargin = (deviceWidth - 225) / 2;
+    double headerMargin = (deviceWidth - 231) / 2;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: backGroundColor,
         title: Text(
           widget.calendarName,
           style: TextStyle(fontSize: 18, fontFamily: 'Pretendard', fontWeight: FontWeight.w500),
@@ -153,7 +159,7 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
                     children: [
                       CircleAvatar(
                         radius: 30,
-                        backgroundImage: NetworkImage(widget.profileImage),
+                        backgroundImage: widget.profileImage != "null" ? NetworkImage(widget.profileImage) : AssetImage("assets/icons/mypage_profile.png") as ImageProvider,
                       ),
                       SizedBox(width: 10),
                       RichText(
