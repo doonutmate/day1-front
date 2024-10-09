@@ -88,8 +88,8 @@ class LoginScreen extends ConsumerWidget {
             SizedBox(height: 60), // 텍스트와 이미지 사이 간격
             // 카메라 이미지 추가 (이미지 크기 조정)
             Container(
-              height: 272,
-              width: 272,
+              height: 150,
+              width: 150,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/camera.png'),
