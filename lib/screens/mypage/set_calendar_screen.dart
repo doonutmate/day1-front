@@ -86,6 +86,7 @@ class _SetCalendarScreenState extends ConsumerState<SetCalendarScreen> {
             "캘린더 설정",
             style: TextStyle(
               fontSize: appBarTitleFontSize,
+              fontWeight: FontWeight.w500
             ),
           ),
           leading: GestureDetector(

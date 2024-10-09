@@ -100,11 +100,13 @@ class _SetNotificationScreenState extends ConsumerState<SetNotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: backGroundColor,
         toolbarHeight: appBarHeight,
         title: Text(
           "알림 설정",
           style: TextStyle(
             fontSize: appBarTitleFontSize,
+            fontWeight: FontWeight.w500
           ),
         ),
       ),

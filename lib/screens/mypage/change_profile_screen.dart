@@ -157,6 +157,7 @@ class _ChangeProfileScreenState extends ConsumerState<ChangeProfileScreen> {
             "프로필 수정",
             style: TextStyle(
               fontSize: appBarTitleFontSize,
+              fontWeight: FontWeight.w500
             ),
           ),
           leading: GestureDetector(

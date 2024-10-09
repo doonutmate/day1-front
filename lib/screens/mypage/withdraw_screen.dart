@@ -26,6 +26,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
       return Scaffold(
         appBar: AppBar(
+          backgroundColor: backGroundColor,
           toolbarHeight: appBarHeight,
           title: Text(
             '탈퇴하기',
