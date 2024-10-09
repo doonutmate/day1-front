@@ -111,6 +111,7 @@ class LoginScreen extends ConsumerWidget {
               ),
               onPressed: () {},
               style: ButtonStyle(
+                minimumSize: WidgetStateProperty.all(Size(155, 40)),
                 surfaceTintColor: WidgetStateProperty.all(Colors.white),
                 padding: WidgetStateProperty.all(
                     EdgeInsets.symmetric(vertical: 16, horizontal: 100)),
