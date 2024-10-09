@@ -27,8 +27,10 @@ class CustomTableCalendar extends StatelessWidget {
     return showDialog<void>(
       context: context,
       barrierDismissible: true,
+      barrierColor: Color(0x80222222),
       builder: (context) {
         // builder 에서 생성할 위젯
+
         return DefaultImageDialog(
           imageMap: imageMap,
           day: day,

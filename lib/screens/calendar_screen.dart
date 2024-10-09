@@ -26,16 +26,26 @@ class CalendarScreen extends ConsumerStatefulWidget {
 class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Map<DateTime, CalendarImage> imageMap = {};
   bool isGetFinish = false;
+  String? calendarTitle;
   late int _year;
   late int _month;
   @override
   void initState() {
     super.initState();
 
+
+
     int year = DateTime.now().year;
     int month = DateTime.now().month;
     getCalendarImage(year, month);
   }
+
+  Future<void> logout() async {
+    await AppDataBase.clearToken();
+    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+  }
+
+
   // 서버에서 캘린더 이미지를 불러오는 함수
   Future<void> getCalendarImage(int year, int month) async {
     //provider에서 서버 토큰 정보 get
@@ -93,18 +103,20 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     // provider에서 실제 화면 width get
     double deviceWidth = ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
-    // calendar headermargin 크기
-    double headerMargin = (deviceWidth - 225) / 2;
+    // calendar headermargin 크기 225
+    double headerMargin = (deviceWidth - 231) / 2;
     // calendar title get
-    String? calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
-
     String? totalCount = ref.watch(totalRecordCount.notifier).state;
 
+    calendarTitle = ref.watch(calendarTitleProvider.notifier).state;
 
 
+    //캘린더 제목 변수가 null이면 logout
+    if(calendarTitle == null ) {
+      logout();
+    }
 
     return Padding(
       padding: screenHorizontalMargin,

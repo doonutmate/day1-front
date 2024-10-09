@@ -18,6 +18,7 @@ class _FlashChangeButtonState extends State<FlashChangeButton> {
   @override
   Widget build(BuildContext context) {
     return IconButton(
+      iconSize: 48,
       onPressed: widget.responseImage != null ? null : (){
           setState(() {
             _isFlashOn = !_isFlashOn;

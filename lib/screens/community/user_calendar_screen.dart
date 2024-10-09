@@ -122,10 +122,11 @@ class _UserCalendarScreenState extends ConsumerState<UserCalendarScreen> {
   Widget build(BuildContext context) {
     double deviceWidth =
         ref.watch(deviceSizeProvider.notifier).getDeviceWidth();
-    double headerMargin = (deviceWidth - 225) / 2;
+    double headerMargin = (deviceWidth - 231) / 2;
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: backGroundColor,
         title: Text(
           widget.calendarName,
           style: TextStyle(fontSize: 18),
