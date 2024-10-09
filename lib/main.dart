@@ -66,8 +66,6 @@ late List<CameraDescription> cameras;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
-
   HttpOverrides.global = MyHttpOverrides();
   await initializeDateFormatting();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -115,50 +113,44 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
-    VoidCallback? navigate;
-
+    final isSignedOut = ref.watch(authProvider);
 
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-
-      builder: (BuildContext context, Widget? widget) {
-        ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-          return Scaffold(
-            body: AlertDialog(
-              contentPadding: EdgeInsets.zero,
-              content: ErrorPopup(errorMassage: errorDetails.summary.toString(), navigate: navigate,),
-            ),
-          );
-        };
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(
-            //사용자 기기 설정에 상관없이 텍스트 크기 고정
-            textScaler: TextScaler.linear(1.0),
-          ),
-          child: widget!,
-        );
-      },
-      //기본 폰트 설정
       theme: ThemeData(
         fontFamily: "Pretendard",
         bottomSheetTheme: BottomSheetThemeData(
-            backgroundColor: Colors.black.withOpacity(0)),
-        scaffoldBackgroundColor: backGroundColor,
-        /*appBarTheme: AppBarTheme(
-          systemOverlayStyle: SystemUiOverlayStyle(
-            // Status bar color
-            statusBarColor: backGroundColor, // 안드로이드만?? (iOS에서는 아무 변화없음)
-            // statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.dark, // iOS에서 먹히는 설정(검정 글씨로 표시됨)
-          ),
-        ),*/
+          backgroundColor: Colors.black.withOpacity(0),
+        ),
       ),
-      home: FutureBuilder(
-          future: getToken(tokenProvider),
-          builder: (context, AsyncSnapshot<bool> snapshot) {
-            if (snapshot.hasData && snapshot.data == true && calendarTitle != null) {
+      home: Consumer(
+        builder: (context, ref, child) {
+          if (isSignedOut) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WithdrawScreen2(
+                    onTap: () {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                            (Route<dynamic> route) => false,
+                      );
+                    },key: Key('withdraw_screen2'),
+                  ),
+                ),
+              );
+            });
+          }
+
+          return FutureBuilder<bool>(
+            future: getToken(ref.read(ServerTokenProvider.notifier)),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasData && snapshot.data == true) {
 
                 return CameraScreen(cameras);
               } else {
@@ -168,7 +160,6 @@ class MyApp extends ConsumerWidget {
           );
         },
       ),
-
       routes: {
         '/login': (context) => LoginScreen(),
         '/permision': (context) => Permision(),

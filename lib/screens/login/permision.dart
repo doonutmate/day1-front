@@ -49,6 +49,7 @@ class _PermisionState extends State<Permision> {
         print("requestTracking1");
         // Request system's tracking authorization dialog
 
+
         final TrackingStatus status =
         await AppTrackingTransparency.requestTrackingAuthorization();
         setState(() => _authStatus = '$status');
@@ -66,9 +67,6 @@ class _PermisionState extends State<Permision> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) => initPlugin());
-
   }
 
   @override

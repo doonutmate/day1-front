@@ -1,3 +1,4 @@
+// withdraw_popup.dart
 import 'dart:convert';
 import 'package:day1/constants/colors.dart';
 import 'package:day1/services/app_database.dart';
@@ -10,20 +11,25 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../models/token_information.dart';
 import 'package:day1/widgets/atoms/radius_text_button.dart';
 import 'package:day1/services/auth_provider.dart';
+
+
 class WithdrawPopup extends ConsumerWidget {
   final String submitReasonText;
+
   WithdrawPopup({required this.submitReasonText, super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     final authNotifier = ref.read(authProvider.notifier);
+
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
       ),
     );
+
     return Container(
       width: 312,
       height: 188,
@@ -71,19 +77,25 @@ class WithdrawPopup extends ConsumerWidget {
                   radius: screenWidth * 0.013,
                   text: "더 써볼게요",
                   textColor: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
+
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
+
                   borderColor: Color(0xFFDEDEDE),
                 ),
               ),
               GestureDetector(
                 onTap: () async {
                   Navigator.pop(context);
+
+
                   String? token = await AppDataBase.getToken();
+
                   if (token != null) {
                     Map<String, dynamic> tokenMap = jsonDecode(token);
                     TokenInformation tokenInfo =
                     TokenInformation.fromJson(tokenMap);
+
                     if (tokenInfo.oauthType == "KAKAO") {
                       String? response = await DioService.signOutDay1(
                           tokenInfo.oauthType,
@@ -111,7 +123,10 @@ class WithdrawPopup extends ConsumerWidget {
                         }
                       }
                     }
+
                     await AppDataBase.clearToken();
+
+
                     // 상태 변경을 통한 화면 전환
                     authNotifier.signOut();  // 상태 변경 트리거
                   } else {

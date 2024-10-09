@@ -500,7 +500,6 @@
 				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = DASKP64V6P;
 				ENABLE_BITCODE = NO;
-
 				FLUTTER_BUILD_NAME = 2.0.4;
 				FLUTTER_BUILD_NUMBER = 4;
 
@@ -511,9 +510,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-
 				MARKETING_VERSION = 2.0.4;
-
 
 				PRODUCT_BUNDLE_IDENTIFIER = com.doonut.Day1;
 				PRODUCT_NAME = "$(TARGET_NAME)";

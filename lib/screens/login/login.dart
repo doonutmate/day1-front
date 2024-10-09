@@ -88,8 +88,8 @@ class LoginScreen extends ConsumerWidget {
             SizedBox(height: 60), // 텍스트와 이미지 사이 간격
             // 카메라 이미지 추가 (이미지 크기 조정)
             Container(
-              height: 272,
-              width: 272,
+              height: 150,
+              width: 150,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/camera.png'),
@@ -111,11 +111,12 @@ class LoginScreen extends ConsumerWidget {
               ),
               onPressed: () {},
               style: ButtonStyle(
-       surfaceTintColor: MaterialStateProperty.all(Colors.white),
-                padding: MaterialStateProperty.all(
+                minimumSize: WidgetStateProperty.all(Size(155, 40)),
+                surfaceTintColor: WidgetStateProperty.all(Colors.white),
+                padding: WidgetStateProperty.all(
                     EdgeInsets.symmetric(vertical: 16, horizontal: 100)),
-                elevation: MaterialStateProperty.all(5),
-                shadowColor: MaterialStateProperty.all(Colors.white70),
+                elevation: WidgetStateProperty.all(5),
+                shadowColor: WidgetStateProperty.all(Colors.white70),
               ),
             ),
             SizedBox(height: 24), // 버튼 사이 간격

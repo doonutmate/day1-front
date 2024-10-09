@@ -17,9 +17,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-
-          height: 91, // 높이 설정
-
+          height: 90,
           decoration: BoxDecoration(
             boxShadow: <BoxShadow>[
               BoxShadow(
