@@ -85,10 +85,12 @@ packages:
     dependency: transitive
     description:
       name: camera_avfoundation
+
       sha256: "0d04cec8715b59fb6dc60eefb47e69024f51233c570e475b886dc9290568bca7"
       url: "https://pub.dev"
     source: hosted
     version: "0.9.17+4"
+
   camera_platform_interface:
     dependency: transitive
     description:
@@ -101,10 +103,12 @@ packages:
     dependency: transitive
     description:
       name: camera_web
+
       sha256: "595f28c89d1fb62d77c73c633193755b781c6d2e0ebcd8dc25b763b514e6ba8f"
       url: "https://pub.dev"
     source: hosted
     version: "0.3.5"
+
   characters:
     dependency: transitive
     description:
@@ -273,6 +277,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.9.3+3"
+
   firebase_core:
     dependency: "direct main"
     description:
@@ -900,10 +905,12 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_foundation
+
       sha256: "07e050c7cd39bad516f8d64c455f04508d09df104be326d8c02551590a0d513d"
       url: "https://pub.dev"
     source: hosted
     version: "2.5.3"
+
   shared_preferences_linux:
     dependency: transitive
     description:
@@ -1241,10 +1248,12 @@ packages:
     dependency: transitive
     description:
       name: webview_flutter_wkwebview
+
       sha256: d4034901d96357beb1b6717ebf7d583c88e40cfc6eb85fe76dd1bf0979a9f251
       url: "https://pub.dev"
     source: hosted
     version: "3.16.0"
+
   xdg_directories:
     dependency: transitive
     description:

@@ -132,7 +132,6 @@ class MyApp extends ConsumerWidget {
             ),
           );
         };
-
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
             //사용자 기기 설정에 상관없이 텍스트 크기 고정
@@ -140,7 +139,6 @@ class MyApp extends ConsumerWidget {
           ),
           child: widget!,
         );
-
       },
       //기본 폰트 설정
       theme: ThemeData(
@@ -170,6 +168,7 @@ class MyApp extends ConsumerWidget {
           );
         },
       ),
+
       routes: {
         '/login': (context) => LoginScreen(),
         '/permision': (context) => Permision(),
