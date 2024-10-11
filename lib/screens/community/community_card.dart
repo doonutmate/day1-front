@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import '../../models/community_model.dart';
-
 class CommunityCard extends StatelessWidget {
   final Community community;
   final String calendarTitle;
   final VoidCallback onTap;
   final VoidCallback onMoreOptionsTap;
-
   CommunityCard({
     required this.community,
     required this.calendarTitle,
     required this.onTap,
     required this.onMoreOptionsTap,
   });
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -33,70 +30,73 @@ class CommunityCard extends StatelessWidget {
             ),
           ],
         ),
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+        child: Stack(
             children: [
-              CircleAvatar(
-                backgroundImage: community.profileImage != "null"
-                    ? NetworkImage(community.profileImage) as ImageProvider
-                    : AssetImage("assets/icons/mypage_profile.png") as ImageProvider,
-                radius: 27,
-              ),
-              SizedBox(height: 16.0),
-              Text(
-                community.calendarName,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF212121),
-                ),
-              ),
-              SizedBox(height: 5.0),
-              Text(
-                '${community.firstUploadedAt} ~ ${community.lastUploadedAt}',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontFamily: 'Pretendard',
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xFF757575),
-                ),
-              ),
-              SizedBox(height: 16.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  SizedBox(height: 16,),
+                  CircleAvatar(
+                    backgroundImage: community.profileImage != "null"
+                        ? NetworkImage(community.profileImage) as ImageProvider
+                        : AssetImage("assets/icons/mypage_profile.png") as ImageProvider,
+                    radius: 27,
+                  ),
+                  SizedBox(height: 16.0),
                   Text(
-                    community.memberName,
+                    community.calendarName,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontFamily: 'Pretendard',
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFF212121),
+                    ),
+                  ),
+                  Text(
+                    '${community.firstUploadedAt} ~ ${community.lastUploadedAt}',
                     style: TextStyle(
                       fontSize: 14,
                       fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
-                      color: Color(0xFF9E9E9E),
+                      color: Color(0xFF757575),
                     ),
                   ),
-                  SizedBox(width: 4.0),
-                  Text(
-                    '|',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF9E9E9E),
-                    ),
-                  ),
-                  SizedBox(width: 4.0),
-                  Text(
-                    '${community.totalCount}번의 기록',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFF9E9E9E),
-                    ),
+                  SizedBox(height: 16.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        community.memberName,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontFamily: 'Pretendard',
+                          fontWeight: FontWeight.w400,
+                          color: Color(0xFF9E9E9E),
+                        ),
+                      ),
+                      SizedBox(width: 8.0),
+                      Text(
+                        '|',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF9E9E9E),
+                        ),
+                      ),
+                      SizedBox(width: 8.0),
+                      Text(
+                        '${community.totalCount}번의 기록',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF9E9E9E),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              Align(
-                alignment: Alignment.topRight,
+              Positioned(
+                top: 0,
+                right: 0,
                 child: IconButton(
                   icon: Icon(
                     Icons.more_vert,
@@ -104,9 +104,8 @@ class CommunityCard extends StatelessWidget {
                   ),
                   onPressed: onMoreOptionsTap,
                 ),
-              ),
-            ],
-          ),
+              )
+            ]
         ),
       ),
     );

@@ -92,7 +92,7 @@ class LoginScreen extends ConsumerWidget {
               width: 150,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/camera.png'),
+                  image: AssetImage('assets/icons/camera.png'),
                   fit: BoxFit.contain,
                 ),
               ),
@@ -111,12 +111,12 @@ class LoginScreen extends ConsumerWidget {
               ),
               onPressed: () {},
               style: ButtonStyle(
-                minimumSize: WidgetStateProperty.all(Size(155, 40)),
-                surfaceTintColor: WidgetStateProperty.all(Colors.white),
-                padding: WidgetStateProperty.all(
-                    EdgeInsets.symmetric(vertical: 16, horizontal: 100)),
-                elevation: WidgetStateProperty.all(5),
-                shadowColor: WidgetStateProperty.all(Colors.white70),
+                minimumSize: MaterialStateProperty.all(Size(155, 40,)),
+                surfaceTintColor: MaterialStateProperty.all(Colors.white),
+                padding: MaterialStateProperty.all(
+                    EdgeInsets.symmetric(vertical: 8 ,horizontal: 12)),
+                elevation: MaterialStateProperty.all(5),
+                shadowColor: MaterialStateProperty.all(Colors.white70),
               ),
             ),
             SizedBox(height: 24), // 버튼 사이 간격

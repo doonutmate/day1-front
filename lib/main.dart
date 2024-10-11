@@ -88,6 +88,8 @@ Future<void> main() async {
   await FirebaseMessaging.instance.getInitialMessage();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
+
   runApp(ProviderScope(child: MyApp(initialUrl: initialUrl)));
 }
 
@@ -112,17 +114,37 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ServerTokenStateNotifier tokenProvider = ref.read(ServerTokenProvider.notifier);
+    VoidCallback? navigate;
 
     final isSignedOut = ref.watch(authProvider);
 
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
+      builder: (BuildContext context, Widget? widget) {
+        ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+          return Scaffold(
+            body: AlertDialog(
+              contentPadding: EdgeInsets.zero,
+              content: ErrorPopup(errorMassage: errorDetails.summary.toString(), navigate: navigate,),
+            ),
+          );
+        };
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            //사용자 기기 설정에 상관없이 텍스트 크기 고정
+            textScaler: TextScaler.linear(1.0),
+          ),
+          child: widget!,
+        );
+      },
+      //기본 폰트 설정
       theme: ThemeData(
         fontFamily: "Pretendard",
         bottomSheetTheme: BottomSheetThemeData(
-          backgroundColor: Colors.black.withOpacity(0),
-        ),
+            backgroundColor: Colors.black.withOpacity(0)),
+        scaffoldBackgroundColor: backGroundColor,
       ),
       home: Consumer(
         builder: (context, ref, child) {

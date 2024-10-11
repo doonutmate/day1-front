@@ -11,22 +11,17 @@ import 'community_card.dart';
 import '../report_screen.dart';
 import '../../providers/calendar_title_provider.dart';
 import 'user_calendar_screen.dart';
-
 class CommunityScreen extends ConsumerStatefulWidget {
   final List<Community> communities;
-
   CommunityScreen({required this.communities});
-
   @override
   _CommunityScreenState createState() => _CommunityScreenState();
 }
-
 class _CommunityScreenState extends ConsumerState<CommunityScreen> {
   List<Community> _calendars = [];
   bool _hasNext = true;
   DateTime? _lastUpdatedAt;
   bool _isLoading = false;
-
   @override
   void initState() {
     super.initState();
@@ -34,18 +29,14 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
     if (_calendars.isNotEmpty) {
       _lastUpdatedAt = DateTime.parse(_calendars.last.updatedAt as String);
     }
-
     _hasNext = _calendars.isNotEmpty;
   }
-
   Future<void> _fetchCalendars() async {
     if (_isLoading || !_hasNext) return;
     _isLoading = true;
-
     try {
       final result = await CommunityService().fetchCalendars(context, _lastUpdatedAt);
       List<Community> fetchedCalendars = result['communities'];
-
       setState(() {
         _calendars.addAll(fetchedCalendars.where((newCalendar) => !_calendars.any((existingCalendar) => existingCalendar.id == newCalendar.id)));
         _hasNext = result['hasNext'];
@@ -59,7 +50,6 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
       _isLoading = false;
     }
   }
-
   void _navigateToUserCalendar(Community community) {
     Navigator.push(
       context,
@@ -75,7 +65,6 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
       ),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
@@ -84,9 +73,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
         statusBarIconBrightness: Brightness.dark,
       ),
     );
-
     final calendarTitle = ref.watch(calendarTitleProvider) ?? 'calendarName';
-
     return Scaffold(
       backgroundColor: Color(0xFFFAFAFA),
       body: Column(
@@ -130,21 +117,24 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                 return true;
               },
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                padding: const EdgeInsets.only(left: 16,right: 16),
                 itemCount: _calendars.length + 1,
                 itemBuilder: (context, index) {
                   if (index == _calendars.length) {
                     return _isLoading ? Center(child: CircularProgressIndicator()) : SizedBox.shrink();
                   }
-                  return CommunityCard(
-                    community: _calendars[index],
-                    calendarTitle: calendarTitle,
-                    onTap: () {
-                      _navigateToUserCalendar(_calendars[index]);
-                    },
-                    onMoreOptionsTap: () {
-                      showMoreOptionsDialog(context);
-                    },
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: CommunityCard(
+                      community: _calendars[index],
+                      calendarTitle: calendarTitle,
+                      onTap: () {
+                        _navigateToUserCalendar(_calendars[index]);
+                      },
+                      onMoreOptionsTap: () {
+                        showMoreOptionsDialog(context);
+                      },
+                    ),
                   );
                 },
               ),
